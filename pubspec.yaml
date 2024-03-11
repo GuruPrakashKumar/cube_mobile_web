@@ -1,0 +1,105 @@
+name: shopos
+description: POS and accounts ledger.
+
+# Prevent accidental publishing to pub.dev.
+publish_to: "none"
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.16.2 <3.0.0"
+
+dependencies:
+  flutter_html: 
+  audioplayers: 
+  cached_network_image: 
+  cookie_jar: 
+  # date_time_picker: 
+  dio: 
+  dio_cookie_manager: 
+  firebase_auth: 
+  firebase_core: 
+  flutter:
+    sdk: flutter
+  firebase_messaging:
+  firebase_analytics:
+  lottie:
+  flutter_barcode_scanner: 
+  flutter_bloc: 
+  flutter_html_to_pdf: 
+  flutter_localization: 
+  # flutter_secure_storage: ^5.0.2
+  flutter_typeahead: 
+  flutter_vibrate: 
+  get_it:
+  image_picker: ^0.8.5
+  image_cropper: ^1.5.1
+  in_app_update: 
+  intl: 
+  path_provider: 
+  pdf: 
+  permission_handler: 
+  pin_code_fields: 
+  share_plus: 
+  slidable_button: ^3.0.0+1
+  whatsapp_share2: 
+  rflutter_alert: 
+  flutter_svg:
+  flutter_pdfview: 
+  url_launcher: 
+  new_version: 
+  flutter_background_service: 
+  flutter_background_service_android: 
+  flutter_local_notifications:
+  switcher: 
+  screenshot: 
+  file_picker: 
+  shared_preferences: ^2.2.0
+  upi_payment_qrcode_generator: ^1.4.0
+  provider: ^6.0.2
+  open_file:
+  ntp: ^2.0.0
+  upgrader: 
+  pinput: ^3.0.1
+  open_file_plus: ^3.4.1
+  print_bluetooth_thermal: ^1.0.9
+  esc_pos_utils_plus: ^2.0.2
+  # excel: ^2.1.0
+  syncfusion_flutter_xlsio: ^23.1.40
+  sqflite:
+  package_info_plus:
+  path:
+  otp_text_field:
+  widget_toolkit_otp:
+ 
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_launcher_icons: 
+  change_app_package_name: ^1.1.0
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon/BharatPos.png"
+
+flutter:
+  uses-material-design: true
+
+  # Enable generation of localized Strings from arb files.
+  generate: true
+
+  assets:
+    # Add assets from the images directory to the application.
+    - assets/images/
+    - assets/audio/
+    - assets/icon/
+    - assets/anims/
+  fonts:
+    - family: CustomIcons
+      fonts:
+        - asset: assets/CustomIcons.ttf
+    - family: Montserrat
+      fonts:
+        - asset: assets/OpenSans-Regular.ttf 

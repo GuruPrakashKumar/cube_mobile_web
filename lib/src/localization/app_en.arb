@@ -1,0 +1,6 @@
+{
+  "appTitle": "BharatPOS",
+  "@appTitle": {
+    "description": "The title of the application"
+  }
+}
