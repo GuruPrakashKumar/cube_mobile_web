@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
@@ -20,6 +21,8 @@ import 'package:shopos/src/services/locator.dart';
 import 'package:shopos/src/widgets/custom_button.dart';
 import 'package:shopos/src/widgets/custom_text_field.dart';
 import 'package:shopos/src/widgets/product_card_horizontal.dart';
+import 'package:simple_barcode_scanner/enum.dart';
+import 'package:simple_barcode_scanner/simple_barcode_scanner.dart';
 import 'package:slidable_button/slidable_button.dart';
 
 import '../services/product.dart';
@@ -79,7 +82,7 @@ class _CreateSaleReturnState extends State<CreateSaleReturn> {
   }
   void setQuantityToBeSold(OrderItemInput orderItem, double value,int index){
     final availableQty = orderItem.product?.quantity ?? 0;
-    print("setting quantity to be sold: value is $value and available is $availableQty");
+    if(kDebugMode)print("setting quantity to be sold: value is $value and available is $availableQty");
     if (value > availableQty) {
       locator<GlobalServices>().infoSnackBar("Quantity not available");
       return;
@@ -102,36 +105,36 @@ class _CreateSaleReturnState extends State<CreateSaleReturn> {
     product.saleigst = newGStRate.toStringAsFixed(2);
 
     product.salecgst = (newGStRate / 2).toStringAsFixed(2);
-    print(product.salecgst);
+    if(kDebugMode)print(product.salecgst);
 
     product.salesgst = (newGStRate / 2).toStringAsFixed(2);
-    print(product.salesgst);
+    if(kDebugMode)print(product.salesgst);
 
     product.sellingPrice = double.parse(product.baseSellingPriceGst!.toString()) + newGStRate;
-    print(product.sellingPrice);
+    if(kDebugMode)print(product.sellingPrice);
   }
 
   _onTotalChange(Product product, String? discountedPrice) {
     product.sellingPrice = double.parse(discountedPrice!);
-    print(product.gstRate);
+    if(kDebugMode)print(product.gstRate);
 
     double newBasePrice = (product.sellingPrice! * 100.0) / (100.0 + double.parse(product.gstRate == 'null' ? '0.0' : product.gstRate!));
 
-    print(newBasePrice);
+    if(kDebugMode)print(newBasePrice);
 
     product.baseSellingPriceGst = newBasePrice.toString();
 
     double newGst = product.sellingPrice! - newBasePrice;
 
-    print(newGst);
+    if(kDebugMode)print(newGst);
 
     product.saleigst = newGst.toStringAsFixed(2);
 
     product.salecgst = (newGst / 2).toStringAsFixed(2);
-    print(product.salecgst);
+    if(kDebugMode)print(product.salecgst);
 
     product.salesgst = (newGst / 2).toStringAsFixed(2);
-    print(product.salesgst);
+    if(kDebugMode)print(product.salesgst);
   }
 
   @override
@@ -269,16 +272,22 @@ class _CreateSaleReturnState extends State<CreateSaleReturn> {
 
   ///
   Future<void> _searchProductByBarcode() async {
-    locator<GlobalServices>().showBottomSheetLoader();
-    final barcode = await FlutterBarcodeScanner.scanBarcode(
-      "#000000",
-      "Cancel",
-      false,
-      ScanMode.BARCODE,
-    );
-    const _type = FeedbackType.success;
-    Vibrate.feedback(_type);
+    // locator<GlobalServices>().showBottomSheetLoader();
+    // final barcode = await FlutterBarcodeScanner.scanBarcode(
+    //   "#000000",
+    //   "Cancel",
+    //   false,
+    //   ScanMode.BARCODE,
+    // );
+    // const _type = FeedbackType.success;
+    // Vibrate.feedback(_type);
     //await _audioCache.play('audio/beep.mp3');
+    // String barcode="";
+    final barcode = await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => SimpleBarcodeScannerPage(appBarTitle: "Scan Barcode", centerTitle: true, scanType: ScanType.barcode),
+        ));
     try {
       /// Fetch product by barcode
       final res = await const ProductService().getProductByBarcode(barcode);
@@ -300,7 +309,7 @@ class _CreateSaleReturnState extends State<CreateSaleReturn> {
         });
       }
     } catch (_) {}
-    Navigator.pop(context);
+    // Navigator.pop(context);
   }
 
   Map CountNoOfitemIsList(List<Product> temp) {
@@ -455,8 +464,8 @@ class _CreateSaleReturnState extends State<CreateSaleReturn> {
                         title: 'Submit',
                         onTap: () {
                           if (localSellingPrice != null) {
-                            print(localSellingPrice);
-                            print(discountedPrice);
+                            if(kDebugMode)print(localSellingPrice);
+                            if(kDebugMode)print(discountedPrice);
                             if(_orderItem.product!.baseSellingPriceGst =="null"){
                               discount = (_orderItem.product!.sellingPrice!  + double.parse(_orderItem.discountAmt) - double.parse(localSellingPrice!).toDouble()) * _orderItem.quantity;
                             }else{
@@ -470,13 +479,13 @@ class _CreateSaleReturnState extends State<CreateSaleReturn> {
                             _onSubtotalChange(product, localSellingPrice);
                             setState(() {});
                           } else if (discountedPrice != null) {
-                            print('s$discountedPrice');
+                            if(kDebugMode)print('s$discountedPrice');
 
                             double realBaseSellingPrice = double.parse(_orderItem.product!.baseSellingPriceGst!);
 
                             _onTotalChange(product, discountedPrice);
-                            print("realbase selling price=${realBaseSellingPrice}");
-                            print("discount=${discount}");
+                            if(kDebugMode)print("realbase selling price=${realBaseSellingPrice}");
+                            if(kDebugMode)print("discount=${discount}");
                             discount = (realBaseSellingPrice + discount - double.parse(_orderItem.product!.baseSellingPriceGst!)) * _orderItem.quantity;
                             _orderItems[index].discountAmt = discount.toStringAsFixed(2);
 

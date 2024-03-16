@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:html';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -35,7 +36,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     authStatus();
-    checkForUpdate();
+    // checkForUpdate();
   
   }
 
@@ -61,9 +62,10 @@ class _SplashScreenState extends State<SplashScreen> {
         pos = 0;
       });
     });
-    final cj = await const ApiV1Service().initCookiesManager();
-    final cookies = await cj.loadForRequest(Uri.parse(Const.apiUrl));
-    final isAuthenticated = cookies.isNotEmpty;
+    // final cj = await const ApiV1Service().initCookiesManager();
+    // final cookies = await cj.loadForRequest(Uri.parse(Const.apiUrl));
+    final cookie=document.cookie!;
+    final isAuthenticated = cookie.isNotEmpty;
     Future.delayed(
       const Duration(milliseconds: 3000),
       () => Navigator.pushReplacement(

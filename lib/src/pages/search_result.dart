@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:pin_code_fields/pin_code_fields.dart';
@@ -115,7 +116,7 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
         }
       }
     }
-    // print("searched products: $prodList");
+    // if(kDebugMode)print("searched products: $prodList");
     setState(() {});
   }
 
@@ -151,7 +152,7 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
     }
 
     var availableQty = product.quantity ?? 0;
-    print("prevAdded while selecting the product is ${prevAdded}");
+    if(kDebugMode)print("prevAdded while selecting the product is ${prevAdded}");
     if(isSale && (prevAdded>=availableQty)){
       locator<GlobalServices>().infoSnackBar('Item not available');
       return;
@@ -161,8 +162,8 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
       // }else{
       //   product.quantityToBeSold = product.quantityToBeSold! + 1;
       // }
-      print("adding product in _products list");
-      // print("-----product name is ${product.name} and quantity to be sold is ${product.quantityToBeSold!}");
+      if(kDebugMode)print("adding product in _products list");
+      // if(kDebugMode)print("-----product name is ${product.name} and quantity to be sold is ${product.quantityToBeSold!}");
       _products.add(product);
     }
     setState(() {});
@@ -183,20 +184,20 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
         prevAdded = widget.args?.productlist[i].quantity ?? 0;
       }
     }
-      print("value = $value and availableQty $availableQty");
-      print("product.quantityToBeSold is ${product.quantityToBeSold}");
+      if(kDebugMode)print("value = $value and availableQty $availableQty");
+      if(kDebugMode)print("product.quantityToBeSold is ${product.quantityToBeSold}");
     if ((isSale || isEstimate) && (value+prevAdded > availableQty)) {
-      print("value = $value and availableQty $availableQty");
+      if(kDebugMode)print("value = $value and availableQty $availableQty");
       locator<GlobalServices>().infoSnackBar('Item not available');
       return;
     }
     setState(() {
-      print("increasing quantity to be sold");
+      if(kDebugMode)print("increasing quantity to be sold");
       for(int i = 0;i< _products.length;i++){
         if(_products[i].id == product.id){
           _products[i].quantityToBeSold = _products[i].quantityToBeSold! + 1;
           product.quantityToBeSold = _products[i].quantityToBeSold;
-          // print("-----product name is ${_products[i].name} and quantity to be sold is ${_products[i].quantityToBeSold!}");
+          // if(kDebugMode)print("-----product name is ${_products[i].name} and quantity to be sold is ${_products[i].quantityToBeSold!}");
         }
       }
     });
@@ -262,15 +263,15 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
     //   if (element.id == product.id) count++;
     // });
     double quantityTobeSold = 0;
-    // print("_products.length is ${_products.length}");
-    // print("in count no of quantity in array method");
+    // if(kDebugMode)print("_products.length is ${_products.length}");
+    // if(kDebugMode)print("in count no of quantity in array method");
     for(int i = 0;i<_products.length;i++){
       if(_products[i].id == product.id){
-        print("_products[i].quantityToBeSold = ${_products[i].quantityToBeSold}");
-        print("product.quantityToBeSold = ${product.quantityToBeSold}");
+        if(kDebugMode)print("_products[i].quantityToBeSold = ${_products[i].quantityToBeSold}");
+        if(kDebugMode)print("product.quantityToBeSold = ${product.quantityToBeSold}");
         quantityTobeSold = _products[i].quantityToBeSold ?? 0;
         // quantityTobeSold = product.quantityToBeSold ?? 0;
-        print("in count no of quantity in array product name = ${product.name} and quantity to be sold is ${quantityTobeSold}");
+        if(kDebugMode)print("in count no of quantity in array product name = ${product.name} and quantity to be sold is ${quantityTobeSold}");
       }
     }
     return quantityTobeSold;
@@ -399,9 +400,9 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
 
                                           //this logic is done becasue when we press the card only the (+-) button should show and should add item
                                           //then when we again press the card the opposite should happen
-                                          print("value of q $q");//q represents item quantity
+                                          if(kDebugMode)print("value of q $q");//q represents item quantity
                                           if (q == 0) {
-                                            print("if part q==0");
+                                            if(kDebugMode)print("if part q==0");
                                             _selectProduct(prodList[index]);
                                             itemCheckedFlag = true;
                                             // if (widget.args!.orderType == OrderType.sale) {//to show the available quantity in product card horizontal
@@ -414,7 +415,7 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
                                             //   prodList[index].quantity = prodList[index].quantity! + 1;
                                             // }
                                           } else if (q <= 1) {
-                                            print("if part q<=1");
+                                            if(kDebugMode)print("if part q<=1");
                                             decreaseTheQuantity(prodList[index], q);
                                             itemCheckedFlag = false;
                                             // if (widget.args!.orderType == OrderType.sale) {//to show the available quantity in product card horizontal
@@ -505,7 +506,7 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
                                           }
                                         },
                                         onQuantityFieldChange: (double value){
-                                          print("line 412 in serch result: value coming is $value");
+                                          if(kDebugMode)print("line 412 in serch result: value coming is $value");
                                           setQuantityToBeSold(prodList[index], value);
 
                                         },
@@ -560,9 +561,9 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
                       }
                     }
                   }
-                  // print(_products);
+                  // if(kDebugMode)print(_products);
 
-                  print("searchbar running");
+                  if(kDebugMode)print("searchbar running");
                   setState(() {});
                 }
               },

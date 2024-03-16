@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
@@ -140,7 +141,7 @@ class _PartyListPageState extends State<PartyListPage>
                 child: BlocBuilder<PartyCubit, PartyState>(
                   bloc: _partyCubit,
                   builder: (context, state) {
-                    // print(state.toString());
+                    // if(kDebugMode)print(state.toString());
                     if (state is CreditPartiesListRender) {
                       final salesParties = state.saleParties;
                       final purchaseParties = state.purchaseParties;
@@ -217,7 +218,7 @@ class _PartyListPageState extends State<PartyListPage>
       final data = response.data['allParty'] as List<dynamic>;
       return data.map((e) => Party.fromMap(e));
     } catch (err) {
-      // print(err.toString());
+      // if(kDebugMode)print(err.toString());
       return [];
     }
   }
@@ -275,7 +276,7 @@ class _PartiesListViewState extends State<PartiesListView> {
                   style: TextStyle(color: Colors.green),
                 ), //here when api will be fixed then we will get the correct value
           onTap: () async {
-            print("line 278 in partylist");
+            if(kDebugMode)print("line 278 in partylist");
             await Navigator.pushNamed(context, PartyCreditPage.routeName,
                 arguments: ScreenArguments(
                     party.id!, party.name!, party.phoneNumber!, widget.tabno));

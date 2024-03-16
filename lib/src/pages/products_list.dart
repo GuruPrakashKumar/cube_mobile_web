@@ -66,7 +66,7 @@
 //       _currentPage++;
 
 //       _productCubit.getProducts(_currentPage, _limit);
-//       print(_newList.length);
+//       if(kDebugMode)print(_newList.length);
 //     }
 //   }
 
@@ -245,7 +245,7 @@
 //                 //  onChanged: (String e) {
 //                 //     if (e.isNotEmpty) {
 //                 //       _productCubit.searchProducts(e);
-//                 //       print("searchbar running");
+//                 //       if(kDebugMode)print("searchbar running");
 //                 //       setState(() {});
 //                 //     }
 //                 //   },

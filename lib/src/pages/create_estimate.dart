@@ -1,10 +1,13 @@
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:shopos/src/models/input/order.dart';
 import 'package:shopos/src/pages/search_result.dart';
+import 'package:simple_barcode_scanner/enum.dart';
+import 'package:simple_barcode_scanner/simple_barcode_scanner.dart';
 import 'package:slidable_button/slidable_button.dart';
 
 import '../models/product.dart';
@@ -53,9 +56,9 @@ class _CreateEstimateState extends State<CreateEstimate> {
     //   orderItems: widget.args == null ? [] : widget.args?.editOrders,
     // );
     _Order = (widget.args == null ? Order(id: 0, orderItems: []): widget.args?.order)!;
-    print("line 53 in create estimate.dart");
-    print(_Order.businessName);
-    // print(_Order.orderItems?[0].product?.name);
+    if(kDebugMode)print("line 53 in create estimate.dart");
+    if(kDebugMode)print(_Order.businessName);
+    // if(kDebugMode)print(_Order.orderItems?[0].product?.name);
     if(widget.args!.editFlag!)
       calculate();
 
@@ -87,7 +90,7 @@ class _CreateEstimateState extends State<CreateEstimate> {
   }
   void setQuantityToBeSold(OrderItemInput orderItem, double value,int index){
     final availableQty = orderItem.product?.quantity ?? 0;
-    print("setting quantity to be sold: value is $value and available is $availableQty");
+    if(kDebugMode)print("setting quantity to be sold: value is $value and available is $availableQty");
     if (value > availableQty) {
       locator<GlobalServices>().infoSnackBar("Quantity not available");
       return;
@@ -113,52 +116,57 @@ class _CreateEstimateState extends State<CreateEstimate> {
     product.saleigst = newGStRate.toStringAsFixed(2);
 
     product.salecgst = (newGStRate / 2).toStringAsFixed(2);
-    print(product.salecgst);
+    if(kDebugMode)print(product.salecgst);
 
     product.salesgst = (newGStRate / 2).toStringAsFixed(2);
-    print(product.salesgst);
+    if(kDebugMode)print(product.salesgst);
 
     product.sellingPrice =
         double.parse(product.baseSellingPriceGst!.toString()) + newGStRate;
-    print(product.sellingPrice);
+    if(kDebugMode)print(product.sellingPrice);
   }
 
   _onTotalChange(Product product, String? discountedPrice) {
     product.sellingPrice = double.parse(discountedPrice!);
-    print(product.gstRate);
+    if(kDebugMode)print(product.gstRate);
 
     double newBasePrice = (product.sellingPrice! * 100.0) /
         (100.0 +
             double.parse(product.gstRate == 'null' ? '0.0' : product.gstRate!));
 
-    print(newBasePrice);
+    if(kDebugMode)print(newBasePrice);
 
     product.baseSellingPriceGst = newBasePrice.toString();
 
     double newGst = product.sellingPrice! - newBasePrice;
 
-    print(newGst);
+    if(kDebugMode)print(newGst);
 
     product.saleigst = newGst.toStringAsFixed(2);
 
     product.salecgst = (newGst / 2).toStringAsFixed(2);
-    print(product.salecgst);
+    if(kDebugMode)print(product.salecgst);
 
     product.salesgst = (newGst / 2).toStringAsFixed(2);
-    print(product.salesgst);
+    if(kDebugMode)print(product.salesgst);
   }
 
   Future<void> _searchProductByBarcode() async {
-    locator<GlobalServices>().showBottomSheetLoader();
-    final barcode = await FlutterBarcodeScanner.scanBarcode(
-      "#000000",
-      "Cancel",
-      false,
-      ScanMode.BARCODE,
-    );
-    const _type = FeedbackType.success;
-    Vibrate.feedback(_type);
+    // locator<GlobalServices>().showBottomSheetLoader();
+    // final barcode = await FlutterBarcodeScanner.scanBarcode(
+    //   "#000000",
+    //   "Cancel",
+    //   false,
+    //   ScanMode.BARCODE,
+    // );
+    // const _type = FeedbackType.success;
+    // Vibrate.feedback(_type);
     //await _audioCache.play('audio/beep.mp3');
+    final barcode = await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => SimpleBarcodeScannerPage(appBarTitle: "Scan Barcode", centerTitle: true, scanType: ScanType.barcode),
+        ));
     try {
       /// Fetch product by barcode
       final res = await const ProductService().getProductByBarcode(barcode);
@@ -182,7 +190,7 @@ class _CreateEstimateState extends State<CreateEstimate> {
         });
       }
     } catch (_) {}
-    Navigator.pop(context);
+    // Navigator.pop(context);
   }
 
   Map CountNoOfitemIsList(List<Product> temp) {
@@ -347,8 +355,8 @@ class _CreateEstimateState extends State<CreateEstimate> {
                         title: 'Submit',
                         onTap: () {
                           if (localSellingPrice != null) {
-                            print(localSellingPrice);
-                            print(discountedPrice);
+                            if(kDebugMode)print(localSellingPrice);
+                            if(kDebugMode)print(discountedPrice);
                             if (_orderItem.product!.baseSellingPriceGst ==
                                 "null") {
                               discount = (_orderItem.product!.sellingPrice! +
@@ -374,15 +382,15 @@ class _CreateEstimateState extends State<CreateEstimate> {
                             _onSubtotalChange(product, localSellingPrice);
                             setState(() {});
                           } else if (discountedPrice != null) {
-                            print('s$discountedPrice');
+                            if(kDebugMode)print('s$discountedPrice');
 
                             double realBaseSellingPrice = double.parse(
                                 _orderItem.product!.baseSellingPriceGst!);
 
                             _onTotalChange(product, discountedPrice);
-                            print(
+                            if(kDebugMode)print(
                                 "realbase selling price=${realBaseSellingPrice}");
-                            print("discount=${discount}");
+                            if(kDebugMode)print("discount=${discount}");
                             discount = (realBaseSellingPrice +
                                     discount -
                                     double.parse(_orderItem
@@ -514,8 +522,8 @@ class _CreateEstimateState extends State<CreateEstimate> {
                       onChanged: (position) {
                         if (position == SlidableButtonPosition.end) {
                           if (_orderItems.isNotEmpty) {
-                            print("line 499 in create estimate");
-                            print(_Order.businessName);
+                            if(kDebugMode)print("line 499 in create estimate");
+                            if(kDebugMode)print(_Order.businessName);
                             Navigator.pushNamed(
                               context,
                               CheckoutPage.routeName,

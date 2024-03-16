@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -67,9 +68,9 @@ class _CreateProductState extends State<CreateProduct> {
       _subProductNames.add(TextEditingController());
       _subProductQuantities.add(TextEditingController());
       _keys.add(GlobalKey());
-      print("----line 62 in create_product---");
-      print(_subProductNames.length);
-      print(_subProductQuantities.length);
+      if(kDebugMode)print("----line 62 in create_product---");
+      if(kDebugMode)print(_subProductNames.length);
+      if(kDebugMode)print(_subProductQuantities.length);
     });
   }
 
@@ -103,8 +104,8 @@ class _CreateProductState extends State<CreateProduct> {
     }
     try {
       final response = await const ProductService().getProduct(widget.args!.id!);
-      print("fetching product data in line 73 in createproduct");
-      print(response.toString());
+      if(kDebugMode)print("fetching product data in line 73 in createproduct");
+      if(kDebugMode)print(response.toString());
       productInput = ProductFormInput.fromMap(response.data['inventory']);
     } on DioError catch (err) {
       log(err.message.toString());
@@ -132,19 +133,19 @@ class _CreateProductState extends State<CreateProduct> {
       includedExcludedRadioButton = 2;
     }
 
-    print("gstttt");
-    print(_formInput.gstRate);
-    print(_formInput.gst);
+    if(kDebugMode)print("gstttt");
+    if(kDebugMode)print(_formInput.gstRate);
+    if(kDebugMode)print(_formInput.gst);
     if (_formInput.gstRate != null &&
         _formInput.gstRate != "null" &&
         _formInput.gstRate != "") {
       _formInput.gst = true;
-      print("kkkk");
-      print(_formInput.gst);
+      if(kDebugMode)print("kkkk");
+      if(kDebugMode)print(_formInput.gst);
       gstSwitch = true;
     }
     sellingPriceController.text = _formInput.sellingPrice as String;
-    print("testttt=${_formInput.sellingPrice}");
+    if(kDebugMode)print("testttt=${_formInput.sellingPrice}");
 
     purchasePriceController.text = _formInput.purchasePrice != "null"
         ? _formInput.purchasePrice as String
@@ -179,7 +180,7 @@ class _CreateProductState extends State<CreateProduct> {
       _subProductNames[i].text= _formInput.subProducts?[i].name ?? "";
       _subProductQuantities[i].text = _formInput.subProducts?[i].quantity.toString() ?? "";
     }
-    print("end of fetch product data and _forminput.image is ${_formInput.image} and runtime type is ${_formInput.image.runtimeType}");
+    if(kDebugMode)print("end of fetch product data and _forminput.image is ${_formInput.image} and runtime type is ${_formInput.image.runtimeType}");
     calculate();
   }
 
@@ -259,8 +260,10 @@ class _CreateProductState extends State<CreateProduct> {
   void _pickImage(ImageSource source) async {
     final XFile? image = await _picker.pickImage(source: source, imageQuality: 20);
     if (image == null) return; //if photo is null then it will return else---
-    File? croppedFile = await ImageCropper().cropImage(//Image Cropper
+    if(kDebugMode)print("in pick image image is not null");
+    CroppedFile? croppedFile = await ImageCropper().cropImage(
       sourcePath: image.path,
+      cropStyle: CropStyle.rectangle,
       aspectRatioPresets: [
         CropAspectRatioPreset.square,
         // CropAspectRatioPreset.ratio3x2,
@@ -268,16 +271,29 @@ class _CreateProductState extends State<CreateProduct> {
         // CropAspectRatioPreset.ratio4x3,
         // CropAspectRatioPreset.ratio16x9
       ],
-
-      androidUiSettings: AndroidUiSettings(
-          toolbarTitle: 'Crop Your Photo',
-          toolbarColor: Colors.white,
-          toolbarWidgetColor: Colors.black,
-          initAspectRatio: CropAspectRatioPreset.original,
-          lockAspectRatio: false),
-
+      uiSettings: [
+        AndroidUiSettings(
+            toolbarTitle: 'Cropper',
+            toolbarColor: Colors.deepOrange,
+            toolbarWidgetColor: Colors.white,
+            initAspectRatio: CropAspectRatioPreset.original,
+            lockAspectRatio: false),
+        IOSUiSettings(
+          title: 'Cropper',
+        ),
+        WebUiSettings(
+          // boundary: CroppieBoundary(width: int.parse((MediaQuery.of(context).size.width).toString().split('.')[0]) - 20,height: 300),
+          boundary: CroppieBoundary(width: 220,height: 220),
+          // enableResize: true,
+          enableZoom: true,
+          // viewPort: CroppieViewPort(width: int.parse((MediaQuery.of(context).size.width).toString().split('.')[0]) - 60,height: 200),
+          viewPort: CroppieViewPort(width: 220,height: 220),
+          showZoomer: true,
+          context: context,
+        ),
+      ],
     );
-
+    if(kDebugMode)print("cropped file path is ${croppedFile?.path}");
     setState(() {
       _formInput.imageFile = XFile(croppedFile!.path);
     });
@@ -289,7 +305,7 @@ class _CreateProductState extends State<CreateProduct> {
 
 // selling price
       if (_formInput.sellingPrice != null && includedExcludedRadioButton == 1) {
-        print("gggggggggg");
+        if(kDebugMode)print("gggggggggg");
         double oldsp = double.parse(_formInput.sellingPrice!);
         double basesp = (oldsp * 100 / (100 + rate));
 
@@ -322,7 +338,7 @@ class _CreateProductState extends State<CreateProduct> {
         _formInput.salecgst = salecgst.toString();
         _formInput.saleigst = saleigst.toString();
 
-        print(
+        if(kDebugMode)print(
             "Seeling price changed by changing bsp:${_formInput.sellingPrice}");
 
         sellingPriceController.text =
@@ -348,8 +364,8 @@ class _CreateProductState extends State<CreateProduct> {
         });
       }
 
-      print("pruchase");
-      print(_formInput.basePurchasePriceGst);
+      if(kDebugMode)print("pruchase");
+      if(kDebugMode)print(_formInput.basePurchasePriceGst);
     }
 
     var temp = _formInput;
@@ -359,8 +375,8 @@ class _CreateProductState extends State<CreateProduct> {
 
   @override
   Widget build(BuildContext context) {
-    print("sellingggggggPrice:");
-    print(gstSwitch);
+    if(kDebugMode)print("sellingggggggPrice:");
+    if(kDebugMode)print(gstSwitch);
     return Scaffold(
         appBar: AppBar(
           title: const Text('Create Product'),
@@ -399,8 +415,8 @@ class _CreateProductState extends State<CreateProduct> {
                                          imageUrl: _formInput.image!,
                                          fit: BoxFit.fill,
                                        )
-                                      : Image.file(
-                                          File(_formInput.imageFile!.path),
+                                      : Image.network(
+                                            _formInput.imageFile!.path,
                                           fit: BoxFit.contain,
                                         )
                                   : _formInput.imageFile == null
@@ -409,8 +425,8 @@ class _CreateProductState extends State<CreateProduct> {
                                           height: 80,
                                           width: 80,
                                         )
-                                      : Image.file(
-                                          File(_formInput.imageFile!.path),
+                                      : Image.network(
+                                          _formInput.imageFile!.path,
                                           fit: BoxFit.contain,
                                         ),
                               Align(
@@ -496,8 +512,8 @@ class _CreateProductState extends State<CreateProduct> {
                             onChanged: (e) {
                               _formInput.purchasePrice = e;
                               calculate();
-                              print("pppppppooooppp");
-                              print(gstSwitch);
+                              if(kDebugMode)print("pppppppooooppp");
+                              if(kDebugMode)print(gstSwitch);
                             },
                             validator: (e) {
                               if (e!.contains(",")) {
@@ -692,7 +708,7 @@ class _CreateProductState extends State<CreateProduct> {
                       onChanged: (DateTime value) {
                         setState(() {
                           _formInput.expiryDate = value;
-                          print(value);
+                          if(kDebugMode)print(value);
                         });
                       },
                       onSave: (DateTime? value) {},
@@ -925,49 +941,49 @@ class _CreateProductState extends State<CreateProduct> {
                       onTap: () async {
                         _formKey.currentState?.save();
 
-                        print(_formInput.purchasePrice);
+                        if(kDebugMode)print(_formInput.purchasePrice);
 
                         if (_formInput.purchasePrice == null ||
                             _formInput.purchasePrice == "null" ||
                             _formInput.purchasePrice == "") {
                           _formInput.purchasePrice = "0";
                         }
-                        print("saving the product and _subProduct.length is ${_subProductNames.length}");
+                        if(kDebugMode)print("saving the product and _subProduct.length is ${_subProductNames.length}");
                         for (int i = 0; i < _subProductNames.length; i++){
                           List<Product> prodList = await searchProductServices.searchproduct(_subProductNames[i].text.toString());
                           for(int j = 0;j<prodList.length;j++){
                             SubProduct subProduct = SubProduct();
-                            print("executing line 877----");
+                            if(kDebugMode)print("executing line 877----");
                             if(prodList.elementAt(j).name==_subProductNames[i].text.toString()){
                               subProduct.name = prodList.elementAt(j).name.toString();
                               subProduct.inventoryId = prodList.elementAt(j).id.toString();
                               subProduct.quantity = double.parse(_subProductQuantities[i].text);
-                              print("line 901 in create product");
-                              print(subProduct.name);
-                              print(subProduct.inventoryId);
-                              print(subProduct.quantity);
+                              if(kDebugMode)print("line 901 in create product");
+                              if(kDebugMode)print(subProduct.name);
+                              if(kDebugMode)print(subProduct.inventoryId);
+                              if(kDebugMode)print(subProduct.quantity);
                               // var newSubProduct = {"inventoryId": prodList.elementAt(j).id.toString(),
                               //   "name": prodList.elementAt(j).name.toString(),
                               //   "quantity": _subProductQuantities[i].text.toString()};
-                              // print(newSubProduct);
+                              // if(kDebugMode)print(newSubProduct);
                               subProductList.add(subProduct);
                               _formInput.subProducts = (subProductList);
                             }
                           }
                         }
-                        print(subProductList);
+                        if(kDebugMode)print(subProductList);
                         _formInput.subProducts = (subProductList);
-                        print("line 887");
-                        print(_formInput.subProducts);
+                        if(kDebugMode)print("line 887");
+                        if(kDebugMode)print(_formInput.subProducts);
                         if (_formKey.currentState?.validate() ?? false) {
-                          print(_formInput.available);
-                          print(_formInput.expiryDate);
-                          print(_formInput.batchNumber);
-                          print("line 889 in createProduct.dart----");
-                          print(_formInput.subProducts.toString());
+                          // if(kDebugMode)print(_formInput.available);
+                          // if(kDebugMode)print(_formInput.expiryDate);
+                          // if(kDebugMode)print(_formInput.batchNumber);
+                          // if(kDebugMode)print("line 889 in createProduct.dart----");
+                          // if(kDebugMode)print(_formInput.subProducts.toString());
                           _productCubit.createProduct(_formInput);
-                          print("Barcode:");
-                          print(_formInput.barCode);
+                          // if(kDebugMode)print("Barcode:");
+                          // if(kDebugMode)print(_formInput.barCode);
                           Navigator.pop(context);
                         }
                       },

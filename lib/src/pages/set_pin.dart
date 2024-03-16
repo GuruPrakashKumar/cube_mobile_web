@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
@@ -39,9 +40,9 @@ class _SetPinPageState extends State<SetPinPage> {
     final String oldpin = oldPinControlller.text.trim().toString();
     final String newpin = newPinController.text.trim().toString();
     final String repin = rePinController.text.trim().toString();
-    print(oldpin);
-    print(newpin);
-    print(repin);
+    if(kDebugMode)print(oldpin);
+    if(kDebugMode)print(newpin);
+    if(kDebugMode)print(repin);
 
     if (newpin.length < 6 || repin.length < 6) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(backgroundColor: Colors.red, content: Text('Invalid pin')));
@@ -58,8 +59,8 @@ class _SetPinPageState extends State<SetPinPage> {
     }
 
     if (widget.isPinSet) {
-      // print(int.parse(oldpin));
-      // print(int.parse(newpin));
+      // if(kDebugMode)print(int.parse(oldpin));
+      // if(kDebugMode)print(int.parse(newpin));
       await pinService.changePin(int.parse(oldpin), int.parse(newpin));
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Pin lock has changed.')));
     } else {
@@ -238,7 +239,7 @@ class _SetPinPageState extends State<SetPinPage> {
         debugPrint("Completed");
       },
       // onTap: () {
-      //   print("Pressed");
+      //   if(kDebugMode)print("Pressed");
       // },
       onChanged: (value) {
         debugPrint(value);

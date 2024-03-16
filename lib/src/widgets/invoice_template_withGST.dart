@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'package:shopos/src/models/input/order.dart';
 import 'package:shopos/src/models/user.dart';
@@ -94,9 +95,9 @@ String invoiceTemplatewithGST({
 
 
          bool atleastOneItemhaveGST = false;
-      print("Value OF GST");
+      if(kDebugMode)print("Value OF GST");
       order.orderItems!.forEach((element) {
-        print(element.product!.gstRate);
+        if(kDebugMode)print(element.product!.gstRate);
         if (element.product!.gstRate != "null") {
           atleastOneItemhaveGST = true;
         }
@@ -168,8 +169,8 @@ String invoiceTemplatewithGST({
                       '<td class="left">₹ ${((orderItem.quantity) * (orderItem.product?.sellingPrice ?? 0)).toStringAsFixed(2)}</td>'
                       '</tr>';
             else {
-              print("llll");
-              print(hsnAvailableFlag);
+              if(kDebugMode)print("llll");
+              if(kDebugMode)print(hsnAvailableFlag);
               return '<tr>'
                       '<td class="left product-name">${orderItem.product?.name}</td>'
                       '<td class="left">${orderItem.quantity}</td>'+

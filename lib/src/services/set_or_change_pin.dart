@@ -1,12 +1,12 @@
 import 'package:shopos/src/services/api_v1.dart';
-
+import 'package:flutter/foundation.dart';
 class PinService {
   // set pin
   Future<void> setPin(int pin) async {
     final response = await ApiV1Service.postRequest('/getpin', data: {
       'pin': pin,
     });
-    print(response.data);
+    if(kDebugMode)print(response.data);
   }
 
   // verify pin
@@ -14,7 +14,7 @@ class PinService {
     final response = await ApiV1Service.postRequest('/verifypin', data: {
       'pin': pin,
     });
-    print(response.data);
+    if(kDebugMode)print(response.data);
     bool status = response.data['success'];
 
     return status;
@@ -26,7 +26,7 @@ class PinService {
       'newPin': newPin,
       'oldPin': oldPin,
     });
-    print(response.data);
+    if(kDebugMode)print(response.data);
   }
 
   // delete pin
@@ -34,7 +34,7 @@ class PinService {
     final response = await ApiV1Service.postRequest('/deletepin', data: {
       'pin': oldPin,
     });
-    print(response.data);
+    if(kDebugMode)print(response.data);
   }
 
   // pin status = false(default)
@@ -42,7 +42,7 @@ class PinService {
     final response = await ApiV1Service.getRequest(
       '/pinstatus',
     );
-    print(response.data);
+    if(kDebugMode)print(response.data);
     bool status = false;
     try {
       status = response.data;

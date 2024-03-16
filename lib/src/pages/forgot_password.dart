@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shopos/src/services/auth.dart';
@@ -166,7 +167,7 @@ class _ForgotpasswordState extends State<Forgotpassword> {
                                         )));
                             Navigator.pop(context);
                           } catch (e) {
-                            print(e.toString());
+                            if(kDebugMode)print(e.toString());
                             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                                 backgroundColor: Colors.red,
                                 content: Text(

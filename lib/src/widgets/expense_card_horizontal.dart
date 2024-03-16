@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shopos/src/models/expense.dart';
@@ -16,12 +17,12 @@ class ExpenseCardHorizontal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     DateTime? timestamp = expense.createdAt?.toLocal();
-    print("line 19 in expense card horizontal");
-    print(expense.header);
-    print(expense.createdAt);
-    // print(timestamp?.toIso8601String());
+    if(kDebugMode)if(kDebugMode)print("line 19 in expense card horizontal");
+    if(kDebugMode)print(expense.header);
+    if(kDebugMode)print(expense.createdAt);
+    // if(kDebugMode)print(timestamp?.toIso8601String());
     String date = timestamp == null ? '--' : DateFormat('dd-MM-yyyy').format(timestamp);
-    // print("condision is ${expense.createdAt?.toString().endsWith('Z')}");
+    // if(kDebugMode)print("condision is ${expense.createdAt?.toString().endsWith('Z')}");
 
     String time;
     if (timestamp != null) {
@@ -34,7 +35,7 @@ class ExpenseCardHorizontal extends StatelessWidget {
       time = '--';
     }
 
-    print(time);
+    if(kDebugMode)print(time);
 
 
     return Card(

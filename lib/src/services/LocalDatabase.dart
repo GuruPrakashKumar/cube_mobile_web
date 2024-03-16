@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart';
 import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
@@ -142,7 +143,7 @@ class DatabaseHelper {
   }
 
   Future<int> InsertOrder(Order input, Billing provider, List<OrderItemInput> newAddeditems) async {
-    print("--inserting order in local database");
+    if(kDebugMode)print("--inserting order in local database");
     final response = await UserService.me();
     final user = User.fromMap(response.data['user']);
 
@@ -150,8 +151,8 @@ class DatabaseHelper {
     final db = await dbHelper.database;
 
     var map = input.toMap(OrderType.sale);
-    print("line 152 in local database in insert order");
-    print(map.toString());
+    if(kDebugMode)print("line 152 in local database in insert order");
+    if(kDebugMode)print(map.toString());
 
     //As we cant edit the data fetched from database because it is immutable we made a tempMap
     Map<String, dynamic> tempMap = {};
@@ -192,8 +193,8 @@ class DatabaseHelper {
     if (input.id == -1) {
       highestId = result.first['maxId'] == null ? 0 : result.first['maxId'] as int;
       input.id = highestId;
-       print("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh");
-      print(input.id);
+       if(kDebugMode)print("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh");
+      if(kDebugMode)print(input.id);
     
 
       provider.addSalesBill(
@@ -213,7 +214,7 @@ class DatabaseHelper {
     final dbHelper = DatabaseHelper();
     final db = await dbHelper.database;
     var curr = data;
-    print("insert order items input in local database and data is ${data} and newOrderItemsData is ${newOrderItemsData}");
+    if(kDebugMode)print("insert order items input in local database and data is ${data} and newOrderItemsData is ${newOrderItemsData}");
     data = newOrderItemsData.isEmpty ? data : newOrderItemsData;
 
     //to handle those items which are in database but user wants to delete them
@@ -229,15 +230,15 @@ class DatabaseHelper {
       }
     });
     if(orderPresentInDatabase){//if order is not present in database that means it is new sale order.
-      print("data items");
+      if(kDebugMode)print("data items");
 
-      print("printing the products which were present in database for order id: ${id}");
+      if(kDebugMode)print("printing the products which were present in database for order id: ${id}");
       List<OrderItemInput>? orderItemsInDatabase = orderFromPrevData.orderItems;
       orderItemsInDatabase?.forEach((orderItem) {
         //check if this order item is present in 'data'.
         //if it is not present in data then delete from local database
-        print(orderItem.product?.name);
-        print(orderItem.product?.id);
+        if(kDebugMode)print(orderItem.product?.name);
+        if(kDebugMode)print(orderItem.product?.id);
         bool isPresent = false;
         String productIdToBeDeleted="";
         curr.forEach((element) {
@@ -256,7 +257,7 @@ class DatabaseHelper {
             }
           });
           if(!isPresentInNewItems){
-            print("deleting an orderItemInput");
+            if(kDebugMode)print("deleting an orderItemInput");
             db.delete(
                 'OrderItemInput',
                 where: "product = ? AND OIID = ?",
@@ -268,8 +269,8 @@ class DatabaseHelper {
     }
 
     for (int i = 0; i < data.length; i++) {
-      print("line 221 in localdatabase");
-      print(data[i].product);
+      if(kDebugMode)print("line 221 in localdatabase");
+      if(kDebugMode)print(data[i].product);
       var map = data[i].toSaleMap();
       map['product'] = data[i].product!.id;
       map['OIID'] = id;
@@ -350,23 +351,23 @@ class DatabaseHelper {
     final db = await dbHelper.database;
 
     final List<Map<String, dynamic>> OrderItemInputData = await db.query('OrderItemInput');
-    print("line 290 in localdatabase");
-    print(OrderItemInputData);
+    if(kDebugMode)print("line 290 in localdatabase");
+    if(kDebugMode)print(OrderItemInputData);
     final List<Map<String, dynamic>> OrderData = await db.query('OrderInput', where: 'userId=?', whereArgs: [user.id]);
-    print("From database");
+    if(kDebugMode)print("From database");
     List<Order> list = [];
 
     for (int j = 0; j < OrderData.length; j++) {
       Map<String, dynamic> t = {};
 
       t.addAll(OrderData[j]);
-      print("data=");
-      print(t);
+      if(kDebugMode)print("data=");
+      if(kDebugMode)print(t);
 
       List<OrderItemInput> plist = [];
 
       for (int i = 0; i < OrderItemInputData.length; i++) {
-        print(OrderItemInputData[i]['OIID'].toString() + "&" + OrderData[j]['id'].toString());
+        if(kDebugMode)print(OrderItemInputData[i]['OIID'].toString() + "&" + OrderData[j]['id'].toString());
         if (OrderItemInputData[i]['OIID'] == OrderData[j]['id']) {
           plist.addAll(await convertListOfMaptoListofOrderItemInput(OrderItemInputData[i]));
         }
@@ -383,7 +384,7 @@ class DatabaseHelper {
       list.add(OrderObject);
     }
 
-    // print("list returning from localdatabase.getorderitems ${list[0].tableNo}");
+    // if(kDebugMode)print("list returning from localdatabase.getorderitems ${list[0].tableNo}");
 
     return list;
   }
@@ -397,7 +398,7 @@ class DatabaseHelper {
     Otemp.addAll(OrderItemInputData);
 
     final List<Map<String, dynamic>> Productdata = await db.query('Product');
-    print("product data: $Productdata ");
+    if(kDebugMode)print("product data: $Productdata ");
 
     Productdata.forEach((ele) {
       Map<String, dynamic> t = {};
@@ -406,17 +407,17 @@ class DatabaseHelper {
         t["expiryDate"] = null;
       }
       if (ele['_id'] == Otemp['product']) {
-        print("line 348 in local database");
-        print(t);
+        if(kDebugMode)print("line 348 in local database");
+        if(kDebugMode)print(t);
 
         Otemp['product'] = Product.fromMap(t).toMap();
-        print("line 349 in local database");
-        print(Otemp['product']);
+        if(kDebugMode)print("line 349 in local database");
+        if(kDebugMode)print(Otemp['product']);
       }
     });
 
     // Convert the stored JSON back to a list of SubProduct
-    // print(Otemp['product']['subProducts']);
+    // if(kDebugMode)print(Otemp['product']['subProducts']);
     // Otemp['product']['subProducts'] = Otemp['product']['subProducts'];
 
     // // Check if the 'subProducts' field is present in the data
@@ -429,16 +430,16 @@ class DatabaseHelper {
     //   // If 'subProducts' is not present, initialize it as an empty list
     //   Otemp['product'].subProducts = [];
     // }
-    // print("Otemp['product'] in line 436 ${Otemp["product"]['quantity']}");
+    // if(kDebugMode)print("Otemp['product'] in line 436 ${Otemp["product"]['quantity']}");
     list.add(OrderItemInput.fromMapForLocalDatabase(Otemp));
-    // print("line 354 in localdataabase");
-    // print(list[0].product?.quantityToBeSold!);
+    // if(kDebugMode)print("line 354 in localdataabase");
+    // if(kDebugMode)print(list[0].product?.quantityToBeSold!);
 
     return list;
   }
 
   deleteOrderItemInput(Order input) async {
-    print("input.id in delete order item input: ${input.id}");
+    if(kDebugMode)print("input.id in delete order item input: ${input.id}");
     final dbHelper = DatabaseHelper();
     final db = await dbHelper.database;
     await db.delete("Kot", where: "orderId = ?", whereArgs: [input.id]);
@@ -456,16 +457,16 @@ class DatabaseHelper {
         where: 'orderId =? AND isPrinted=? AND name=?',
         whereArgs: [list[i].orderId, "no", list[i].name],
       );
-      print(list[i].name);
+      if(kDebugMode)print(list[i].name);
 
-      // print("result");
-      // print(result);
+      // if(kDebugMode)print("result");
+      // if(kDebugMode)print(result);
 
       if (result.isNotEmpty) {//updates those KOTs which are not printed
         double qty = result.first['qty'];
         db.execute("update Kot set qty=${qty + list[i].qty} where orderId=${list[i].orderId} and isPrinted='no' and name='${list[i].name}'");
-        print("check qty");
-        print(list);
+        if(kDebugMode)print("check qty");
+        if(kDebugMode)print(list);
       } else {
         var map = list[i].toMap();
         await db.insert(
@@ -474,7 +475,7 @@ class DatabaseHelper {
           conflictAlgorithm: ConflictAlgorithm.replace,
         );
 
-        print("exception");
+        if(kDebugMode)print("exception");
       }
     }
   }
@@ -491,7 +492,7 @@ class DatabaseHelper {
 
     final List<Map<String, dynamic>> data = await db.query("Kot", where: 'isPrinted=? AND orderId=?', whereArgs: ["no", id]);
 
-    print("data got from kot: $data");
+    if(kDebugMode)print("data got from kot: $data");
 
     return data;
   }
@@ -499,14 +500,14 @@ class DatabaseHelper {
   deleteKot(int id, String itemName) async {
     final dbHelper = DatabaseHelper();
     final db = await dbHelper.database;
-    print("deleting kot because it was not in _Order but it was on _currOrder");
+    if(kDebugMode)print("deleting kot because it was not in _Order but it was on _currOrder");
     db.execute("delete from Kot where orderId=$id and isPrinted='no' and name='$itemName'");
   }
 
   updateKotQuantity(int id, String itemName, double itemQuantity) async {
     final dbHelper = DatabaseHelper();
     final db = await dbHelper.database;
-    print("${id} and $itemName");
+    if(kDebugMode)print("${id} and $itemName");
 
     // List<Map<String, dynamic>> result = await db.query(
     //   'Kot',
@@ -514,17 +515,17 @@ class DatabaseHelper {
     //   where: 'orderId =? AND isPrinted=? AND name=?',
     //   whereArgs: [id, "no", itemName],
     // );
-    // print("result.length is ${result.length}");
-    // print("--result.first['name'] ${result.first['name']}");
-    // print("--result.first['qty'] ${result.first['qty']}");
+    // if(kDebugMode)print("result.length is ${result.length}");
+    // if(kDebugMode)print("--result.first['name'] ${result.first['name']}");
+    // if(kDebugMode)print("--result.first['qty'] ${result.first['qty']}");
     //
     // double qty = result.first['qty'].toDouble();
 
     if (itemQuantity > 0) {//TODO: this was qty>1 before
-      print("updating kot with qty = ${itemQuantity}");
+      if(kDebugMode)print("updating kot with qty = ${itemQuantity}");
       db.execute("update Kot set qty=$itemQuantity where orderId=$id and isPrinted='no' and name='$itemName'");
     } else {//the control will not go to the else part as of current logic
-      print("deleting kot because itemQuantity was 0");
+      if(kDebugMode)print("deleting kot because itemQuantity was 0");
       db.execute("delete from Kot where orderId=$id and isPrinted='no' and name='$itemName'");
     }
   }
@@ -538,7 +539,7 @@ class DatabaseHelper {
   deleteTHEDatabase() async {
     String path = join(await getDatabasesPath(), 'database.db');
     await deleteDatabase(path);
-    print('Database cleared.');
+    if(kDebugMode)print('Database cleared.');
   }
 
   /*Future<bool>  checkIfNewColumnsAreAdded() async {
@@ -551,7 +552,7 @@ class DatabaseHelper {
 
         if(orderItemInputcolumns.length<10)
         {
-          print("lessssssssssssssssssssss");
+          if(kDebugMode)print("lessssssssssssssssssssss");
             return true;
             
         }

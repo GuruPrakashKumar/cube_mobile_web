@@ -3,7 +3,7 @@ import 'package:shopos/src/models/input/order.dart';
 import 'package:shopos/src/models/user.dart';
 import 'package:shopos/src/services/api_v1.dart';
 import 'package:shopos/src/services/user.dart';
-
+import 'package:flutter/foundation.dart';
 class SalesReturnService {
   const SalesReturnService();
 
@@ -12,9 +12,9 @@ class SalesReturnService {
       Order orderItemInput, String invoiceNum, String total) async {
     final userresponse = await UserService.me();
     final user = User.fromMap(userresponse.data['user']);
-    print('${orderItemInput.orderItems![0].product?.sellingPrice}');
-    print('${orderItemInput.orderItems![0].product?.baseSellingPriceGst}');
-    print('${orderItemInput.orderItems![0].product?.saleigst}');
+    if(kDebugMode)print('${orderItemInput.orderItems![0].product?.sellingPrice}');
+    if(kDebugMode)print('${orderItemInput.orderItems![0].product?.baseSellingPriceGst}');
+    if(kDebugMode)print('${orderItemInput.orderItems![0].product?.saleigst}');
     final response = await ApiV1Service.postRequest(
       '/salesOrder/return',
       data: {
@@ -32,7 +32,7 @@ class SalesReturnService {
         'total': double.parse(total),
       },
     );
-    print(response.data);
+    if(kDebugMode)print(response.data);
     return response;
   }
 

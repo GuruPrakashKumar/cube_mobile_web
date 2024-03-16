@@ -1,4 +1,5 @@
 // import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -111,20 +112,20 @@ class _HomePageState extends State<HomePage> {
   }
   //LocalDatabase
   getDataFromDatabase() async {
-    print("sssssssss");
+    if(kDebugMode)print("sssssssss");
     
 
       final provider = Provider.of<Billing>(
         widget.context,
       );
       var data = await DatabaseHelper().getOrderItems();
-      print("data form database");
-      // print(data[0].orderItems?[0].product?.quantityToBeSold!);
+      if(kDebugMode)print("data form database");
+      // if(kDebugMode)print(data[0].orderItems?[0].product?.quantityToBeSold!);
       provider.removeAll();
 
       data.forEach((element) {
-        // print("element:${element.orderItems![0].product!.name} and ${element.id}");
-        // print("element:${element.orderItems![0].product!.sellingPrice} and ${element.id}");
+        // if(kDebugMode)print("element:${element.orderItems![0].product!.name} and ${element.id}");
+        // if(kDebugMode)print("element:${element.orderItems![0].product!.sellingPrice} and ${element.id}");
         provider.addSalesBill(element, element.id.toString());
       });
  
@@ -283,7 +284,7 @@ class _HomePageState extends State<HomePage> {
                         title: Title(color: Colors.black, child: Text("Set/Change pin")),
                         onTap: () async {
                           bool status = await _pinService.pinStatus();
-                          print(status);
+                          if(kDebugMode)print(status);
                           Navigator.of(context).pushNamed(SetPinPage.routeName, arguments: status);
                         },
                       ),

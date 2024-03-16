@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:flutter/foundation.dart';
 import 'package:dio/dio.dart';
 import 'package:shopos/src/models/input/order.dart';
 import 'package:shopos/src/services/api_v1.dart';
@@ -12,14 +12,14 @@ class SalesService {
     Order orderItemInput,
     String invoiceNum,
   ) async {
-    // print('${orderItemInput.orderItems![0].product?.sellingPrice}');
-    // print('${orderItemInput.orderItems![0].product?.baseSellingPriceGst}');
-    // print('${orderItemInput.orderItems![0].product?.saleigst}');
-    print("---line 16 in sales.dart");
-    print(orderItemInput.kotId);
-    // print(orderItemInput.modeOfPayment);
-    // print(orderItemInput.party);
-    // print(orderItemInput.invoiceNum);
+    // if(kDebugMode)print('${orderItemInput.orderItems![0].product?.sellingPrice}');
+    // if(kDebugMode)print('${orderItemInput.orderItems![0].product?.baseSellingPriceGst}');
+    // if(kDebugMode)print('${orderItemInput.orderItems![0].product?.saleigst}');
+    if(kDebugMode)print("---line 16 in sales.dart");
+    if(kDebugMode)print(orderItemInput.kotId);
+    // if(kDebugMode)print(orderItemInput.modeOfPayment);
+    // if(kDebugMode)print(orderItemInput.party);
+    // if(kDebugMode)print(orderItemInput.invoiceNum);
     var dataSent = {
       'kotId': orderItemInput.kotId,
       'orderItems':
@@ -32,8 +32,8 @@ class SalesService {
       'businessAddress': orderItemInput.businessAddress,
       'gst': orderItemInput.gst,
     };
-    print("--data sent--");
-    print(jsonEncode(dataSent));
+    if(kDebugMode)print("--data sent--");
+    if(kDebugMode)print(jsonEncode(dataSent));
     final response = await ApiV1Service.postRequest(
       '/salesOrder/new',
       data: {
@@ -49,13 +49,13 @@ class SalesService {
         'gst': orderItemInput.gst,
       },
     );
-    print("line 37 in sales.dart");
-    print(response.data);
+    if(kDebugMode)print("line 37 in sales.dart");
+    if(kDebugMode)print(response.data);
     return response;
   }
   static Future<Map<String, dynamic>> getNumberOfSales() async {
     final response = await ApiV1Service.getRequest('/salesNum');
-    print("sales num is ${response.data}");
+    if(kDebugMode)print("sales num is ${response.data}");
     return response.data;
   }
   ///
@@ -65,8 +65,8 @@ class SalesService {
   }
   static Future<Map<String, dynamic>> getSingleSaleOrder(String invoiceNum) async {
     final response = await ApiV1Service.getRequest('/salesOrder/$invoiceNum');
-    print("line 65 in sales.dart");
-    print(response.data);
+    if(kDebugMode)print("line 65 in sales.dart");
+    if(kDebugMode)print(response.data);
     return response.data;
   }
 }

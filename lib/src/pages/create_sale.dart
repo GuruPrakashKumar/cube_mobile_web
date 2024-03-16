@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
@@ -25,6 +26,8 @@ import 'package:shopos/src/services/locator.dart';
 import 'package:shopos/src/widgets/custom_button.dart';
 import 'package:shopos/src/widgets/custom_text_field.dart';
 import 'package:shopos/src/widgets/product_card_horizontal.dart';
+import 'package:simple_barcode_scanner/enum.dart';
+import 'package:simple_barcode_scanner/simple_barcode_scanner.dart';
 import 'package:slidable_button/slidable_button.dart';
 
 import '../services/product.dart';
@@ -92,22 +95,22 @@ class _CreateSaleState extends State<CreateSale> {
   }
   // Future<bool> _onWillPop() async {
   //   bool isOrderEdited = false;
-  //     print("is Order Edited false in line 65");
+  //     if(kDebugMode)print("is Order Edited false in line 65");
   //   if(_Order.orderItems?.length != _prevOrder.orderItems?.length){
-  //     print("is Order Edited true in line 66");
+  //     if(kDebugMode)print("is Order Edited true in line 66");
   //     isOrderEdited = true;
   //   }
   //   if(newAddedItems!.isNotEmpty){
-  //     print("is Order Edited true in line 70");
+  //     if(kDebugMode)print("is Order Edited true in line 70");
   //     isOrderEdited = true;
   //   }
   //   _prevOrder.orderItems?.forEach((orderItem) {
   //     _Order.orderItems?.forEach((element) {
   //       if(orderItem.product?.id == element.product?.id){
-  //         print("id matched");
+  //         if(kDebugMode)print("id matched");
   //         if(orderItem.quantity != element.quantity){
-  //           print("is Order Edited true in line 78");
-  //           print("not equal quantity");
+  //           if(kDebugMode)print("is Order Edited true in line 78");
+  //           if(kDebugMode)print("not equal quantity");
   //           isOrderEdited = true;
   //         }
   //       }
@@ -172,8 +175,8 @@ class _CreateSaleState extends State<CreateSale> {
                       if (_orderItems[index].product!.baseSellingPriceGst != null && _orderItems[index].product!.baseSellingPriceGst != "null"){
                         basesellingprice = double.parse(_orderItems[index].product!.baseSellingPriceGst!);
                       }
-                  // print("line 109 in create sale");
-                  // print(basesellingprice);
+                  // if(kDebugMode)print("line 109 in create sale");
+                  // if(kDebugMode)print(basesellingprice);
 
                   return GestureDetector(
                     onLongPress: () {
@@ -189,8 +192,8 @@ class _CreateSaleState extends State<CreateSale> {
                       onAdd: () {
                         Kotlist.add(_Order.orderItems![index].product!);
                         _onAdd(_orderItems[index]);
-                        print("on add quantity is ${_orderItems[index].quantity}");
-                        print("on add quantity to be sold is ${_orderItems[index].product?.quantityToBeSold!}");
+                        if(kDebugMode)print("on add quantity is ${_orderItems[index].quantity}");
+                        if(kDebugMode)print("on add quantity to be sold is ${_orderItems[index].product?.quantityToBeSold!}");
 
                       },
                       onDelete: () {
@@ -253,7 +256,7 @@ class _CreateSaleState extends State<CreateSale> {
               onChanged: (position) async {
                 if (position == SlidableButtonPosition.end) {
                   if (_orderItems.isNotEmpty && skipPendingOrdersPref==false) {
-                    // print('orderid: ${widget.args?.orderId}');
+                    // if(kDebugMode)print('orderid: ${widget.args?.orderId}');
                     await insertToDatabase(provider);
                     Navigator.pushNamed(context, BillingListScreen.routeName, arguments: OrderType.sale);
                   }else if(_orderItems.isEmpty && skipPendingOrdersPref==false){
@@ -294,7 +297,7 @@ class _CreateSaleState extends State<CreateSale> {
   }
   void setQuantityToBeSold(OrderItemInput orderItem, double value,int index){
     final availableQty = orderItem.product?.quantity ?? 0;
-    print("setting quantity to be sold: value is $value and available is $availableQty");
+    if(kDebugMode)print("setting quantity to be sold: value is $value and available is $availableQty");
     if (value > availableQty) {
       locator<GlobalServices>().infoSnackBar("Quantity not available");
       return;
@@ -323,36 +326,36 @@ class _CreateSaleState extends State<CreateSale> {
     product.saleigst = newGStRate.toStringAsFixed(2);
 
     product.salecgst = (newGStRate / 2).toStringAsFixed(2);
-    print(product.salecgst);
+    if(kDebugMode)print(product.salecgst);
 
     product.salesgst = (newGStRate / 2).toStringAsFixed(2);
-    print(product.salesgst);
+    if(kDebugMode)print(product.salesgst);
 
     product.sellingPrice = double.parse(product.baseSellingPriceGst!.toString()) + newGStRate;
-    print(product.sellingPrice);
+    if(kDebugMode)print(product.sellingPrice);
   }
 
   _onTotalChange(Product product, String? discountedPrice) {
     product.sellingPrice = double.parse(discountedPrice!);
-    print(product.gstRate);
+    if(kDebugMode)print(product.gstRate);
 
     double newBasePrice = (product.sellingPrice! * 100.0) / (100.0 + double.parse(product.gstRate == 'null' ? '0.0' : product.gstRate!));
 
-    print(newBasePrice);
+    if(kDebugMode)print(newBasePrice);
 
     product.baseSellingPriceGst = newBasePrice.toString();
 
     double newGst = product.sellingPrice! - newBasePrice;
 
-    print(newGst);
+    if(kDebugMode)print(newGst);
 
     product.saleigst = newGst.toStringAsFixed(2);
 
     product.salecgst = (newGst / 2).toStringAsFixed(2);
-    print(product.salecgst);
+    if(kDebugMode)print(product.salecgst);
 
     product.salesgst = (newGst / 2).toStringAsFixed(2);
-    print(product.salesgst);
+    if(kDebugMode)print(product.salesgst);
   }
 
   //local Database
@@ -367,22 +370,22 @@ class _CreateSaleState extends State<CreateSale> {
 
 
     //remove all from kotList, add all products from _Order to kotList while comparing to _currOrder
-    print("_currOrder length in line 326 is ${_prevOrder.orderItems?.length}");
+    if(kDebugMode)print("_currOrder length in line 326 is ${_prevOrder.orderItems?.length}");
     // if(_prevOrder.orderItems!.length != 0){//no matter we can clear kot list anyway
-      print("clearing kot list");
+      if(kDebugMode)print("clearing kot list");
       Kotlist.clear();
     // }
     for(int i = 0; i < _Order.orderItems!.length; i++){
       Product? product = _Order.orderItems?[i].product;
       product?.quantityToBeSold = _Order.orderItems?[i].quantity;
-      // print("product name is ${product!.name} and quantity to be sold is ${product.quantityToBeSold}");
+      // if(kDebugMode)print("product name is ${product!.name} and quantity to be sold is ${product.quantityToBeSold}");
       String? productId = _Order.orderItems?[i].product?.id;
       //todo: all the working will be done by orderItems.quantity
       if(_prevOrder.orderItems!.any((element) => element.product!.id == productId)){//checks if product(with id 'productId') is present in _prevOrder.orderItems or not
         //check quantity
         //if increased then find how much quantity is increased and add that value
         //if decreased update it
-        print("in if part line 344");
+        if(kDebugMode)print("in if part line 344");
         double quantityBefore = 0;
         for(int i = 0;i<_prevOrder.orderItems!.length;i++){//loop for getting what was the quantity before
           if(_prevOrder.orderItems?[i].product?.id == productId){
@@ -392,10 +395,10 @@ class _CreateSaleState extends State<CreateSale> {
 
         if((product!.quantityToBeSold! - quantityBefore)>0){//this means user have increased quantity of this product
           product.quantityToBeSold = product.quantityToBeSold! - quantityBefore;
-          print("adding in kot list");
+          if(kDebugMode)print("adding in kot list");
           Kotlist.add(product);
         }else if ((product.quantityToBeSold! - quantityBefore)<0){//means user have decreased the quantity
-          print("else part in line 360 ${product.name} and ${product.quantityToBeSold} and quantity before is ${quantityBefore}");
+          if(kDebugMode)print("else part in line 360 ${product.name} and ${product.quantityToBeSold} and quantity before is ${quantityBefore}");
           // DatabaseHelper().updateKotQuantity(widget.args!.id!, product.name!,product.quantityToBeSold!);
           //todo: user decreased the quantity here
           Item item = Item(name: product.name!, quantity: (product.quantityToBeSold! - quantityBefore), createdAt: DateTime.now());
@@ -403,7 +406,7 @@ class _CreateSaleState extends State<CreateSale> {
         }
       }else{
         //add the product as it is because it is new product added
-        print("adding in kot list");
+        if(kDebugMode)print("adding in kot list");
         Kotlist.add(_Order.orderItems![i].product!);
       }
     }
@@ -412,7 +415,7 @@ class _CreateSaleState extends State<CreateSale> {
     //checks from Previously saved Order and compares
     for(int i = 0;i<_prevOrder.orderItems!.length;i++){
       if(!_Order.orderItems!.any((element) => element.product?.id == _prevOrder.orderItems?[i].product?.id)){
-        print("deleting in line 370 name is ${_prevOrder.orderItems![i].product!.name!}");
+        if(kDebugMode)print("deleting in line 370 name is ${_prevOrder.orderItems![i].product!.name!}");
         Item item = Item(name: _prevOrder.orderItems![i].product!.name!, quantity: -_prevOrder.orderItems![i].quantity, createdAt: DateTime.now());
         kotItems.add(item);
         // DatabaseHelper().deleteKot(widget.args!.id!, _prevOrder.orderItems![i].product!.name!);
@@ -421,13 +424,13 @@ class _CreateSaleState extends State<CreateSale> {
 
 
     var tempMap = CountNoOfitemIsList(Kotlist);
-    print("inserting to database");
-    print("temp map is $tempMap");
-    print("kotlist length is ${Kotlist.length} and kotlist is $Kotlist");
+    if(kDebugMode)print("inserting to database");
+    if(kDebugMode)print("temp map is $tempMap");
+    if(kDebugMode)print("kotlist length is ${Kotlist.length} and kotlist is $Kotlist");
     Kotlist.forEach((element) {
-      print("---kotList for each loop running---");
+      if(kDebugMode)print("---kotList for each loop running---");
       if(tempMap['${element.id}'] > 0){//to remove those items which has 0 quantity in kotList
-        print("kot model name: ${element.name!}, qtycount :${tempMap['${element.id}']}");
+        if(kDebugMode)print("kot model name: ${element.name!}, qtycount :${tempMap['${element.id}']}");
         //Making Item object for kot api
         Item item = Item(name: element.name, quantity: tempMap['${element.id}'], createdAt: DateTime.now());
         kotItems.add(item);
@@ -448,21 +451,27 @@ class _CreateSaleState extends State<CreateSale> {
       await billingCubit.updateBillingOrder(_Order);
     }
     // billingCubit.getBillingOrders();
-    // print(resp);
+    // if(kDebugMode)print(resp);
     // DatabaseHelper().insertKot(kotItemlist);
   }
 
   ///
   Future<void> _searchProductByBarcode() async {
-    locator<GlobalServices>().showBottomSheetLoader();
-    final barcode = await FlutterBarcodeScanner.scanBarcode(
-      "#000000",
-      "Cancel",
-      false,
-      ScanMode.BARCODE,
-    );
-    const _type = FeedbackType.success;
-    Vibrate.feedback(_type);
+    // locator<GlobalServices>().showBottomSheetLoader();
+    // final barcode = await FlutterBarcodeScanner.scanBarcode(
+    //   "#000000",
+    //   "Cancel",
+    //   false,
+    //   ScanMode.BARCODE,
+    // );
+    // String barcode="";
+    final barcode = await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => SimpleBarcodeScannerPage(appBarTitle: "Scan Barcode", centerTitle: true, scanType: ScanType.barcode),
+        ));
+    // const _type = FeedbackType.success;
+    // Vibrate.feedback(_type);
     //await _audioCache.play('audio/beep.mp3');
     try {
       /// Fetch product by barcode
@@ -484,8 +493,10 @@ class _CreateSaleState extends State<CreateSale> {
           _Order.orderItems?.add(order);
         });
       }
-    } catch (_) {}
-    Navigator.pop(context);
+    } catch (err) {
+      // locator<GlobalServices>().errorSnackBar(err.toString());
+    }
+    // Navigator.pop(context);
   }
 
   ///counts number of Products in list and returns a map in which the keys are the ids of products and values are the quantity to be sold
@@ -497,7 +508,7 @@ class _CreateSaleState extends State<CreateSale> {
         // for (int j = i + 1; j < temp.length; j++) {
         //   if (temp[i].id == temp[j].id) {
         //     count++;
-        //     print("count =$count");
+        //     if(kDebugMode)print("count =$count");
         //   }
         // }
         temp[i].quantityToBeSold = roundToDecimalPlaces(temp[i].quantityToBeSold!, 4);
@@ -505,7 +516,7 @@ class _CreateSaleState extends State<CreateSale> {
           tempMap["${temp[i].id}"] = temp[i].quantityToBeSold;
       }
     }
-    print("temp map is $tempMap");
+    if(kDebugMode)print("temp map is $tempMap");
 
     for (int i = 0; i < temp.length; i++) {
       for (int j = i + 1; j < temp.length; j++) {
@@ -552,7 +563,7 @@ class _CreateSaleState extends State<CreateSale> {
     for (int i = 0; i < Kotlist.length; i++) {
       if (Kotlist[i].id == _Order.orderItems![index].product!.id) {
         if(_Order.orderItems![index].product!.quantityToBeSold! <= 0){
-          print("removing kot from kotlist");
+          if(kDebugMode)print("removing kot from kotlist");
           Kotlist.removeAt(i);
         }
         break;
@@ -578,7 +589,7 @@ class _CreateSaleState extends State<CreateSale> {
     Kotlist.addAll(temp);
 
     var tempMap = CountNoOfitemIsList(temp);//tempMap contains the keys as the ids of products and values are the quantities to be sold
-    print(" temp is $temp");
+    if(kDebugMode)print(" temp is $temp");
     final orderItems = temp.map((e) => OrderItemInput(
               product: e,
               quantity: tempMap["${e.id}"].toDouble(),
@@ -618,9 +629,9 @@ class _CreateSaleState extends State<CreateSale> {
     final _orderItem = _orderItems[index];
     final tappedProduct = await ProductService().getProduct(_orderItems[index].product!.id!);
     final productJson = Product.fromMap(tappedProduct.data['inventory']);
-    // print("line 404");
-    // print(productJson.baseSellingPriceGst);
-    // print(productJson.sellingPrice);
+    // if(kDebugMode)print("line 404");
+    // if(kDebugMode)print(productJson.baseSellingPriceGst);
+    // if(kDebugMode)print(productJson.sellingPrice);
     final baseSellingPriceToShow = productJson.baseSellingPriceGst;
     final sellingPriceToShow = productJson.sellingPrice;
 
@@ -683,17 +694,17 @@ class _CreateSaleState extends State<CreateSale> {
                         title: 'Submit',
                         onTap: () {
                           if (localSellingPrice != null) {
-                            print(localSellingPrice);
-                            print(discountedPrice);
-                            print("----line 463---in createsale.dart");
-                            print(basesellingprice);
-                            print(_orderItem.product!.baseSellingPriceGst!);
+                            if(kDebugMode)print(localSellingPrice);
+                            if(kDebugMode)print(discountedPrice);
+                            if(kDebugMode)print("----line 463---in createsale.dart");
+                            if(kDebugMode)print(basesellingprice);
+                            if(kDebugMode)print(_orderItem.product!.baseSellingPriceGst!);
                             if(_orderItem.product!.baseSellingPriceGst =="null"){
-                              print("---line 467 in createsale.dart");
+                              if(kDebugMode)print("---line 467 in createsale.dart");
                               discount = (_orderItem.product!.sellingPrice!  + double.parse(_orderItem.discountAmt) - double.parse(localSellingPrice!).toDouble()) * _orderItem.quantity;
 
                             }else{
-                              print("---line 470 in createsale.dart");
+                              if(kDebugMode)print("---line 470 in createsale.dart");
                               discount = (double.parse(_orderItem.product!.baseSellingPriceGst!) + double.parse(_orderItem.discountAmt) - double.parse(localSellingPrice!).toDouble()) * _orderItem.quantity;
                             }
 
@@ -702,18 +713,18 @@ class _CreateSaleState extends State<CreateSale> {
                           }
 
                           if (localSellingPrice != null && localSellingPrice!.isNotEmpty) {
-                            print("line 479 in create_sale.dart");
+                            if(kDebugMode)print("line 479 in create_sale.dart");
                             _onSubtotalChange(product, localSellingPrice);
                             setState(() {});
                           } else if (discountedPrice != null) {
-                            print("line 483 in create_sale.dart");
-                            print('s$discountedPrice');
+                            if(kDebugMode)print("line 483 in create_sale.dart");
+                            if(kDebugMode)print('s$discountedPrice');
 
                             double realBaseSellingPrice = double.parse(_orderItem.product!.baseSellingPriceGst!);
 
                             _onTotalChange(product, discountedPrice);
-                            // print("realbase selling price=${realBaseSellingPrice}");
-                            // print("discount=${discount}");
+                            // if(kDebugMode)print("realbase selling price=${realBaseSellingPrice}");
+                            // if(kDebugMode)print("discount=${discount}");
                             discount = (realBaseSellingPrice + discount - double.parse(_orderItem.product!.baseSellingPriceGst!)) * _orderItem.quantity;
                             _orderItems[index].discountAmt = discount.toStringAsFixed(2);
 

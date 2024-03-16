@@ -11,9 +11,9 @@ class EstimateService{
   const EstimateService();
 
   static Future<Response> createEstimateOrder(Order orderItemInput, String estimateNum) async {
-    print("line 12 in estimate.dart");
-    // print(orderItemInput.toMap(OrderType.estimate).toString());
-    print("end---");
+    if(kDebugMode)print("line 12 in estimate.dart");
+    // if(kDebugMode)print(orderItemInput.toMap(OrderType.estimate).toString());
+    if(kDebugMode)print("end---");
     final response = await ApiV1Service.postRequest(
       '/estimate/new',
       data: {
@@ -26,15 +26,15 @@ class EstimateService{
       },
     );
     if(kDebugMode){
-      print("----line 29 in estimate.dart");
-      print(response.data);
+      if(kDebugMode)print("----line 29 in estimate.dart");
+      if(kDebugMode)print(response.data);
     }
     return response;
   }
   static Future<Response> convertEstimateToSales(Order orderItemInput, String invoiceNum) async {
-    print("line 35 in estimate.dart");
-    print(orderItemInput.party?.id);
-    print(orderItemInput.objId);
+    if(kDebugMode)print("line 35 in estimate.dart");
+    if(kDebugMode)print(orderItemInput.party?.id);
+    if(kDebugMode)print(orderItemInput.objId);
     final response = await ApiV1Service.postRequest(
       '/estimate/${orderItemInput.objId}',
       data: {
@@ -44,14 +44,14 @@ class EstimateService{
       },
     );
     if(kDebugMode){
-      print("----line 44 in estimate.dart");
-      print(response.data);
+      if(kDebugMode)print("----line 44 in estimate.dart");
+      if(kDebugMode)print(response.data);
     }
     return response;
   }
   static Future<Response> updateEstimateOrder(Order orderItemInput) async {
-    print("line 52 in estimate.dart");
-    print(orderItemInput.objId);
+    if(kDebugMode)print("line 52 in estimate.dart");
+    if(kDebugMode)print(orderItemInput.objId);
     final response = await ApiV1Service.putRequest(
       '/estimate/${orderItemInput.objId}',
       data: {
@@ -64,8 +64,8 @@ class EstimateService{
       },
     );
     if(kDebugMode){
-      print("----line 62 in estimate.dart");
-      print(response.data);
+      if(kDebugMode)print("----line 62 in estimate.dart");
+      if(kDebugMode)print(response.data);
     }
     return response;
   }

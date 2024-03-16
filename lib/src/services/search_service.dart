@@ -4,12 +4,12 @@ import 'package:shopos/src/services/user.dart';
 
 import '../models/product.dart';
 import '../models/user.dart';
-
+import 'package:flutter/foundation.dart';
 class SearchProductServices {
   Future<List<Product>> searchproduct(String catagory) async {
     final response =
         await ApiV1Service.getRequest('/inventory/me?keyword=$catagory');
-    print('search=${response.data}');
+    if(kDebugMode)print('search=${response.data}');
     return (response.data["inventories"] as List)
         .map((e) => Product.fromMap(e as Map<String, dynamic>))
         .toList();
@@ -18,7 +18,7 @@ class SearchProductServices {
   Future<List<Product>> allproduct(int page, int limit) async {
     final response =
         await ApiV1Service.getRequest('/inventory/me?page=$page&limit=$limit');
-    print(response.data);
+    if(kDebugMode)print(response.data);
     return (response.data["inventories"] as List)
         .map((e) => Product.fromMap(e as Map<String, dynamic>))
         .toList();
@@ -30,7 +30,7 @@ class SearchProductServices {
     final userid = user.id;
     final response = await ApiV1Service.getRequest(
         '/inventory/$userid/expiring/$days');
-    print('search=${response.data}');
+    if(kDebugMode)print('search=${response.data}');
     return response.data["expiringItems"] != null
         ? (response.data["expiringItems"] as List)
             .map((e) => Product.fromMap(e as Map<String, dynamic>))

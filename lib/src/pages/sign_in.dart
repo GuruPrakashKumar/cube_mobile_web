@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -41,7 +42,7 @@ class _SignInPageState extends State<SignInPage> {
     try {
       final provider = Provider.of<Billing>(context);
       var data = await DatabaseHelper().getOrderItems();
-      print("kkkkkk=");
+      if(kDebugMode)print("kkkkkk=");
 
 
       provider.removeAll();

@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 // import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shopos/src/services/api_v1.dart';
 import 'package:shopos/src/services/auth.dart';
-
+import 'package:flutter/foundation.dart';
 class UserService {
   const UserService();
 
@@ -11,10 +11,10 @@ class UserService {
     var response;
     try {
       response = await ApiV1Service.getRequest('/me');
-      print(response);
+      if(kDebugMode)print(response);
       getNewToken();
     } catch (e) {
-      print('cube token expired');
+      if(kDebugMode)print('cube token expired');
       await getNewToken();
       response = await ApiV1Service.getRequest('/me');
     }
@@ -37,6 +37,6 @@ class UserService {
     if ((response.statusCode ?? 400) > 300) {
       return null;
     }
-    print(response.data);
+    if(kDebugMode)print(response.data);
   }
 }

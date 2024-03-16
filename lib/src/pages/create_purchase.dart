@@ -210,7 +210,7 @@ class _CreatePurchaseState extends State<CreatePurchase> {
         // for (int j = i + 1; j < temp.length; j++) {
         //   if (temp[i].id == temp[j].id) {
         //     count++;
-        //     print("count =$count");
+        //     if(kDebugMode)print("count =$count");
         //   }
         // }
         temp[i].quantityToBeSold = roundToDecimalPlaces(temp[i].quantityToBeSold!, 4);

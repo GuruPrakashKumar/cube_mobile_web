@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:dio/dio.dart';
 
 import '../models/input/order.dart';
@@ -8,7 +9,7 @@ class BillingService{
   const BillingService();
 
   Future<Response> createBillingOrder(Order order) async {
-    print("data to be sent in create ${order.toMapForCopy()}");
+    if(kDebugMode)print("data to be sent in create ${order.toMapForCopy()}");
     final response = await ApiV1Service.postRequest(
       '/billingorder/new',
       data: order.toMapForCopy()
@@ -16,12 +17,12 @@ class BillingService{
     return response;
   }
   Future<Response> updateBillingOrder(Order order) async {
-    print("data to be sent in update bill ${order.toMapForCopy()}");
+    if(kDebugMode)print("data to be sent in update bill ${order.toMapForCopy()}");
     final response = await ApiV1Service.putRequest(
       '/billingorder/${order.kotId}',
       data: order.toMapForCopy()
     );
-    print("response.data from update bill ${response.data}");
+    if(kDebugMode)print("response.data from update bill ${response.data}");
     return response;
   }
   Future<List<dynamic>> getAllBillingOrder() async {

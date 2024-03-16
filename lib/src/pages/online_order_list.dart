@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:intl/intl.dart';
@@ -40,7 +41,7 @@ class _OnlineOrderListState extends State<OnlineOrderList> {
     orderHistory = await OrderServices.orderHistory();
     orderHistory = orderHistory.reversed.toList();
     orderLength = orderHistory.length;
-    print("history" + orderHistory.length.toString());
+    if(kDebugMode)print("history" + orderHistory.length.toString());
 
     pendingData = orderHistory;
     allData = orderHistory;
@@ -108,7 +109,7 @@ class _OnlineOrderListState extends State<OnlineOrderList> {
             (element) => element.items![0].status == dropdownVal.toLowerCase())
         .toList();
 
-    print("Asd" + pendingData.length.toString());
+    if(kDebugMode)print("Asd" + pendingData.length.toString());
   }
 
   dateFilterData() {
@@ -305,7 +306,7 @@ class _OnlineOrderListState extends State<OnlineOrderList> {
             totalAmount += sum;
           }
 
-          print(pendingData);
+          if(kDebugMode)print(pendingData);
 
           return Container(
             padding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
@@ -367,7 +368,7 @@ class _OnlineOrderListState extends State<OnlineOrderList> {
 
                         totalAmount += sum;
 
-                        print(totalAmount);
+                        if(kDebugMode)print(totalAmount);
 
                         return product(prodName!, qty!, sum, height, width);
                       },

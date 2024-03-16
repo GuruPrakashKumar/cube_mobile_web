@@ -28,8 +28,8 @@ void main() async {
   // Check if the app is updated
   if (currentVersion != previousVersion) {
     print("version are not correct");
-   await DatabaseHelper().deleteTHEDatabase();
-        await DatabaseHelper().initDatabase();
+   // await DatabaseHelper().deleteTHEDatabase();
+   //      await DatabaseHelper().initDatabase();
     prefs.setString('appVersion', currentVersion);
   }
   else
@@ -38,23 +38,23 @@ void main() async {
   }
 
   locator.registerLazySingleton(() => GlobalServices());
-  await Firebase.initializeApp(
-      name: 'BharatPOS', options: DefaultFirebaseOptions.currentPlatform);
+  // await Firebase.initializeApp(
+  //     name: 'BharatPOS', options: DefaultFirebaseOptions.currentPlatform);
  
-  await FirebaseApi().initNotifications();
-  await Permission.notification.isDenied.then((value) => {
-        if (value) {Permission.notification.request()}
-      });
+  // await FirebaseApi().initNotifications();
+  // await Permission.notification.isDenied.then((value) => {
+  //       if (value) {Permission.notification.request()}
+  //     });
 
-  await flutterLocalNotificationsPlugin.initialize(
-    InitializationSettings(
-      android: AndroidInitializationSettings('@mipmap/ic_launcher'),
-    ),
-    onDidReceiveNotificationResponse: (details) {
-      print(details.payload);
-      print(details.notificationResponseType.name);
-    },
-  );
+  // await flutterLocalNotificationsPlugin.initialize(
+  //   InitializationSettings(
+  //     android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+  //   ),
+  //   onDidReceiveNotificationResponse: (details) {
+  //     print(details.payload);
+  //     print(details.notificationResponseType.name);
+  //   },
+  // );
 
   /// TODO uncomment this line
    //await Utils().checkForUpdate();

@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:shopos/src/models/input/report_input.dart';
 import 'package:shopos/src/services/api_v1.dart';
 
@@ -11,17 +12,17 @@ class ReportService {
   }
   ///
   Future<Response> getAllReport(ReportInput input) async {
-    print(input.type);
-    print(input.startDate);
-    print(input.endDate);
-    print('ok');
+    if(kDebugMode)print(input.type);
+    if(kDebugMode)print(input.startDate);
+    if(kDebugMode)print(input.endDate);
+    if(kDebugMode)print('ok');
     final response = await ApiV1Service.getRequest(
       '/report',
       queryParameters: input.toMap(),
     );
-    print("--line 18 in report.dart");
-    print("response:${response.data}");
-    print("--------------");
+    if(kDebugMode)print("--line 18 in report.dart");
+    // if(kDebugMode)print("response:${response.data}");
+    if(kDebugMode)print("--------------");
 
     
     return response;

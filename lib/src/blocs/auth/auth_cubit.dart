@@ -12,7 +12,7 @@ part 'auth_state.dart';
 class AuthCubit extends Cubit<AuthState> {
   AuthCubit() : super(AuthInitial());
   final _authService = const AuthService();
-  final _authInstace = fb.FirebaseAuth.instance;
+  // final _authInstace = fb.FirebaseAuth.instance;
   String? _verificationId;
   void saveAccount(String email,String pass)async
   {
@@ -58,23 +58,24 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  ///
+  ///not supported in web
   verifyPhoneNumber(String phoneNumber) async {
-    locator<GlobalServices>().infoSnackBar("Sending Code");
-    await _authInstace.verifyPhoneNumber(
-      phoneNumber: '+91$phoneNumber',
-      verificationCompleted: (fb.PhoneAuthCredential credential) async {
-        _onVerificationCompleted(credential);
-      },
-      verificationFailed: (fb.FirebaseAuthException e) {
-        emit(AuthError("Could not verify phone number"));
-      },
-      codeSent: (String verificationId, int? resendToken) {
-        locator<GlobalServices>().successSnackBar("Code sent");
-        _verificationId = verificationId;
-      },
-      codeAutoRetrievalTimeout: (String verificationId) {},
-    );
+    // locator<GlobalServices>().infoSnackBar("Sending Code");
+    locator<GlobalServices>().infoSnackBar("Firebase not supported in web version");
+    // await _authInstace.verifyPhoneNumber(
+    //   phoneNumber: '+91$phoneNumber',
+    //   verificationCompleted: (fb.PhoneAuthCredential credential) async {
+    //     _onVerificationCompleted(credential);
+    //   },
+    //   verificationFailed: (fb.FirebaseAuthException e) {
+    //     emit(AuthError("Could not verify phone number"));
+    //   },
+    //   codeSent: (String verificationId, int? resendToken) {
+    //     locator<GlobalServices>().successSnackBar("Code sent");
+    //     _verificationId = verificationId;
+    //   },
+    //   codeAutoRetrievalTimeout: (String verificationId) {},
+    // );
   }
 
   ///
@@ -86,19 +87,20 @@ class AuthCubit extends Cubit<AuthState> {
     emit(OtpRetrieved(smsCode));
   }
 
-  ///
+  ///not supported
   Future<fb.UserCredential?> _verifyOtp(String otp) async {
     if (_verificationId == null) {
       return null;
     }
-    final creds = fb.PhoneAuthProvider.credential(
-        verificationId: _verificationId!, smsCode: otp);
-    try {
-      final user = await _authInstace.signInWithCredential(creds);
-      return user;
-    } catch (_) {
-      return null;
-    }
+    return null;
+    // final creds = fb.PhoneAuthProvider.credential(
+    //     verificationId: _verificationId!, smsCode: otp);
+    // try {
+    //   final user = await _authInstace.signInWithCredential(creds);
+    //   return user;
+    // } catch (_) {
+    //   return null;
+    // }
   }
 
   void gst() {

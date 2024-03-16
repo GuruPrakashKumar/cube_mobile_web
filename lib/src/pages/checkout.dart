@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_html_to_pdf/flutter_html_to_pdf.dart';
@@ -43,6 +44,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../models/party.dart';
 import '../models/product.dart';
+import '../widgets/generate_pdf.dart';
 
 enum OrderType { purchase, sale, saleReturn, estimate, none }
 
@@ -134,12 +136,12 @@ class _CheckoutPageState extends State<CheckoutPage> {
   @override
   void initState() {
     super.initState();
-    print("init state of checkout");
+    if(kDebugMode)print("init state of checkout");
     init();
     // String date = DateTime.now().toString();
-    // print(date);
-    // print(date.substring(11,16));
-    // print(date.substring(10,12));
+    // if(kDebugMode)print(date);
+    // if(kDebugMode)print(date.substring(11,16));
+    // if(kDebugMode)print(date.substring(10,12));
     getUserData();
     // _isUPI = widget.args.Order.modeOfPayment == 'UPI' ? true : false;
 
@@ -520,8 +522,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
     if (expirydateAvailableFlag  && widget.args.invoiceType!=OrderType.purchase) {
       headerList.insert(2, "Expiry");
     }
-    final targetPath = await getExternalCacheDirectories();
-    var targetFileName = "Invoice " + DateTime.now().toString();
+    // final targetPath = await getExternalCacheDirectories();
+    // var targetFileName = "Invoice " + DateTime.now().toString();
     salesInvoiceNo = await _checkoutCubit.getSalesNum() as int;
     purchasesInvoiceNo = await _checkoutCubit.getPurchasesNum() as int;
     estimateNo = await _checkoutCubit.getEstimateNum() as int;
@@ -530,48 +532,55 @@ class _CheckoutPageState extends State<CheckoutPage> {
       salesInvoiceNo++;
       purchasesInvoiceNo++;
     }
-    print("line 392 in checkout.dart");
-    print(widget.args.order.invoiceNum.runtimeType);
-    // print(salesInvoiceNo);
-    // print(widget.args.order.createdAt);
-    print("total price is ${totalPrice()}");
-    final htmlContent = invoiceTemplatewithGST(
-      type: widget.args.invoiceType.toString(),
+    if(kDebugMode)print("line 392 in checkout.dart");
+    if(kDebugMode)print(widget.args.order.invoiceNum.runtimeType);
+    // if(kDebugMode)print(salesInvoiceNo);
+    // if(kDebugMode)print(widget.args.order.createdAt);
+    if(kDebugMode)print("total price is ${totalPrice()}");
+    generatePdf(
+      fileName: "Invoice",
       date: widget.args.order.createdAt.toString() ?? "",
       companyName: userData.businessName ?? "",
-      order: widget.args.order,
+      Order: widget.args.order,
       user: userData,
-      headers: headerList,
-      total: totalPrice() ?? "",
-      subtotal: totalbasePrice() ?? "",
-      gsttotal: totalgstPrice() ?? "",
+      totalPrice: totalPrice() ?? '',
+      subtotal: totalbasePrice(),
+      gstTotal: totalgstPrice(),
+      gstType: 'WithGST',
       dlNum: dlNumController.text,
+      orderType: widget.args.invoiceType,
       convertToSale: convertToSale,
       invoiceNum: widget.args.invoiceType == OrderType.sale
-          ? "Invoice No: ${widget.args.order.invoiceNum != '' && widget.args.order.invoiceNum != null && widget.args.order.invoiceNum != "null" ? widget.args.order.invoiceNum : salesInvoiceNo.toString()}"
+          ? "Invoice No: ${widget.args.order.invoiceNum != '' &&
+          widget.args.order.invoiceNum != null &&
+          widget.args.order.invoiceNum != "null"
+          ? widget.args.order.invoiceNum
+          : salesInvoiceNo.toString()}"
           : widget.args.invoiceType == OrderType.purchase
           ? "Invoice No: ${purchasesInvoiceNo.toString()}"
           : widget.args.invoiceType == OrderType.estimate
-          ? widget.args.order.estimateNum == '' || widget.args.order.estimateNum == "null" || widget.args.order.estimateNum == null
+          ? widget.args.order.estimateNum == '' ||
+          widget.args.order.estimateNum == "null" ||
+          widget.args.order.estimateNum == null
           ? "Estimate No: ${estimateNo.toString()}"
           : convertToSale
           ? "Invoice No: ${salesInvoiceNo.toString()}"
           : "Estimate No: ${widget.args.order.estimateNum}"
           : "",
     );
-    final generatedPdfFile = await FlutterHtmlToPdf.convertFromHtmlContent(
-      htmlContent,
-      targetPath!.first.path,
-      targetFileName,
-    );
-
-    // for open pdf
-    try {
-      OpenFile.open(generatedPdfFile.path);
-    } catch (e) {
-      print(e);
-    }
-    print("last line of _view pdf");
+    // final generatedPdfFile = await FlutterHtmlToPdf.convertFromHtmlContent(
+    //   htmlContent,
+    //   targetPath!.first.path,
+    //   targetFileName,
+    // );
+    //
+    // // for open pdf
+    // try {
+    //   OpenFile.open(generatedPdfFile.path);
+    // } catch (e) {
+    //   if(kDebugMode)print(e);
+    // }
+    if(kDebugMode)print("last line of _view pdf");
   }
 
   ///
@@ -599,7 +608,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
   //   try {
   //     await OpenFile.open(generatedPdfFile.path);
   //   } catch (e) {
-  //     print(e.toString());
+  //     if(kDebugMode)print(e.toString());
   //   }
 
   // final input = _typeAheadController.value.text.trim();
@@ -844,7 +853,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
     // try {
     //   OpenFile.open(generatedPdfFile.path);
     // } catch (e) {
-    //   print(e);
+    //   if(kDebugMode)print(e);
     // }
   }
 
@@ -863,7 +872,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
     //   gstTotal: totalgstPrice() ?? '',
     // );
 
-    // print(
+    // if(kDebugMode)print(
     //     widget.args.order.orderItems![0].product!.baseSellingPriceGst == 'null'
     //         ? widget.args.order.orderItems![0].product!.sellingPrice
     //         : 0);
@@ -1608,10 +1617,10 @@ class _CheckoutPageState extends State<CheckoutPage> {
       for (int i = 0; i < _amountControllers.length; i++) {
         inputAmount += double.parse(_amountControllers[i].text);
       }
-      print("checking amount");
-      print(inputAmount);
+      if(kDebugMode)print("checking amount");
+      if(kDebugMode)print(inputAmount);
       var total = double.parse(totalPrice()!);
-      print(total);
+      if(kDebugMode)print(total);
       double tolerance = 0.99;
 
       if ((inputAmount - total).abs() > tolerance) {
@@ -1659,12 +1668,12 @@ class _CheckoutPageState extends State<CheckoutPage> {
   void _onTapSubmit() async {
     _formKey.currentState?.save();
     if (_formKey.currentState?.validate() ?? false) {
-      // print("discountttttttt=${widget.args.order.orderItems![0].discountAmt}");
-      print("widget.args.order ${widget.args.order}");
-      print("widget.args.order ${widget.args.order.kotId}");
-      print(totalPrice());
-      print(totalbasePrice());
-      print(totalgstPrice());
+      // if(kDebugMode)print("discountttttttt=${widget.args.order.orderItems![0].discountAmt}");
+      if(kDebugMode)print("widget.args.order ${widget.args.order}");
+      if(kDebugMode)print("widget.args.order ${widget.args.order.kotId}");
+      if(kDebugMode)print(totalPrice());
+      if(kDebugMode)print(totalbasePrice());
+      if(kDebugMode)print(totalgstPrice());
       widget.args.order.modeOfPayment = [];
 
       if (_singlePayMode) {
@@ -1694,8 +1703,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
       salesInvoiceNo = await _checkoutCubit.getSalesNum() as int;
       purchasesInvoiceNo = await _checkoutCubit.getPurchasesNum() as int;
       estimateNo = await _checkoutCubit.getEstimateNum() as int;
-      // print("lilne 1310 in checkout.dart");
-      // print("sales invoice no is: $salesInvoiceNo");
+      // if(kDebugMode)print("lilne 1310 in checkout.dart");
+      // if(kDebugMode)print("sales invoice no is: $salesInvoiceNo");
 
       if (widget.args.invoiceType == OrderType.purchase) {
         if(checkAmounts()){
@@ -1752,14 +1761,14 @@ class _CheckoutPageState extends State<CheckoutPage> {
   //     //fetch product
   //     var resp = await ProductService().getProduct(orderItem.product!.id!);
   //     final product = Product.fromMap(resp.data['inventory']);
-  //     print("productJson : ${product.subProducts?[0].inventoryId}");
+  //     if(kDebugMode)print("productJson : ${product.subProducts?[0].inventoryId}");
   //     product.subProducts?.forEach((subProduct) async {
   //       var resp = await ProductService().getProduct(subProduct.inventoryId!);
   //       final subProductFetched = Product.fromMap(resp.data['inventory']);
-  //       print("subProduct quantity: ${subProductFetched.quantity}");
-  //       print("orderItem quantity: ${orderItem.quantity}");
+  //       if(kDebugMode)print("subProduct quantity: ${subProductFetched.quantity}");
+  //       if(kDebugMode)print("orderItem quantity: ${orderItem.quantity}");
   //       double quantityToBeSold = orderItem.quantity*subProduct.quantity!.toDouble();
-  //       print(quantityToBeSold);
+  //       if(kDebugMode)print(quantityToBeSold);
   //
   //       // if(subProductFetched.quantity)
   //

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:open_file_plus/open_file_plus.dart';
@@ -23,7 +24,7 @@ class PdfUI {
     required String subtotal,
     required String gstTotal,
   }) async {
-    print("date=$date");
+    if(kDebugMode)print("date=$date");
     final pdf = pw.Document();
     final roll80 = PdfPageFormat.roll80;
 
@@ -271,13 +272,13 @@ class PdfUI {
     //     onLayout: (PdfPageFormat format) async => pdf.save());
 
     try {
-      print('run');
-      print(file.path);
-      print(file.absolute.path);
+      if(kDebugMode)print('run');
+      if(kDebugMode)print(file.path);
+      if(kDebugMode)print(file.absolute.path);
       OpenFile.open(file.path);
-      print('done');
+      if(kDebugMode)print('done');
     } catch (e) {
-      print(e);
+      if(kDebugMode)print(e);
     }
   }
 
@@ -545,7 +546,7 @@ class PdfUI {
       OpenFile.open(file.path);
       print('done');
     } catch (e) {
-      print(e);
+      if(kDebugMode)print(e);
     }
   }
 }

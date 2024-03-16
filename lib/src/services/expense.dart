@@ -1,13 +1,13 @@
 import 'package:dio/dio.dart';
 import 'package:shopos/src/models/input/expense_input.dart';
 import 'package:shopos/src/services/api_v1.dart';
-
+import 'package:flutter/foundation.dart';
 class ExpenseService {
   const ExpenseService();
 
   Future<Response> createExpense(ExpenseFormInput input) async {
-    print("creating expense");
-    print(input.toMap());
+    if(kDebugMode)print("creating expense");
+    if(kDebugMode)print(input.toMap());
 
     final response =
         await ApiV1Service.postRequest('/add/expense', data: input.toMap());

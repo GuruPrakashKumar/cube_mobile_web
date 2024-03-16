@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -102,13 +103,13 @@ class _BillingListScreenState extends State<BillingListScreen> {
   // }
 
   // void startTimer() {
-  //   print("timer started");
+  //   if(kDebugMode)print("timer started");
   //   timer = Timer.periodic(Duration(seconds: 10), (_) => refreshPage());
   // }
 
   void refreshPage() {
     _billingCubit.getBillingOrders();
-    // print("Function executed!");
+    // if(kDebugMode)print("Function executed!");
   }
   init() async {
     prefs =
@@ -117,10 +118,10 @@ class _BillingListScreenState extends State<BillingListScreen> {
   // getBillingOrders() async {
   //   List<dynamic> allBillingOrders = await BillingService.getAllBillingOrder();
   //   allBillingOrders.forEach((element) {
-  //     print("element: ${element}");
+  //     if(kDebugMode)print("element: ${element}");
   //     _allBills.add(Order.fromMap(element));
   //   });
-  //   print("all bills length: ${_allBills.length}");
+  //   if(kDebugMode)print("all bills length: ${_allBills.length}");
   //   setState(() {
   //
   //   });
@@ -173,7 +174,7 @@ class _BillingListScreenState extends State<BillingListScreen> {
     }
 
     date = '${day}${month}${currentTime.year}${hour}${minute}${second}';
-    print('date1=$date');
+    if(kDebugMode)print('date1=$date');
   }
 
   ///
@@ -206,25 +207,25 @@ class _BillingListScreenState extends State<BillingListScreen> {
           ).toStringAsFixed(2);
   }
   String? totalDiscount(int index, Billing provider, List<Order> _allBills){
-    // print("in total discount");
-    // print("line 157 in billing list");
-    // print(index);
-    // print(provider.salesBilling.values.toList());
+    // if(kDebugMode)print("in total discount");
+    // if(kDebugMode)print("line 157 in billing list");
+    // if(kDebugMode)print(index);
+    // if(kDebugMode)print(provider.salesBilling.values.toList());
 
     return _allBills[index].orderItems?.fold<double>(
       0,
         (acc, curr){
-          // print(acc);
-          // print(curr.discountAmt);
+          // if(kDebugMode)print(acc);
+          // if(kDebugMode)print(curr.discountAmt);
           return double.parse(curr.discountAmt)+acc;
         }
     ).toStringAsFixed(2);
   }
   ///
   String? totalbasePrice(int index, Billing provider, List<Order> _allBills) {
-    print("line 158 in billing list");
-    print("index is $index");
-    // print(provider.salesBilling.values.toList()[index].toMap(OrderType.sale));
+    if(kDebugMode)print("line 158 in billing list");
+    if(kDebugMode)print("index is $index");
+    // if(kDebugMode)print(provider.salesBilling.values.toList()[index].toMap(OrderType.sale));
     return widget.orderType == OrderType.sale
         ? _allBills[index].orderItems?.fold<double>(
             0,
@@ -283,8 +284,8 @@ class _BillingListScreenState extends State<BillingListScreen> {
 
   ///
   String? totalgstPrice(int index, Billing provider, List<Order> _allBills) {
-    // print("line 230 in billing list");
-    // print(provider.salesBilling.values.toList());
+    // if(kDebugMode)print("line 230 in billing list");
+    // if(kDebugMode)print(provider.salesBilling.values.toList());
     return widget.orderType == OrderType.sale
         ? _allBills[index].orderItems?.fold<double>(
             0,
@@ -443,7 +444,7 @@ class _BillingListScreenState extends State<BillingListScreen> {
   //   // try {
   //   //   OpenFile.open(generatedPdfFile.path);
   //   // } catch (e) {
-  //   //   print(e);
+  //   //   if(kDebugMode)print(e);
   //   // }
   // }
 
@@ -506,7 +507,7 @@ class _BillingListScreenState extends State<BillingListScreen> {
               bloc: _billingCubit,
               listener: (context, state){
                 if(state is BillingSuccess){
-                  print("state is billing success");
+                  if(kDebugMode)print("state is billing success");
                   _billingCubit.getBillingOrders();
                 }
               },
@@ -523,7 +524,7 @@ class _BillingListScreenState extends State<BillingListScreen> {
                      );
                    }else if(state is BillingListRender){
                      List<Order> _allBills = state.bills;
-                     print("_allBills length is ${_allBills.length}");
+                     if(kDebugMode)print("_allBills length is ${_allBills.length}");
                      if(_allBills.length == 0){
                        return Center(
                            child: Text(
@@ -568,7 +569,7 @@ class _BillingListScreenState extends State<BillingListScreen> {
                              //                 // provider.removeAll();
                              //                 //
                              //                 // data.forEach((element) {
-                             //                 //   print("adding sales bill");
+                             //                 //   if(kDebugMode)print("adding sales bill");
                              //                 //   provider.addSalesBill(element, element.id.toString());
                              //                 // });
                              //
@@ -767,8 +768,8 @@ class _BillingListScreenState extends State<BillingListScreen> {
                                          ),
                                          InkWell(
                                            onTap: () async {
-                                             // print("on tap edit");
-                                             // print(_allBills[index].orderItems![0].quantity);
+                                             // if(kDebugMode)print("on tap edit");
+                                             // if(kDebugMode)print(_allBills[index].orderItems![0].quantity);
                                              widget.orderType == OrderType.sale
                                                  ? await Navigator.pushNamed(
                                                  context, CreateSale.routeName,
@@ -789,7 +790,7 @@ class _BillingListScreenState extends State<BillingListScreen> {
                                              // provider.removeAll();
                                              //
                                              // data.forEach((element) {
-                                             //   print("adding sales bill");
+                                             //   if(kDebugMode)print("adding sales bill");
                                              //   provider.addSalesBill(element, element.id.toString());
                                              // });
                                            },

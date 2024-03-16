@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:intl/intl.dart';
@@ -89,11 +90,11 @@ class _ReportTableState extends State<ReportTable> {
   void initState() {
     super.initState();
     if (widget.args.type == "ReportType.sale" || widget.args.type == "ReportType.purchase" || widget.args.type == "ReportType.estimate" || widget.args.type == "ReportType.saleReturn") {
-      print("line 78 in report table");
+      if(kDebugMode)print("line 78 in report table");
       itemSPRows();
-      print("line 80 in report table");
-      print(datelist.length);
-      print(estimateNum.length);
+      if(kDebugMode)print("line 80 in report table");
+      if(kDebugMode)print(datelist.length);
+      if(kDebugMode)print(estimateNum.length);
       datelist.add("");
       timelist.add("");
       estimateNum.add("");
@@ -213,8 +214,8 @@ class _ReportTableState extends State<ReportTable> {
         );
       }
     } else if (widget.args.type == "ReportType.purchase") {
-      print("lline 212 in report table");
-      print(headersP.length);
+      if(kDebugMode)print("lline 212 in report table");
+      if(kDebugMode)print(headersP.length);
       return List.generate(
         headersP.length,
             (int index) => DataColumn(
@@ -261,9 +262,9 @@ class _ReportTableState extends State<ReportTable> {
   showSaleRow() {
     if (taxfileType == "quarterly") {
 
-      // print(partynamelist[0]);
-      // print(partynamelist[1]);
-      // print(partynametoFilter);
+      // if(kDebugMode)print(partynamelist[0]);
+      // if(kDebugMode)print(partynamelist[1]);
+      // if(kDebugMode)print(partynametoFilter);
       List<DataRow> list = [];
       var total = 0;
       for (int i = 0; i < datelist.length; i++) {
@@ -298,8 +299,8 @@ class _ReportTableState extends State<ReportTable> {
 
       return list;
     } else {
-      print("line 219 in report table.dart");
-      // print(invoiceNum[0]);
+      if(kDebugMode)print("line 219 in report table.dart");
+      // if(kDebugMode)print(invoiceNum[0]);
       List<DataRow> list = [];
 
       /* for printing in the last row */
@@ -353,14 +354,14 @@ class _ReportTableState extends State<ReportTable> {
 
       //adding cells in the report table
       for (int i = 0; i < datelist.length; i++) {
-        // print('partynametofiler= $partynametoFilter');
-        // print("1: ${partynamelist[i] == partynametoFilter}");
-        // print("2: ${moplist[i].any((map)=> map['mode']==filterPaymentModeSelected)}");
-        // print("3: ${partynametoFilter == "" && filterPaymentModeSelected==""}");
-        // print("mop list at i=$i is ${moplist[i]}");
-        // print(totalsplist[i]);
+        // if(kDebugMode)print('partynametofiler= $partynametoFilter');
+        // if(kDebugMode)print("1: ${partynamelist[i] == partynametoFilter}");
+        // if(kDebugMode)print("2: ${moplist[i].any((map)=> map['mode']==filterPaymentModeSelected)}");
+        // if(kDebugMode)print("3: ${partynametoFilter == "" && filterPaymentModeSelected==""}");
+        // if(kDebugMode)print("mop list at i=$i is ${moplist[i]}");
+        // if(kDebugMode)print(totalsplist[i]);
         if ((partynamelist[i] == partynametoFilter && partynametoFilter!="") || moplist[i].any((map)=> map['mode']==filterPaymentModeSelected) ||(partynametoFilter == "" && filterPaymentModeSelected=="")) {
-          // print(moplist[i].toString());
+          // if(kDebugMode)print(moplist[i].toString());
           if (i != datelist.length - 1 && totalsplist[i].length != 0 && totalsplist[i] != "null") total += double.parse(totalsplist[i]);
 
           if (i != datelist.length - 1 && basesplist[i].length != 0 && basesplist[i] != "N/A" && basesplist[i] != "null") basesplitTotal += double.parse(basesplist[i]);
@@ -402,8 +403,8 @@ class _ReportTableState extends State<ReportTable> {
       }
 
       if (partynametoFilter != "" || filterPaymentModeSelected!=""){//for adding the last row in the table
-        print("line 277 in report table.dart");
-        print(datelist[datelist.length - 1]);
+        if(kDebugMode)print("line 277 in report table.dart");
+        if(kDebugMode)print(datelist[datelist.length - 1]);
         list.add(DataRow(cells: [
           DataCell(Text(datelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
           DataCell(Text(timelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
@@ -449,7 +450,7 @@ class _ReportTableState extends State<ReportTable> {
 
     for (int i = 0; i < datelist.length; i++) {
       if ((partynamelist[i] == partynametoFilter && partynametoFilter!="") || moplist[i].any((map)=> map['mode']==filterPaymentModeSelected) ||(partynametoFilter == "" && filterPaymentModeSelected=="")) {
-        print("line 374 in report table.dart");
+        if(kDebugMode)print("line 374 in report table.dart");
         if (i != datelist.length - 1 && totalsplist[i].length != 0 && totalsplist[i] != "null") total += double.parse(totalsplist[i]);
 
         if (i != datelist.length - 1 && basesplist[i].length != 0 && basesplist[i] != "N/A" && basesplist[i] != "null") basesplitTotal += double.parse(basesplist[i]);
@@ -478,7 +479,7 @@ class _ReportTableState extends State<ReportTable> {
       }
     }
     if (partynametoFilter != "" || filterPaymentModeSelected!=""){
-      print("line 277 in report table.dart");
+      if(kDebugMode)print("line 277 in report table.dart");
       list.add(DataRow(cells: [
         DataCell(Text(datelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
         DataCell(Text(timelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
@@ -497,8 +498,8 @@ class _ReportTableState extends State<ReportTable> {
         DataCell(Text(total.toString(), style: TextStyle(fontSize: 6))),
       ]));
     }
-    // print("printing list in 287 in reporttable");
-    // print(list[0].toString());
+    // if(kDebugMode)print("printing list in 287 in reporttable");
+    // if(kDebugMode)print(list[0].toString());
     return list;
   }
   showEstimateRow(){
@@ -514,7 +515,7 @@ class _ReportTableState extends State<ReportTable> {
 
     for (int i = 0; i < datelist.length; i++) {
       if ((partynamelist[i] == partynametoFilter && partynametoFilter!="") || moplist[i].any((map)=> map['mode']==filterPaymentModeSelected) ||(partynametoFilter == "" && filterPaymentModeSelected=="")) {
-        print("line 452 in report table.dart");
+        if(kDebugMode)print("line 452 in report table.dart");
         if (i != datelist.length - 1 && totalsplist[i].length != 0 && totalsplist[i] != "null") total += double.parse(totalsplist[i]);
 
         if (i != datelist.length - 1 && basesplist[i].length != 0 && basesplist[i] != "N/A" && basesplist[i] != "null") basesplitTotal += double.parse(basesplist[i]);
@@ -732,13 +733,13 @@ class _ReportTableState extends State<ReportTable> {
 
   String breakruler = "";
   itemSPRows() {
-    // print("discount ${widget.args.orders![0].discountAmt}");
+    // if(kDebugMode)print("discount ${widget.args.orders![0].discountAmt}");
 
     return widget.args.orders!.map((Order e) {
-      print("line 430 in report table");
-      // print(e.estimateNum);
+      if(kDebugMode)print("line 430 in report table");
+      // if(kDebugMode)print(e.estimateNum);
       return e.orderItems!.map((OrderItemInput item) {
-        // print(e.user!.type);
+        // if(kDebugMode)print(e.user!.type);
         taxfileType = e.user?.type ?? "notdone";
         if (breakruler != DateFormat('hh:mm a').format(DateTime.tryParse(e.createdAt.toString())!)) {
           datelist.add("");
@@ -796,7 +797,7 @@ class _ReportTableState extends State<ReportTable> {
 
   String total() {
     for (int i = 0; i < totalsplist.length; i++) {
-      print(totalsplist[i]);
+      if(kDebugMode)print(totalsplist[i]);
     }
     int sum = 0;
 
@@ -812,7 +813,7 @@ class _ReportTableState extends State<ReportTable> {
         sum += sum_int;
       },
     );
-    print(sum);
+    if(kDebugMode)print(sum);
     return sum.toStringAsFixed(2);
   }
 
@@ -958,7 +959,7 @@ class _ReportTableState extends State<ReportTable> {
     workbook.dispose();
   }
   saleExcelReport() async {
-    print('line 509 in report_table.dart');
+    if(kDebugMode)print('line 509 in report_table.dart');
     final headersSP = [
       'Date',
       'Time',
@@ -985,7 +986,7 @@ class _ReportTableState extends State<ReportTable> {
       sheet.getRangeByIndex(1, i).setText(headersSP[i - 1]);
     }
     for (int i = 0; i < datelist.length; i++) {
-      print(datelist.length);
+      if(kDebugMode)print(datelist.length);
       if (taxfileType == "quarterly") {
         sheet.getRangeByIndex(i + 2, 1).setText(datelist[i]);
         sheet.getRangeByIndex(i + 2, 2).setText(timelist[i]);
@@ -1108,7 +1109,7 @@ class _ReportTableState extends State<ReportTable> {
     }
 
     for (int i = 0; i < datelist.length; i++) {
-      print(datelist.length);
+      if(kDebugMode)print(datelist.length);
       if (taxfileType == "quarterly") {
         sheet.getRangeByIndex(i + 2, 1).setText(datelist[i]);
         sheet.getRangeByIndex(i + 2, 2).setText(timelist[i]);
@@ -1164,7 +1165,7 @@ class _ReportTableState extends State<ReportTable> {
     }
 
     for (int i = 0; i < widget.args.expenses!.length; i++) {
-      print(datelist.length);
+      if(kDebugMode)print(datelist.length);
       final expense = widget.args.expenses![i];
       final date = DateFormat('dd MMM, yyyy').format(expense.createdAt!);
       final time = DateFormat('hh:mm a').format(expense.createdAt!);
@@ -1463,7 +1464,7 @@ class _ReportTableState extends State<ReportTable> {
   kotHistory() async {
     Map<String, dynamic> salesResponse = await SalesService.getSingleSaleOrder(invoiceNumController.text);
     Order order = Order.fromMap(salesResponse['salesOrder']);
-    print("order.kotId is ${order.kotId.runtimeType}");
+    if(kDebugMode)print("order.kotId is ${order.kotId.runtimeType}");
     if(order.kotId != 'null'){
       Navigator.pop(context);
       _showKotHistory(order.kotId!);
@@ -1585,8 +1586,8 @@ class _ReportTableState extends State<ReportTable> {
   goToEstimate() async {
     if(widget.args.type == "ReportType.estimate"){
       Map<String,dynamic> estimateResponse = await EstimateService.getEstimate(estimateNumController.text);
-      print("line 1106 in report table");
-      print(estimateResponse['estimate']['_id']);
+      if(kDebugMode)print("line 1106 in report table");
+      if(kDebugMode)print(estimateResponse['estimate']['_id']);
       Order orders = Order.fromMap(estimateResponse['estimate']);
       Navigator.pushNamed(context, CreateEstimate.routeName,arguments: EstimateBillingPageArgs(order: orders, editFlag: true));
     }else if(widget.args.type == "ReportType.sale"){
@@ -1771,11 +1772,11 @@ class _ReportTableState extends State<ReportTable> {
               );
             },
             onSuggestionSelected: (Party party) {
-              print("------------line 948 in report_table.dart");
+              if(kDebugMode)print("------------line 948 in report_table.dart");
               filterPaymentModeSelected="";
               setState(() {
                 partynametoFilter = party.name ?? "";
-                print(partynametoFilter);
+                if(kDebugMode)print(partynametoFilter);
                 _typeAheadController.text = party.name ?? "";
                 Navigator.pop(ctx, false);
               });

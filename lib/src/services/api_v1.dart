@@ -1,17 +1,18 @@
 import 'dart:io';
-
+import 'dart:html';
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shopos/src/config/const.dart';
 import 'package:shopos/src/services/dio_interceptor.dart';
-
+import 'package:flutter/foundation.dart';
 class ApiV1Service {
   static final Dio _dio = Dio(
     BaseOptions(
       contentType: 'application/json',
       baseUrl: Const.apiV1Url,
+      headers: {"Authorization": document.cookie},
       connectTimeout: Duration(milliseconds: 5000),
       receiveTimeout: Duration(milliseconds: 50000),
     ),
@@ -31,7 +32,7 @@ class ApiV1Service {
   static Future<PersistCookieJar> getCookieJar() async {
     Directory tempDir = await getTemporaryDirectory();
     final tempPath = tempDir.path;
-    print(tempPath);
+    if(kDebugMode)print(tempPath);
     return PersistCookieJar(
       ignoreExpires: true,
       storage: FileStorage(tempPath),
@@ -44,7 +45,7 @@ class ApiV1Service {
     Map<String, dynamic>? data,
     FormData? formData,
   }) async {
-    return await _dio.post(url, data: formData ?? data);
+    return await _dio.post(url, data: formData ?? data, options: Options(headers: {"Authorization": document.cookie}));
   }
 
   ///
@@ -52,7 +53,7 @@ class ApiV1Service {
     String url, {
     Map<String, dynamic>? queryParameters,
   }) async {
-    return await _dio.get(url, queryParameters: queryParameters);
+    return await _dio.get(url, queryParameters: queryParameters, options: Options(headers: {"Authorization": document.cookie}));
   }
 
   ///
@@ -61,12 +62,12 @@ class ApiV1Service {
     Map<String, dynamic>? data,
     FormData? formData,
   }) async {
-    return await _dio.put(url, data: formData ?? data);
+    return await _dio.put(url, data: formData ?? data, options: Options(headers: {"Authorization": document.cookie}));
   }
 
   ///
   static Future<Response> deleteRequest(String url,
       {Map<String, dynamic>? data}) async {
-    return await _dio.delete(url);
+    return await _dio.delete(url, options: Options(headers: {"Authorization": document.cookie}));
   }
 }

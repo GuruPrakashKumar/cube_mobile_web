@@ -1,5 +1,6 @@
 import 'dart:io';
-
+import 'dart:html';
+import 'package:flutter/foundation.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
 import 'package:shopos/src/config/const.dart';
@@ -42,9 +43,11 @@ class AuthService {
 
   /// Save cookies after sign in/up
   Future<void> saveCookie(Response response) async {
-    List<Cookie> cookies = [Cookie("token", response.data['token'])];
-    final cj = await ApiV1Service.getCookieJar();
-    await cj.saveFromResponse(Uri.parse(Const.apiUrl), cookies);
+    document.cookie="Bearer ${response.data['token']}";
+
+    // List<Cookie> cookies = [Cookie("token", response.data['token'])];
+    // final cj = await ApiV1Service.getCookieJar();
+    // await cj.saveFromResponse(Uri.parse(Const.apiUrl), cookies);
   }
 
   ///
@@ -72,8 +75,8 @@ class AuthService {
     if ((response.statusCode ?? 400) > 300) {
       return null;
     }
-    print("line 70 signin request");
-    print('res = ${response.data}');
+    if(kDebugMode)print("line 70 signin request");
+    if(kDebugMode)print('res = ${response.data}');
     await saveCookie(response);
     return User.fromMap(response.data['user']);
   }
@@ -100,7 +103,7 @@ class AuthService {
   ///
   Future<bool> ForgotPasswordChangeRequest(
       String newPassword, String confirmPassword, String phoneNumber) async {
-    // print(newPassword + " " + confirmPassword + " " + phoneNumber);
+    // if(kDebugMode)print(newPassword + " " + confirmPassword + " " + phoneNumber);
     final response = await ApiV1Service.putRequest(
       '/password/reset',
       data: {

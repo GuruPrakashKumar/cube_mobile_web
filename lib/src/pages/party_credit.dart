@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -57,9 +58,9 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
   }
 
   void fetchdata() async {
-    print("line 60 in party_credit");
+    if(kDebugMode)print("line 60 in party_credit");
     widget.args.tabbarNo == 0 ? _specificpartyCubit.getInitialCreditHistory(widget.args.partyId) : _specificpartyCubit.getInitialpurchasedHistory(widget.args.partyId);
-    print("line 62 in party_credit");
+    if(kDebugMode)print("line 62 in party_credit");
 
     final response = await UserService.me();
     user = User.fromMap(response.data['user']);
@@ -77,14 +78,14 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
     for (int i = 0; i < o.length; i++) {
       for (int j = i + 1; j < o.length; j++) {
         String dateString = o[i].createdAt.toString();
-        //  print("Date1:");
-        //  print(dateString);
+        //  if(kDebugMode)print("Date1:");
+        //  if(kDebugMode)print(dateString);
 
         DateTime dateTimei = DateTime.parse(dateString);
 
         String dateStringj = o[j].createdAt.toString();
-        //  print("Date2:");
-        //   print(dateStringj);
+        //  if(kDebugMode)print("Date2:");
+        //   if(kDebugMode)print(dateStringj);
 
         DateTime dateTimej = DateTime.parse(dateStringj);
 
@@ -174,8 +175,8 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                     itemCount: orders.length,
                     itemBuilder: (BuildContext context, int index) {
                       final order = orders[index];
-                      // print("line 177 in party credit");
-                      // print(order.createdAt);
+                      // if(kDebugMode)print("line 177 in party credit");
+                      // if(kDebugMode)print(order.createdAt);
                       return Column(
                         children: [
                           Center(
@@ -192,10 +193,10 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                               child: GestureDetector(
                                 onLongPress: () async {
                                   HapticFeedback.vibrate();
-                                  print("line 193 in party_credit");
+                                  if(kDebugMode)print("line 193 in party_credit");
                                   if(order.orderItems!.isEmpty){
-                                    print("order.objId is ${order.objId}");
-                                    print("order.party!.id! ${order.party!.id!}");
+                                    if(kDebugMode)print("order.objId is ${order.objId}");
+                                    if(kDebugMode)print("order.party!.id! ${order.party!.id!}");
                                     await openEditModal(order.objId!, order.total!, order.createdAt.toString(), order.modeOfPayment!, context);
                                   }else{
                                     locator<GlobalServices>().infoSnackBar("You cannot edit sale order");
@@ -500,9 +501,9 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                       child: CustomButton(
                         onTap: () {
                           setState(() {
-                            print("line 494 in party credit");
+                            if(kDebugMode)print("line 494 in party credit");
                             _specificPartyInput.modeOfPayment = modeofPayment;
-                            print("modeofPayment in line 497 is $modeofPayment");
+                            if(kDebugMode)print("modeofPayment in line 497 is $modeofPayment");
                             _specificPartyInput.total = double.parse(value.text);
                             _specificPartyInput.id = widget.args.partyId;
                             _specificPartyInput.createdAt = DateTime.now();
@@ -510,10 +511,10 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                             value.clear();
                           });
                           if (widget.args.tabbarNo == 0) {
-                            print("line 502 in party credit");
+                            if(kDebugMode)print("line 502 in party credit");
                             _specificpartyCubit.updateCreditHistory(_specificPartyInput);
                           } else {
-                            print("line 505 in party credit");
+                            if(kDebugMode)print("line 505 in party credit");
                             _specificpartyCubit.updatepurchaseHistory(_specificPartyInput);
                           }
                           Navigator.pop(context);
@@ -703,7 +704,7 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                         title: 'Verify',
                         onTap: () async {
                           bool status = await _pinService.verifyPin(int.parse(pinController.text.toString()));
-                          print(status);
+                          if(kDebugMode)print(status);
                           if (status) {
                             pinController.clear();
                             Navigator.of(ctx).pop(true);

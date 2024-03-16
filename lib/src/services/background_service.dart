@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:ui';
-
+import 'package:flutter/foundation.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
@@ -66,20 +66,20 @@ Future<void> onStart(ServiceInstance service) async {
         orderHistory = await OrderServices.orderHistory();
         orderHistory = orderHistory.reversed.toList();
 
-        print(orderHistory.length);
+        if(kDebugMode)print(orderHistory.length);
         pendingData = orderHistory
             .where((element) =>
                 element.items![0].status == "PENDING".toLowerCase())
             .toList();
-        // print(pendingData.length);
+        // if(kDebugMode)print(pendingData.length);
         if (pendingData.length > 0) {
           scheduleAlarm('New order is available',
               'Order id - ' + pendingData[0].orderId.toString());
         }
-        print('background service running');
+        if(kDebugMode)print('background service running');
       }
     } catch (e) {
-      print("EXCEPTION: $e");
+      if(kDebugMode)print("EXCEPTION: $e");
     }
   });
 }

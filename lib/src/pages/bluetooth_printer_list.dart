@@ -2,7 +2,10 @@
 import 'dart:async';
 
 import 'package:esc_pos_utils_plus/esc_pos_utils.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_web_bluetooth/flutter_web_bluetooth.dart';
+import 'package:flutter_web_bluetooth/js_web_bluetooth.dart';
 import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
@@ -12,6 +15,8 @@ import 'package:shopos/src/pages/billing_list.dart';
 import 'package:shopos/src/pages/checkout.dart';
 import 'package:shopos/src/services/LocalDatabase.dart';
 import 'package:shopos/src/services/billing_service.dart';
+import 'package:shopos/src/services/global.dart';
+import 'package:shopos/src/services/locator.dart';
 import 'package:shopos/src/widgets/custom_text_field2.dart';
 
 import '../models/input/kot_model.dart';
@@ -59,10 +64,41 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
       if (widget.args.bluetoothArgs!.order.tableNo != "-1")
         if(widget.args.bluetoothArgs!.order.tableNo!='null')
         tableNoController.text = widget.args.bluetoothArgs!.order.tableNo;
-      // print(widget.args.bluetoothArgs!.order.tableNo);
+      // if(kDebugMode)if(kDebugMode)print(widget.args.bluetoothArgs!.order.tableNo);
     }
   }
 
+//   getDevicesInWeb() async {
+//     // The bluetooth api exists in this user agent.
+//     final supported = FlutterWebBluetooth.instance.isBluetoothApiSupported;
+//     if (supported)locator<GlobalServices>().successSnackBar('bluetooth api supported');
+//     // A stream that says if a bluetooth adapter is available to the browser.
+//     final available = FlutterWebBluetooth.instance.isAvailable;
+//
+//     // Define the services you want to communicate with here!
+//     final requestOptions = RequestOptionsBuilder.acceptAllDevices(optionalServices: [
+//       BluetoothDefaultServiceUUIDS.deviceInformation.uuid
+//     ]);
+//
+//     try {
+//       final device = await FlutterWebBluetooth.instance.requestDevice(requestOptions);
+//       await device.connect();
+//       final services = await device.discoverServices();
+//       final service = services.firstWhere((service) => service.uuid == BluetoothDefaultServiceUUIDS.deviceInformation.uuid);
+// // Now get the characteristic
+//
+//       final characteristic = await service.getCharacteristic(BluetoothDefaultCharacteristicUUIDS.manufacturerNameString.uuid);
+//       characteristic.
+//       final value = characteristic.readValue();
+// // Now we have a [ByteData] object with the manufacturer name in it.
+//       device.disconnect();
+//
+//     } on UserCancelledDialogError {
+//       // The user cancelled the dialog
+//     } on DeviceNotFoundError {
+//       // There is no device in range for the options defined above
+//     }
+//   }
   getDevices() async {
     final bool result = await PrintBluetoothThermal.bluetoothEnabled;
     _devices = await PrintBluetoothThermal.pairedBluetooths;
@@ -75,8 +111,8 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
       final bargs = widget.args.bluetoothArgs!;
       // List<Map<String, dynamic>> list =
       // await DatabaseHelper().getKotData( bargs.order.id!  );
-      // print("Kot Data:");
-      // print(list);
+      // if(kDebugMode)print("Kot Data:");
+      // if(kDebugMode)print(list);
     }
     // if(widget.args.bluetoothArgs!=null){
     //   final bargs = widget.args.bluetoothArgs!;
@@ -90,7 +126,7 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
   //   if (!mounted) return;
   //   bluetoothPrint.scanResults.listen((val) {
   //     if (!mounted) return;
-  //     print(val);
+  //     if(kDebugMode)print(val);
   //     setState(() {
   //       _devices = val;
   //       if (_devices.isEmpty) {
@@ -126,14 +162,14 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
         Navigator.of(context).pop();
       }
     } catch (e) {
-      print(e.toString());
+      if(kDebugMode)print(e.toString());
     }
   }
 
   // Future<void> getBluetooth() async {
   //   final List bluetooths = await BluetoothThermalPrinter.getBluetooths ?? [];
   //   if (!mounted) return;
-  //   print("Print ${bluetooths}");
+  //   if(kDebugMode)print("Print ${bluetooths}");
   //   setState(() {
   //     if (!mounted) return;
   //     _devices = bluetooths;
@@ -147,8 +183,8 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
   // Future<void> printPdfViaBluetooth(BluetoothDevice device) async {
   //   if (device != null && device.address != null) {
   //     var isconnect = await bluetoothPrint.connect(device);
-  //     print(device);
-  //     print(isconnect);
+  //     if(kDebugMode)print(device);
+  //     if(kDebugMode)print(isconnect);
 
   //     String dateFormat() => DateFormat('MMM d, y hh:mm:ss a')
   //         .format(widget.bluetoothArgs.dateTime);
@@ -222,21 +258,21 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
   //     // if (device.connected == null) {
   //     //   await bluetoothPrint.connect(device);
   //     // }
-  //     print('0=${device.address}');
-  //     print(isconnect);
+  //     if(kDebugMode)print('0=${device.address}');
+  //     if(kDebugMode)print(isconnect);
 
   //     // await bluetoothPrint.printLabel(config, list);
   //     // await bluetoothPrint.disconnect();
 
   //     bluetoothPrint.state.listen((event) async {
-  //       print(BluetoothPrint.CONNECTED);
-  //       print(BluetoothPrint.DISCONNECTED);
-  //       print(BluetoothPrint.NAMESPACE);
-  //       print(isconnect);
-  //       print(event);
+  //       if(kDebugMode)print(BluetoothPrint.CONNECTED);
+  //       if(kDebugMode)print(BluetoothPrint.DISCONNECTED);
+  //       if(kDebugMode)print(BluetoothPrint.NAMESPACE);
+  //       if(kDebugMode)print(isconnect);
+  //       if(kDebugMode)print(event);
   //       switch (event) {
   //         case BluetoothPrint.CONNECTED:
-  //           print(BluetoothPrint.CONNECTED);
+  //           if(kDebugMode)print(BluetoothPrint.CONNECTED);
   //           await bluetoothPrint.printReceipt(config, list);
   //         // await bluetoothPrint.disconnect();
   //       }
@@ -251,7 +287,7 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
     if (conecctionStatus) {
       List<int> ticket = await kotTicket();
       final result = await PrintBluetoothThermal.writeBytes(ticket);
-      print("print result: $result");
+      if(kDebugMode)print("print result: $result");
     } else {
       //no connected
     }
@@ -259,7 +295,7 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
   Future<List<Map<String, dynamic>>> getKotData(String kotId) async {
     Map<String, dynamic> kotHistory = await KOTService.getKot(kotId);
     Kot kot = Kot.fromMap(kotHistory['kot']);
-    print("kot.items ${kotHistory['kot']['item']}");
+    if(kDebugMode)print("kot.items ${kotHistory['kot']['item']}");
     List<Map<String, dynamic>> itemList = [];
 
 // Iterate through kot.items in reverse order
@@ -287,7 +323,7 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
     }
     itemList.removeWhere((item) => item['qty'] <= 0);
       return itemList;
-    // print("ITEM LIST IS $itemList");
+    // if(kDebugMode)print("ITEM LIST IS $itemList");
   }
   Future<List<int>> kotTicket() async {
     final bargs = widget.args.bluetoothArgs!;
@@ -404,9 +440,9 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
   }
 
   Future<void> printbill(String mac) async {
-    print(widget.args.billArgs!.subtotalPrice);
-    print(widget.args.billArgs!.gsttotalPrice);
-    print(widget
+    if(kDebugMode)print(widget.args.billArgs!.subtotalPrice);
+    if(kDebugMode)print(widget.args.billArgs!.gsttotalPrice);
+    if(kDebugMode)print(widget
         .args.billArgs!.order.orderItems![0].product!.baseSellingPriceGst);
     final bool result =
         await PrintBluetoothThermal.connect(macPrinterAddress: mac);
@@ -414,7 +450,7 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
     if (conecctionStatus) {
       List<int> ticket = await billTicket();
       final result = await PrintBluetoothThermal.writeBytes(ticket);
-      print("print result: $result");
+      if(kDebugMode)print("print result: $result");
     } else {
       //no connected
     }
@@ -580,15 +616,15 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
             }
             // await DatabaseHelper()
             //     .updateTableNo(tableNoController.text,bargs.order.id! );
-            print("widget.args.bluetoothArgs!.order.tableNo is ${widget.args.bluetoothArgs!.order.tableNo} and runtype is ${widget.args.bluetoothArgs!.order.tableNo.runtimeType}");
+            if(kDebugMode)print("widget.args.bluetoothArgs!.order.tableNo is ${widget.args.bluetoothArgs!.order.tableNo} and runtype is ${widget.args.bluetoothArgs!.order.tableNo.runtimeType}");
             widget.args.bluetoothArgs!.order.tableNo =
                 tableNoController.text;
             if(widget.args.bluetoothArgs!.order.tableNo != "null" && widget.args.bluetoothArgs!.order.tableNo != "")
                 await BillingService().updateBillingOrder(widget.args.bluetoothArgs!.order);//for updating table No
             // final provider = Provider.of<Billing>(context,listen: false);
-            // print("widget.args.bluetoothArgs!.order.id ${widget.args.bluetoothArgs!.order.id.toString()}");
+            // if(kDebugMode)print("widget.args.bluetoothArgs!.order.id ${widget.args.bluetoothArgs!.order.id.toString()}");
             // provider.updateTableNoInSalesBill(widget.args.bluetoothArgs!.order.id.toString(),widget.args.bluetoothArgs!.order.tableNo);
-            // print("popping bluetooth printer list and value is ${widget.args.bluetoothArgs!.order.tableNo}");
+            // if(kDebugMode)print("popping bluetooth printer list and value is ${widget.args.bluetoothArgs!.order.tableNo}");
           }
 
 
@@ -628,7 +664,7 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
                                   printKot(_devices[position].macAdress);
                                 } else if (widget.args.billArgs != null &&
                                     widget.args.bluetoothArgs == null) {
-                                  print('ok');
+                                  if(kDebugMode)print('ok');
                                   printbill(_devices[position].macAdress);
                                 }
                               },

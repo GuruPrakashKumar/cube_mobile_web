@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:otp_text_field/otp_field.dart';
 import 'package:otp_text_field/otp_field_style.dart';
@@ -75,7 +76,7 @@ class _ForgotPassWordOTPPageState extends State<ForgotPassWordOTPPage> {
                         fieldStyle: FieldStyle.box,
                         outlineBorderRadius: 10,
                         onCompleted: (pin) {
-                          print("Completed: " + pin);
+                          if(kDebugMode)print("Completed: " + pin);
                         },
                       ),
                     ),

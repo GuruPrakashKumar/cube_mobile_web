@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
@@ -63,13 +64,13 @@ class _ReportsPageState extends State<ReportsPage> {
               expenses: state.expenses, type: _reportInput.type.toString()));
     }
     if (state.orders != null) {
-      print("line 65 in reports.dart");
+      if(kDebugMode)print("line 65 in reports.dart");
       Navigator.pushNamed(context, ReportTable.routeName,
           arguments: tableArg(
               orders: state.orders, type: _reportInput.type.toString()));
     }
     if (state.product != null) {
-      print("linen 71 in reports.dart");
+      if(kDebugMode)print("linen 71 in reports.dart");
       Navigator.pushNamed(context, ReportTable.routeName,
           arguments: tableArg(
               products: state.product, type: _reportInput.type.toString()));
