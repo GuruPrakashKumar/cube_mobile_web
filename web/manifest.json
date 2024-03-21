@@ -1,11 +1,11 @@
 {
-    "name": "magicstep",
-    "short_name": "magicstep",
+    "name": "BharatPOS",
+    "short_name": "BharatPOS",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "Bills, GST, Payments",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

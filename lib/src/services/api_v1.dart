@@ -4,6 +4,7 @@ import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shopos/src/config/const.dart';
 import 'package:shopos/src/services/dio_interceptor.dart';
 import 'package:flutter/foundation.dart';
@@ -12,7 +13,6 @@ class ApiV1Service {
     BaseOptions(
       contentType: 'application/json',
       baseUrl: Const.apiV1Url,
-      headers: {"Authorization": document.cookie},
       connectTimeout: Duration(milliseconds: 5000),
       receiveTimeout: Duration(milliseconds: 50000),
     ),
@@ -45,7 +45,10 @@ class ApiV1Service {
     Map<String, dynamic>? data,
     FormData? formData,
   }) async {
-    return await _dio.post(url, data: formData ?? data, options: Options(headers: {"Authorization": document.cookie}));
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = await prefs.getString('token');
+
+    return await _dio.post(url, data: formData ?? data, options: Options(headers: {"Authorization": token}));
   }
 
   ///
@@ -53,7 +56,10 @@ class ApiV1Service {
     String url, {
     Map<String, dynamic>? queryParameters,
   }) async {
-    return await _dio.get(url, queryParameters: queryParameters, options: Options(headers: {"Authorization": document.cookie}));
+    if(kDebugMode)print("executing get request and cookie value is ${document.cookie}");
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = await prefs.getString('token');
+    return await _dio.get(url, queryParameters: queryParameters, options: Options(headers: {"Authorization": token}));
   }
 
   ///
@@ -62,12 +68,16 @@ class ApiV1Service {
     Map<String, dynamic>? data,
     FormData? formData,
   }) async {
-    return await _dio.put(url, data: formData ?? data, options: Options(headers: {"Authorization": document.cookie}));
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = await prefs.getString('token');
+    return await _dio.put(url, data: formData ?? data, options: Options(headers: {"Authorization": token}));
   }
 
   ///
   static Future<Response> deleteRequest(String url,
       {Map<String, dynamic>? data}) async {
-    return await _dio.delete(url, options: Options(headers: {"Authorization": document.cookie}));
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = await prefs.getString('token');
+    return await _dio.delete(url, options: Options(headers: {"Authorization": token}));
   }
 }

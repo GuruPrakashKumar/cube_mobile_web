@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:in_app_update/in_app_update.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shopos/src/config/const.dart';
 import 'package:shopos/src/pages/home.dart';
 import 'package:shopos/src/pages/sign_in.dart';
@@ -16,6 +17,8 @@ import 'package:shopos/src/services/LocalDatabase.dart';
 import 'package:shopos/src/services/api_v1.dart';
 import 'package:shopos/src/widgets/custom_button.dart';
 import 'package:upgrader/upgrader.dart';
+
+import '../services/user.dart';
 
 class SplashScreen extends StatefulWidget {
   BuildContext context;
@@ -57,15 +60,23 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> authStatus() async {
-    Future.delayed(Duration(seconds: 4), () {
+    Future.delayed(Duration(seconds: 2), () {
       setState(() {
         pos = 0;
       });
     });
     // final cj = await const ApiV1Service().initCookiesManager();
     // final cookies = await cj.loadForRequest(Uri.parse(Const.apiUrl));
-    final cookie=document.cookie!;
-    final isAuthenticated = cookie.isNotEmpty;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = await prefs.getString('token');
+    // final cookie=document.cookie!;
+    bool isAuthenticated = false;
+    if(token != null && token.isNotEmpty){
+      final response = await UserService.me();
+      if(response.data['success']==true)
+        isAuthenticated = true;
+    }
+    // final isAuthenticated = token?.isNotEmpty || t;
     Future.delayed(
       const Duration(milliseconds: 3000),
       () => Navigator.pushReplacement(

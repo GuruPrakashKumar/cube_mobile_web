@@ -3,6 +3,7 @@ import 'dart:html';
 import 'package:flutter/foundation.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shopos/src/config/const.dart';
 import 'package:shopos/src/models/input/sign_up_input.dart';
 import 'package:shopos/src/models/user.dart';
@@ -43,6 +44,8 @@ class AuthService {
 
   /// Save cookies after sign in/up
   Future<void> saveCookie(Response response) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('token', 'Bearer ${response.data['token']}');
     document.cookie="Bearer ${response.data['token']}";
 
     // List<Cookie> cookies = [Cookie("token", response.data['token'])];
@@ -52,8 +55,10 @@ class AuthService {
 
   ///
   Future<void> signOut() async {
-    await clearCookies();
-    await fb.FirebaseAuth.instance.signOut();
+    // await clearCookies();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('token', '');
+    // await fb.FirebaseAuth.instance.signOut();
   }
 
   /// Clear cookies before log out
