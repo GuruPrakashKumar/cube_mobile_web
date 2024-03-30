@@ -1134,19 +1134,20 @@ class _CheckoutPageState extends State<CheckoutPage> {
                                 convertToSale != false)
                               Column(
                                 children: [
-                                  TypeAheadFormField<Party>(
-                                    validator: (value) {
-                                      final isEmpty =
-                                          (value == null || value.isEmpty);
-                                      if (isEmpty && _isCredit) {
-                                        return "Please select a party for credit order";
-                                      }
-                                      return null;
-                                    },
+                                  TypeAheadField<Party>(
+                                    // validator: (value) {
+                                    //   final isEmpty =
+                                    //       (value == null || value.isEmpty);
+                                    //   if (isEmpty && _isCredit) {
+                                    //     return "Please select a party for credit order";
+                                    //   }
+                                    //   return null;
+                                    // },
                                     debounceDuration:
                                         const Duration(milliseconds: 500),
-                                    textFieldConfiguration:
-                                        TextFieldConfiguration(
+
+                                      builder: (context, controller, focusNode) => TextField(
+
                                       controller: _typeAheadController,
                                       autofocus: true,
                                       decoration: InputDecoration(
@@ -1185,7 +1186,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                                           null) {
                                         return Future.value([]);
                                       }
-                                      return _searchParties(pattern);
+                                      return _searchParties(pattern) as List<Party>;
                                     },
                                     itemBuilder: (context, party) {
                                       return ListTile(
@@ -1193,7 +1194,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                                         title: Text(party.name ?? ""),
                                       );
                                     },
-                                    onSuggestionSelected: (Party party) {
+                                    onSelected: (Party party) {
                                       setState(() {
                                         widget.args.order.party = party;
                                       });

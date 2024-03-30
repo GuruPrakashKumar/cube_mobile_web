@@ -95,9 +95,9 @@ class _PartyListPageState extends State<PartyListPage>
               //   prefixIcon: Icon(Icons.search),
               //   hintText: "Search",
               // ),
-              TypeAheadFormField<Party>(
+              TypeAheadField<Party>(
                 debounceDuration: const Duration(milliseconds: 500),
-                textFieldConfiguration: TextFieldConfiguration(
+                builder: (context, controller, focusNode) => TextField(
                   controller: _typeAheadController,
                   autofocus: true,
                   decoration: InputDecoration(
@@ -119,7 +119,7 @@ class _PartyListPageState extends State<PartyListPage>
                   if (int.tryParse(pattern.trim()) != null) {
                     return Future.value([]);
                   }
-                  return _searchParties(pattern);
+                  return _searchParties(pattern) as List<Party>;
                 },
                 itemBuilder: (context, party) {
                   return ListTile(
@@ -132,7 +132,7 @@ class _PartyListPageState extends State<PartyListPage>
                     },
                   );
                 },
-                onSuggestionSelected: (Party party) {
+                onSelected: (Party party) {
                   _typeAheadController.text = party.name ?? "";
                 },
               ),

@@ -5,6 +5,7 @@ class CustomTextField extends StatefulWidget {
   final Function(String)? onChanged;
   final Function(String?)? onSave;
   final Function(String?)? validator;
+  final Function()? onTap;
   final bool isLoading;
   final String? initialValue;
   final Widget? prefixIcon;
@@ -21,24 +22,25 @@ class CustomTextField extends StatefulWidget {
   final int? maxLines;
   const CustomTextField(
       {Key? key,
-      this.onChanged,
-      this.initialValue,
-      this.onSave,
-      this.value,
-      this.validator,
-      this.hintText,
-      this.label,
-      this.isLoading = false,
-      this.inputType,
-      this.suffixIcon,
-      this.prefixIcon,
-      this.inputFormatters,
-      this.obsecureText = false,
-      this.readonly = false,
-      this.bypassValidator = false,
-      this.maxLines,
-      this.onsubmitted})
-      ;
+        this.onChanged,
+        this.initialValue,
+        this.onSave,
+        this.value,
+        this.validator,
+        this.onTap,
+        this.hintText,
+        this.label,
+        this.isLoading = false,
+        this.inputType,
+        this.suffixIcon,
+        this.prefixIcon,
+        this.inputFormatters,
+        this.obsecureText = false,
+        this.readonly = false,
+        this.bypassValidator = false,
+        this.maxLines,
+        this.onsubmitted})
+  ;
 
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();
@@ -46,9 +48,9 @@ class CustomTextField extends StatefulWidget {
 
 class _CustomTextFieldState extends State<CustomTextField> {
 
-    
 
-@override
+
+  @override
   void initState() {
     // TODO: implement initState
     super.initState();
@@ -69,60 +71,60 @@ class _CustomTextFieldState extends State<CustomTextField> {
           ),
         if (widget.label != null) const SizedBox(height: 5),
         TextFormField(
-            maxLines:  widget.maxLines,
-            
-            readOnly: widget.readonly,
-            obscureText: widget.obsecureText,
-            inputFormatters: widget.inputFormatters,
-            textInputAction: TextInputAction.next,
-            
-            validator: (e) {
-              if (!widget.bypassValidator && widget.validator != null) {
-                // conditionally call validator
-                return widget.validator!(e);
-              }
-              return null;
-            },
-            controller: widget.value != null || widget.initialValue != null
-                ? TextEditingController(text: widget.value ?? widget.initialValue)
-                : null,
-            enabled: !widget.isLoading,
-            onChanged: (e) {
-              if (widget.onChanged == null) {
-                return;
-              }
-              widget.onChanged!(e);
-            },
-            onFieldSubmitted: widget.onsubmitted,
-            onSaved: (e) {
-              if (widget.onSave == null) {
-                return;
-              }
-              widget.onSave!(e);
-            },
-            keyboardType: widget.inputType,
-            decoration: InputDecoration(
-              
-              fillColor:      widget.prefixIcon!=null? Color(0xffEAEAEA):Colors.transparent,
-              filled: true,
-              prefixIcon: widget.prefixIcon,
-              hintText: widget.hintText,
-              suffixIcon: widget.suffixIcon,
-              
-              contentPadding: const EdgeInsets.symmetric(
-                vertical: 2,
-                horizontal: 10,
-              ),
-              border: widget.prefixIcon!=null? OutlineInputBorder(
-                borderSide: BorderSide.none,
-                
-                borderRadius: BorderRadius.circular(10),
-              ): OutlineInputBorder(
+          maxLines:  widget.maxLines,
+          onTap: widget.onTap != null? widget.onTap! : null,
+          readOnly: widget.readonly,
+          obscureText: widget.obsecureText,
+          inputFormatters: widget.inputFormatters,
+          textInputAction: TextInputAction.next,
+
+          validator: (e) {
+            if (!widget.bypassValidator && widget.validator != null) {
+              // conditionally call validator
+              return widget.validator!(e);
+            }
+            return null;
+          },
+          controller: widget.value != null || widget.initialValue != null
+              ? TextEditingController(text: widget.value ?? widget.initialValue)
+              : null,
+          enabled: !widget.isLoading,
+          onChanged: (e) {
+            if (widget.onChanged == null) {
+              return;
+            }
+            widget.onChanged!(e);
+          },
+          onFieldSubmitted: widget.onsubmitted,
+          onSaved: (e) {
+            if (widget.onSave == null) {
+              return;
+            }
+            widget.onSave!(e);
+          },
+          keyboardType: widget.inputType,
+          decoration: InputDecoration(
+
+            fillColor:      widget.prefixIcon!=null? Color(0xffEAEAEA):Colors.transparent,
+            filled: true,
+            prefixIcon: widget.prefixIcon,
+            hintText: widget.hintText,
+            suffixIcon: widget.suffixIcon,
+
+            contentPadding: const EdgeInsets.symmetric(
+              vertical: 2,
+              horizontal: 10,
+            ),
+            border: widget.prefixIcon!=null? OutlineInputBorder(
+              borderSide: BorderSide.none,
+
+              borderRadius: BorderRadius.circular(10),
+            ): OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
             ),
-            ),
           ),
-        
+        ),
+
       ],
     );
   }

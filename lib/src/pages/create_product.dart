@@ -819,9 +819,9 @@ class _CreateProductState extends State<CreateProduct> {
                                       ),
                                     ],
                                   ),
-                                  TypeAheadFormField<Product>(
+                                  TypeAheadField<Product>(
                                     key: _keys[i],
-                                    textFieldConfiguration: TextFieldConfiguration(
+                                    builder: (context, controller, focusNode) => TextField(
                                       controller: _subProductNames[i],
                                       decoration: InputDecoration(
                                           label: Text("Name"),
@@ -834,7 +834,7 @@ class _CreateProductState extends State<CreateProduct> {
                                       if (int.tryParse(pattern.trim()) != null) {
                                         return Future.value([]);
                                       }
-                                      return _searchSubProducts(pattern);
+                                      return _searchSubProducts(pattern) as List<Product>;
                                     },
                                     itemBuilder: (context, subProduct) {
                                       return ListTile(
@@ -846,7 +846,7 @@ class _CreateProductState extends State<CreateProduct> {
                                         },
                                       );
                                     },
-                                    onSuggestionSelected: (Product subProduct) {
+                                    onSelected: (Product subProduct) {
 
                                       _subProductNames[i].text = subProduct.name!;
                                       FocusScope.of(context).unfocus();

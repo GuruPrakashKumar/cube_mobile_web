@@ -42,7 +42,7 @@ class ReportCubit extends Cubit<ReportState> {
 
   ///
   void getReport(ReportInput input) async {
-    // emit(ReportLoading());
+    emit(ReportLoading());
 
     if (input.type == ReportType.sale) {
       print("----------line 41 in report_cubit.dart");

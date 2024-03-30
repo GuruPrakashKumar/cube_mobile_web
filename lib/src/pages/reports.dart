@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lottie/lottie.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:shopos/src/blocs/report/report_cubit.dart';
 import 'package:shopos/src/config/colors.dart';
@@ -97,8 +98,25 @@ class _ReportsPageState extends State<ReportsPage> {
             _showLoader = false;
           });
 
+          //Lottie
+          if(state is ReportLoading){
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => Scaffold(
+                  backgroundColor: Colors.white,// Adjust Scaffold as needed
+                  body: Center(
+
+                    child: Lottie.asset('assets/anims/report_loading.json', ), // Replace with your Lottie animation asset
+
+                  ),
+                ),
+              ),
+            );
+          }
           /// View
           if (state is ReportsView) {
+            Navigator.pop(context);
             _handleReportsView(state);
           }
         },

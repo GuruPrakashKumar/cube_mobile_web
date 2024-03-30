@@ -1723,12 +1723,12 @@ class _ReportTableState extends State<ReportTable> {
               Text('Enter party name to filter'),
             ],
           ),
-          content: TypeAheadFormField<Party>(
-            validator: (value) {
-              return null;
-            },
+          content: TypeAheadField<Party>(
+            // validator: (value) {
+            //   return null;
+            // },
             debounceDuration: const Duration(milliseconds: 500),
-            textFieldConfiguration: TextFieldConfiguration(
+            builder: (context, controller, focusNode) => TextField(
               controller: _typeAheadController,
               autofocus: true,
               decoration: InputDecoration(
@@ -1763,7 +1763,7 @@ class _ReportTableState extends State<ReportTable> {
                 return Future.value([]);
               }
 
-              return _searchParties(pattern);
+              return _searchParties(pattern) as List<Party>;
             },
             itemBuilder: (context, party) {
               return ListTile(
@@ -1771,7 +1771,7 @@ class _ReportTableState extends State<ReportTable> {
                 title: Text(party.name ?? ""),
               );
             },
-            onSuggestionSelected: (Party party) {
+            onSelected: (Party party) {
               if(kDebugMode)print("------------line 948 in report_table.dart");
               filterPaymentModeSelected="";
               setState(() {
