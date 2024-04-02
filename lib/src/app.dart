@@ -191,7 +191,7 @@ class _MyAppState extends State<MyApp> {
               case SetPinPage.routeName:
                 bool status = settings.arguments as bool;
                 return SetPinPage(
-                  isPinSet: status,
+                  args: SetPinPageArgs(isPinSet: status)
                 );
                 case SwitchAccountPage.rountName:
                 return SwitchAccountPage();
@@ -205,6 +205,8 @@ class _MyAppState extends State<MyApp> {
                 return BluetoothPrinterList(
                   args: settings.arguments as CombineArgs,
                 );
+
+
               default:
                 return SplashScreen(context);
             }

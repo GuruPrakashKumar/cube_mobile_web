@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -11,7 +12,6 @@ import 'package:shopos/src/models/input/kot_model.dart';
 import 'package:shopos/src/models/input/order.dart';
 
 
-import 'package:shopos/src/pages/bluetooth_printer_list.dart';
 import 'package:shopos/src/pages/checkout.dart';
 import 'package:shopos/src/pages/create_purchase.dart';
 import 'package:shopos/src/pages/create_sale.dart';
@@ -26,9 +26,12 @@ import '../config/colors.dart';
 import '../services/global.dart';
 import '../services/locator.dart';
 import '../services/set_or_change_pin.dart';
+import '../services/user.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/custom_text_field.dart';
+import '../widgets/pdf_kot_template.dart';
 import '../widgets/pin_validation.dart';
+import 'bluetooth_printer_list.dart';
 
 enum kotType {
   is57mm,
@@ -348,7 +351,7 @@ class _BillingListScreenState extends State<BillingListScreen> {
     ).toStringAsFixed(2);
   }
 
-  void _view57mmPdf(Order Order) async {
+  void _view57mmPdf( Order Order)   {
     // User user = User();
     // try {
     //   final res = await UserService.me();
@@ -364,17 +367,21 @@ class _BillingListScreenState extends State<BillingListScreen> {
     //     headers: ["Item", "Qty"],
     //     date: DateTime.now(),
     //     invoiceNum: date);
-
-    Navigator.of(context).pushNamed(BluetoothPrinterList.routeName,
+    print("Pushed to bluetooth printer list");
+    Navigator.pushNamed(context, BluetoothPrinterList.routeName,
         arguments: CombineArgs(
             billArgs: null,
             bluetoothArgs: BluetoothArgs(
                 order: Order,
                 dateTime: DateTime.now(),
-                type: kotType.is57mm)));
+                type: kotType.is57mm))
+    );
+    print("Not Pushed");
+
+
   }
 
-  void _view80mmPdf(Order order) {
+  void _view80mmPdf( Order order) {
     // User user = User();
     // try {
     //   final res = await UserService.me();
@@ -390,7 +397,6 @@ class _BillingListScreenState extends State<BillingListScreen> {
     //     headers: ["Item", "Qty"],
     //     date: DateTime.now(),
     //     invoiceNum: date);
-
     Navigator.of(context).pushNamed(BluetoothPrinterList.routeName,
         arguments: CombineArgs(
             billArgs: null,
@@ -398,6 +404,7 @@ class _BillingListScreenState extends State<BillingListScreen> {
                 order: order,
                 dateTime: DateTime.now(),
                 type: kotType.is80mm)));
+
   }
 
   // void _viewSmallKot(Order Order, int index, Billing provider) async {
@@ -458,7 +465,7 @@ class _BillingListScreenState extends State<BillingListScreen> {
     return showDialog(
       context: context,
       useRootNavigator: true,
-      builder: (ctx) => AlertDialog(
+      builder: (context) => AlertDialog(
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -466,17 +473,36 @@ class _BillingListScreenState extends State<BillingListScreen> {
               onTap: () async {
                 SharedPreferences prefs = await SharedPreferences.getInstance();
                 prefs.setString('default', '57mm');
-                _view57mmPdf(order);
-                Navigator.of(ctx).pop();
+                print("Default = ${prefs.getString('default')}");
+                // Navigator.of(context).pop();
+                Navigator.of(context).pushNamed(BluetoothPrinterList.routeName,
+                    arguments: CombineArgs(
+                        billArgs: null,
+                        bluetoothArgs: BluetoothArgs(
+                            order: order,
+                            dateTime: DateTime.now(),
+                            type: kotType.is57mm)));
+
+                // _view57mmPdf(order);
+                // Navigator.of(context).pop();
               },
-              title: Text('58mm'),
+              title: Text('57mm'),
             ),
             ListTile(
               onTap: () async {
                 SharedPreferences prefs = await SharedPreferences.getInstance();
                 prefs.setString('default', '80mm');
-                _view80mmPdf(order);
-                Navigator.of(ctx).pop();
+                print("Default = ${prefs.getString('default')}");
+                // _view80mmPdf(order);
+
+                Navigator.of(context).pushNamed(BluetoothPrinterList.routeName,
+                    arguments: CombineArgs(
+                        billArgs: null,
+                        bluetoothArgs: BluetoothArgs(
+                            order: order,
+                            dateTime: DateTime.now(),
+                            type: kotType.is80mm)));
+                // Navigator.of(context).pop();
               },
               title: Text('80mm'),
             )
@@ -788,13 +814,13 @@ class _BillingListScreenState extends State<BillingListScreen> {
                                                 String? defaultFormat =
                                                 prefs.getString('default');
 
-                                                if (defaultFormat == null) {
-                                                  _showNewDialog(_allBills[index],);
-                                                } else if (defaultFormat == "57mm") {
+                                                // if (defaultFormat == null) {
+                                                //   _showNewDialog(_allBills[index],);
+                                                // } else if (defaultFormat == "57mm") {
                                                   _view57mmPdf(_allBills[index],);
-                                                } else if (defaultFormat == "80mm") {
-                                                  _view80mmPdf(_allBills[index],);
-                                                }
+                                                // } else if (defaultFormat == "80mm") {
+                                                //   _view80mmPdf(_allBills[index],);
+                                                // }
                                               }, icon: Icon(Icons.print, color: Colors.blue[400],)),
                                             ],
                                           ),

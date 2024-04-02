@@ -6,14 +6,19 @@ import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:shopos/src/services/set_or_change_pin.dart';
 import 'package:shopos/src/widgets/custom_button.dart';
 
+
+class SetPinPageArgs {
+  final bool isPinSet;
+
+  SetPinPageArgs({required this.isPinSet});
+}
+
 class SetPinPage extends StatefulWidget {
   static const routeName = 'set-pin';
-  const SetPinPage({
-    Key? key,
-    required this.isPinSet,
-  }) : super(key: key);
+  SetPinPage({ Key? key, required this.args,}) : super(key: key);
 
-  final bool isPinSet;
+  SetPinPageArgs? args;
+  bool isPinSet = false;
 
   @override
   State<SetPinPage> createState() => _SetPinPageState();
@@ -28,13 +33,15 @@ class _SetPinPageState extends State<SetPinPage> {
   PinService pinService = PinService();
 
   @override
-  void dispose() {
-    oldPinControlller.dispose();
-    newPinController.dispose();
-    rePinController.dispose();
-    deletePinController.dispose();
-    super.dispose();
+  void initState() {
+    // TODO: implement initState
+    // widget.isPinSet = widget.args!.isPinSet;
+    print("isPinSet = ${widget.isPinSet}");
+    super.initState();
+
   }
+
+
 
   setPin() async {
     final String oldpin = oldPinControlller.text.trim().toString();
@@ -70,126 +77,143 @@ class _SetPinPageState extends State<SetPinPage> {
     Navigator.of(context).pop();
   }
 
+
+  @override
+  void dispose() {
+    oldPinControlller.dispose();
+    newPinController.dispose();
+    rePinController.dispose();
+    deletePinController.dispose();
+    super.dispose();
+  }
+
+  // @override
+  // Widget build(BuildContext context) {
+  //   final height = MediaQuery.of(context).size.height;
+  //   final width = MediaQuery.of(context).size.width;
+  //   return Scaffold(
+  //     appBar: AppBar(
+  //       leading: GestureDetector(
+  //           onTap: () {
+  //             Navigator.of(context).pop();
+  //           },
+  //           child: Icon(Icons.arrow_back)),
+  //       title: Text("Set /Change Pin"),
+  //       centerTitle: true,
+  //     ),
+  //     body: SingleChildScrollView(
+  //       child: GestureDetector(
+  //         onTap: () {},
+  //         child: SizedBox(
+  //           height: 300,
+  //           width: 200,
+  //           child: Column(
+  //             crossAxisAlignment: CrossAxisAlignment.center,
+  //             mainAxisAlignment: MainAxisAlignment.center,
+  //             children: <Widget>[
+  //               SvgPicture.asset(
+  //                 'assets/images/changepin.svg',
+  //                 height: 200,
+  //                 width: 200,
+  //               ),
+  //               if (widget.isPinSet)
+  //                 Padding(
+  //                   padding: EdgeInsets.symmetric(horizontal: 20),
+  //                   child: Text(
+  //                     'Enter old pin',
+  //                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
+  //                     textAlign: TextAlign.center,
+  //                   ),
+  //                 ),
+  //               SizedBox(
+  //                 height: 10,
+  //               ),
+  //               if (widget.isPinSet)
+  //                 Padding(
+  //                     padding: const EdgeInsets.symmetric(
+  //                       horizontal: 20,
+  //                     ),
+  //                     child: _pinfield(oldPinControlller)),
+  //               SizedBox(height: 10),
+  //               Padding(
+  //                 padding: EdgeInsets.symmetric(horizontal: 20),
+  //                 child: Text(
+  //                   'Enter Your New Pin',
+  //                   style: TextStyle(fontSize: 22),
+  //                   textAlign: TextAlign.center,
+  //                 ),
+  //               ),
+  //               SizedBox(
+  //                 height: 10,
+  //               ),
+  //               Padding(
+  //                   padding: const EdgeInsets.symmetric(
+  //                     horizontal: 20,
+  //                   ),
+  //                   child: _pinfield(newPinController)),
+  //               Padding(
+  //                 padding: EdgeInsets.symmetric(horizontal: 20),
+  //                 child: Text(
+  //                   'Re-type Your Pin',
+  //                   style: TextStyle(fontSize: 22),
+  //                   textAlign: TextAlign.center,
+  //                 ),
+  //               ),
+  //               SizedBox(
+  //                 height: 10,
+  //               ),
+  //               Padding(
+  //                   padding: const EdgeInsets.symmetric(
+  //                     horizontal: 20,
+  //                   ),
+  //                   child: _pinfield(rePinController)),
+  //               const SizedBox(
+  //                 height: 20,
+  //               ),
+  //               Row(
+  //                 mainAxisAlignment: MainAxisAlignment.spaceAround,
+  //                 children: [
+  //                   Center(
+  //                     child: SizedBox(
+  //                       width: !(widget.isPinSet)? 300:170,
+  //                       child: CustomButton(
+  //                         title: !(widget.isPinSet) ? 'SET PIN' : 'CHANGE PIN',
+  //                         onTap: () {
+  //                           setPin();
+  //                         },
+  //                       ),
+  //                     ),
+  //                   ),
+  //                   if (widget.isPinSet)
+  //                     Center(
+  //                       child: SizedBox(
+  //                         width: 170,
+  //                         child: CustomButton(
+  //                           title: "DELETE PIN",
+  //                           onTap: () async {
+  //                             bool? done = await _showPinDialog();
+  //                             if (done != null && done) {
+  //                               Navigator.pop(context);
+  //                             }
+  //                           },
+  //                         ),
+  //                       ),
+  //                     )
+  //                 ],
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  //
+  //
+  // }
+
   @override
   Widget build(BuildContext context) {
-    final height = MediaQuery.of(context).size.height;
-    final width = MediaQuery.of(context).size.width;
-    return Scaffold(
-      appBar: AppBar(
-        leading: GestureDetector(
-            onTap: () {
-              Navigator.of(context).pop();
-            },
-            child: Icon(Icons.arrow_back)),
-        title: Text("Set /Change Pin"),
-        centerTitle: true,
-      ),
-      body: SingleChildScrollView(
-        child: GestureDetector(
-          onTap: () {},
-          child: SizedBox(
-            height: height - 100,
-            width: width,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                SvgPicture.asset(
-                  'assets/images/changepin.svg',
-                  height: 200,
-                  width: 200,
-                ),
-                if (widget.isPinSet)
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    child: Text(
-                      'Enter old pin',
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                SizedBox(
-                  height: 10,
-                ),
-                if (widget.isPinSet)
-                  Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 20,
-                      ),
-                      child: _pinfield(oldPinControlller)),
-                SizedBox(height: 10),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
-                  child: Text(
-                    'Enter Your New Pin',
-                    style: TextStyle(fontSize: 22),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                    ),
-                    child: _pinfield(newPinController)),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
-                  child: Text(
-                    'Re-type Your Pin',
-                    style: TextStyle(fontSize: 22),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                    ),
-                    child: _pinfield(rePinController)),
-                const SizedBox(
-                  height: 20,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Center(
-                      child: SizedBox(
-                        width: !(widget.isPinSet)? 300:170,
-                        child: CustomButton(
-                          title: !(widget.isPinSet) ? 'SET PIN' : 'CHANGE PIN',
-                          onTap: () {
-                            setPin();
-                          },
-                        ),
-                      ),
-                    ),
-                    if (widget.isPinSet)
-                      Center(
-                        child: SizedBox(
-                          width: 170,
-                          child: CustomButton(
-                            title: "DELETE PIN",
-                            onTap: () async {
-                              bool? done = await _showPinDialog();
-                              if (done != null && done) {
-                                Navigator.pop(context);
-                              }
-                            },
-                          ),
-                        ),
-                      )
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
+    return Scaffold();
   }
 
   Widget _pinfield(TextEditingController textEditingController) {

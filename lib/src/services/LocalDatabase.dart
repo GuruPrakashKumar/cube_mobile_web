@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart';
-import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
 import 'package:shopos/src/models/KotModel.dart';
 import 'package:shopos/src/models/input/order.dart';
 import 'package:shopos/src/models/party.dart';

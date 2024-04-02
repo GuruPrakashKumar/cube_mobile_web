@@ -5,7 +5,6 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:shopos/firebase_options.dart';
 import 'package:shopos/src/provider/billing_order.dart';
 import 'package:shopos/src/services/LocalDatabase.dart';
 import 'package:shopos/src/services/background_service.dart';

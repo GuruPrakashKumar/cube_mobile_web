@@ -23,7 +23,6 @@ import 'package:shopos/src/models/input/product_input.dart';
 
 import 'package:shopos/src/models/user.dart';
 import 'package:shopos/src/pages/billing_list.dart';
-import 'package:shopos/src/pages/bluetooth_printer_list.dart';
 import 'package:shopos/src/pages/create_party.dart';
 import 'package:shopos/src/pdf_templates/58mm_kot_template.dart';
 import 'package:shopos/src/provider/billing_order.dart';
@@ -817,37 +816,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
       salesInvoiceNo++;
       purchasesInvoiceNo++;
     }
-    var combineArgs = CombineArgs(
-        bluetoothArgs: null,
-        billArgs: PrintBillArgs(
-          type: billType.is80mm,
-          user: userData,
-          order: Order,
-          headers: [
-            "Invoice 0000000",
-            "${DateFormat('dd/MM/yyyy').format(DateTime.now())}"
-          ],
-          dateTime: DateTime.now(),
-          invoiceNum: widget.args.invoiceType == OrderType.sale
-              ? widget.args.order.invoiceNum != ''&& widget.args.order.invoiceNum != null && widget.args.order.invoiceNum != "null"
-              ? widget.args.order.invoiceNum!
-              : salesInvoiceNo.toString()
-              : purchasesInvoiceNo.toString(),
-          totalPrice: totalPrice() ?? '',
-          subtotalPrice: totalbasePrice() ?? '',
-          gsttotalPrice: totalgstPrice() ?? '',
-        ));
-    if(popAll){
-      Navigator.of(context).pushNamedAndRemoveUntil(
-          BluetoothPrinterList.routeName,
-          ((route)=>route.isFirst),
-          arguments: combineArgs);
-    }else{
-      Navigator.of(context).pushNamed(
-        BluetoothPrinterList.routeName,
-        arguments: combineArgs
-      );
-    }
+
 
     // for open pdf
     // try {
@@ -882,40 +851,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
       salesInvoiceNo++;
       purchasesInvoiceNo++;
     }
-    var combineArgs = CombineArgs(
-        bluetoothArgs: null,
-        billArgs: PrintBillArgs(
-          type: billType.is57mm,
-          user: userData,
-          order: Order,
-          headers: [
-            "Invoice 0000000",
-            "${DateFormat('dd/MM/yyyy').format(DateTime.now())}"
-          ],
-          dateTime: DateTime.now(),
-          invoiceNum: widget.args.invoiceType == OrderType.sale
-              ? widget.args.order.invoiceNum != '' &&
-              widget.args.order.invoiceNum != null &&
-              widget.args.order.invoiceNum != "null"
-              ? widget.args.order.invoiceNum!
-              : salesInvoiceNo.toString()
-              : purchasesInvoiceNo.toString(),
-          totalPrice: totalPrice() ?? '',
-          subtotalPrice: totalbasePrice() ?? '',
-          gsttotalPrice: totalgstPrice() ?? '',
-        ));
 
-    if(popAll){
-      Navigator.of(context).pushNamedAndRemoveUntil(
-          BluetoothPrinterList.routeName,
-          ((route)=>route.isFirst),
-          arguments: combineArgs);
-    }else{
-      Navigator.of(context).pushNamed(
-        BluetoothPrinterList.routeName,
-        arguments: combineArgs
-      );
-    }
+
+
   }
 
   _showNewDialog(
