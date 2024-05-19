@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shopos/src/blocs/product/product_cubit.dart';
 import 'package:shopos/src/blocs/report/report_cubit.dart';
 
@@ -53,6 +54,7 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
   bool isAvailable = true;
   PinService _pinService = PinService();
   late final ReportCubit _reportCubit;
+  late bool _showInStockSwitch;
   final TextEditingController pinController = TextEditingController();
 
   int expiryDaysTOSearch = 7;
@@ -61,6 +63,7 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
   @override
   void initState() {
     super.initState();
+    init();
     _products = [];
     _productCubit = ProductCubit()..getProducts(_currentPage, _limit);
 
@@ -69,6 +72,10 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
     fetchSearchedProducts();
   }
 
+  init() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    _showInStockSwitch = (await pref.getBool('in-stock-button-preference')) ?? false ;
+  }
   //goToProductDetails(BuildContext context, int idx) {
   // Navigator.of(context).pushNamed(SearchProductDetailsScreen.routeName,
   //    arguments: prodList[idx]);
@@ -390,6 +397,7 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
                                     children: [
                                       ProductCardHorizontal(
                                         color: 0XFFFFFFFF,
+                                        showInStockSwitch: _showInStockSwitch,
                                         type: widget.args!.orderType,
                                         noOfQuatityadded: countNoOfQuatityInArray(prodList[index]),
                                         isSelecting: widget.args!.isSelecting,
@@ -459,8 +467,8 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
                                         isAvailable: isAvailable,
                                         onDelete: () async {
                                           var result = true;
-
-                                          if (await _pinService.pinStatus() == true) {
+                                          var x = await _pinService.pinStatus();
+                                          if (x == true) {
                                             result = await _showPinDialog() as bool;
                                           }
 
@@ -473,8 +481,8 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
                                         },
                                         onEdit: () async {
                                           var result = true;
-
-                                          if (await _pinService.pinStatus() == true) {
+                                          var x = await _pinService.pinStatus();
+                                          if (x == true) {
                                             result = await _showPinDialog() as bool;
                                           }
                                           if (result) {

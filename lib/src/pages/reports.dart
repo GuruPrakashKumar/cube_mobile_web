@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shopos/src/blocs/report/report_cubit.dart';
 import 'package:shopos/src/config/colors.dart';
 import 'package:shopos/src/models/input/report_input.dart';
@@ -30,6 +31,9 @@ class _ReportsPageState extends State<ReportsPage> {
   final _formKey = GlobalKey<FormState>();
   late final PdfService _pdfService;
   late final ReportCubit _reportCubit;
+  bool showNamePref = false;
+  bool salegstreport = false;
+  bool purchasegstreport = false;
   bool _showLoader = false;
   final TextEditingController pinController = TextEditingController();
   PinService _pinService = PinService();
@@ -38,8 +42,16 @@ class _ReportsPageState extends State<ReportsPage> {
   @override
   void initState() {
     super.initState();
+    init();
     _reportCubit = ReportCubit();
     _pdfService = PdfService();
+  }
+
+  init() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    showNamePref = (await prefs.getBool('show-name-preference'))!;
+    salegstreport = (await prefs.getBool('sale-gst-preference'))!;
+    purchasegstreport = (await prefs.getBool('purchase-gst-preference'))!;
   }
 
   ///
@@ -62,19 +74,22 @@ class _ReportsPageState extends State<ReportsPage> {
     if (state.expenses != null) {
       Navigator.pushNamed(context, ReportTable.routeName,
           arguments: tableArg(
-              expenses: state.expenses, type: _reportInput.type.toString()));
+              expenses: state.expenses, type: _reportInput.type.toString(),showNamePreference: showNamePref,
+            salegstreport: salegstreport, purchasegstreport: purchasegstreport,),);
     }
     if (state.orders != null) {
       if(kDebugMode)print("line 65 in reports.dart");
       Navigator.pushNamed(context, ReportTable.routeName,
           arguments: tableArg(
-              orders: state.orders, type: _reportInput.type.toString()));
+              orders: state.orders, type: _reportInput.type.toString(),showNamePreference: showNamePref,
+            salegstreport: salegstreport, purchasegstreport: purchasegstreport,));
     }
     if (state.product != null) {
       if(kDebugMode)print("linen 71 in reports.dart");
       Navigator.pushNamed(context, ReportTable.routeName,
           arguments: tableArg(
-              products: state.product, type: _reportInput.type.toString()));
+              products: state.product, type: _reportInput.type.toString(), showNamePreference: showNamePref,
+            salegstreport: salegstreport, purchasegstreport: purchasegstreport,));
     }
   }
 

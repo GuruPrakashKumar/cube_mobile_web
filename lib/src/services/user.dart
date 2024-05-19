@@ -12,7 +12,7 @@ class UserService {
     try {
       response = await ApiV1Service.getRequest('/me');
       if(kDebugMode)print("response of /me is  $response");
-      getNewToken();
+      // getNewToken();
     } catch (e) {
       if(kDebugMode)print('cube token expired');
       await getNewToken();
@@ -26,6 +26,7 @@ class UserService {
   static getNewToken() async {
     if(kDebugMode)print("getting new token");
     final response = await ApiV1Service.getRequest('/get-token');
+    print("Response of getToken= ${response.data}");
     if ((response.statusCode ?? 400) > 300) {
       return null;
     }

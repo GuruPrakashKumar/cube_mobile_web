@@ -86,18 +86,18 @@ Future<void> onStart(ServiceInstance service) async {
 
 Future<void> scheduleAlarm(String newOrder, String body) async {
   const AndroidNotificationDetails androidPlatformChannelSpecifics =
-      AndroidNotificationDetails(
-    'your_channel_id',
+  AndroidNotificationDetails(
+    'your_channel_id1',
     'your_channel_name',
     importance: Importance.max,
     priority: Priority.high,
-    sound: RawResourceAndroidNotificationSound('ring_ring'),
+    sound: RawResourceAndroidNotificationSound('telephone_ring'),
     enableVibration: true,
     playSound: true,
   );
 
   const NotificationDetails platformChannelSpecifics =
-      NotificationDetails(android: androidPlatformChannelSpecifics);
+  NotificationDetails(android: androidPlatformChannelSpecifics);
   flutterLocalNotificationsPlugin.show(
       0, newOrder, body, platformChannelSpecifics);
 }

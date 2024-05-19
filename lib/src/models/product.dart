@@ -30,6 +30,7 @@ class Product {
     this.expiryDate,
     this.mrp,
     this.quantityToBeSold,
+    this.available
   });
 
   String? name;
@@ -57,6 +58,7 @@ class Product {
   String? batchNumber;
   DateTime? expiryDate;
   double? quantityToBeSold;
+  bool? available;
   num i=0;
   
   factory Product.fromMap(Map<String, dynamic> json){ 
@@ -75,6 +77,7 @@ class Product {
     // print(json);
     // print(json['mrp'].toString());
     return Product(
+      available: json['available'],
       name: json["name"],
       sellingPrice:json["sellingPrice"]==null?0.0: double.parse(json["sellingPrice"].toString()) ,
       barCode: json["barCode"],
@@ -128,6 +131,7 @@ class Product {
         "hsn":hsn,
         "mrp":mrp,
         "_id": id,
+        "available": available,
         'purchasePrice': purchasePrice,
         "createdAt": createdAt?.toIso8601String(),
         "__v": v,

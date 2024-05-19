@@ -10,7 +10,9 @@ import 'package:shopos/src/services/product_availability_service.dart';
 import 'package:shopos/src/widgets/custom_button.dart';
 import 'package:shopos/src/widgets/custom_text_field.dart';
 
+import '../models/input/product_input.dart';
 import '../services/global.dart';
+import '../services/product.dart';
 
 class ProductCardHorizontal extends StatefulWidget {
   final Product product;
@@ -28,6 +30,7 @@ class ProductCardHorizontal extends StatefulWidget {
   Function onTap;
   Function onQuantityFieldChange;
   bool isAvailable;
+  bool showInStockSwitch;
 
   double noOfQuatityadded;
   ProductCardHorizontal({
@@ -47,7 +50,8 @@ class ProductCardHorizontal extends StatefulWidget {
     required this.onAdd,
     required this.onRemove,
     required this.onTap,
-    required this.onQuantityFieldChange
+    required this.onQuantityFieldChange,
+    required this.showInStockSwitch,
   }) : super(key: key);
 
   @override
@@ -61,6 +65,7 @@ class _ProductCardHorizontalState extends State<ProductCardHorizontal> {
   ProductAvailabilityService productAvailability = ProductAvailabilityService();
   bool tapflag = false;
   bool onTapOutsideWillWork = false;
+  late bool _showInStockSwitch = widget.showInStockSwitch;
   @override
   void initState() {
     // TODO: implement initState
@@ -450,6 +455,34 @@ class _ProductCardHorizontalState extends State<ProductCardHorizontal> {
                                 ],
                               ),
 
+                            Visibility(
+                              visible: _showInStockSwitch,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Switch(
+                                      value: widget.isAvailable,
+                                      onChanged: (val) async {
+
+                                        widget.isAvailable = val;
+                                        widget.product.available = val;
+                                        setState(() {});
+                                        if (widget.isAvailable == true) {
+                                          await productAvailability.isProductAvailable(
+                                              widget.product.id!, 'active');
+                                        } else {
+                                          await productAvailability.isProductAvailable(
+                                              widget.product.id!, 'disable');
+                                        }
+                                        print(widget.product);
+                                        print(widget.product.toMap());
+                                        final productInput = ProductFormInput.fromMap(widget.product.toMap());
+                                        await ProductService().updateProduct1(productInput);
+                                        setState(() {});
+                                      }),
+                                ],
+                              ),
+                            )
                             /*   Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [

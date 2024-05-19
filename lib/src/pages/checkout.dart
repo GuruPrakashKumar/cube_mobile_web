@@ -1533,15 +1533,29 @@ class _CheckoutPageState extends State<CheckoutPage> {
             if (widget.args.canEdit != false)
               if(!convertToSale)
               Expanded(
-                child: CustomButton(
-                  onTap: () {
-                    _onTapSubmit();
-                  },
-                  title: 'Save',
-                  style: Theme.of(context)
-                    .textTheme
-                    .headline6
-                    ?.copyWith(color: Colors.white, fontSize: 16)
+                child: BlocBuilder<CheckoutCubit,CheckoutState>(
+                  bloc: _checkoutCubit,
+                  builder: (context, state) {
+                    if(state is CheckoutLoading)
+                      return CustomButton(
+                          onTap: () {},
+                          title: 'Save',
+                          style: Theme.of(context)
+                              .textTheme
+                              .headline6
+                              ?.copyWith(color: Colors.white, fontSize: 16)
+                      );
+                    return CustomButton(
+                      onTap: () {
+                        _onTapSubmit();
+                      },
+                      title: 'Save',
+                      style: Theme.of(context)
+                        .textTheme
+                        .headline6
+                        ?.copyWith(color: Colors.white, fontSize: 16)
+                    );
+                  }
                 ),
               )
           ],
@@ -1638,7 +1652,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
           }
         }
       }
-
+      _checkoutCubit.loading();
       salesInvoiceNo = await _checkoutCubit.getSalesNum() as int;
       purchasesInvoiceNo = await _checkoutCubit.getPurchasesNum() as int;
       estimateNo = await _checkoutCubit.getEstimateNum() as int;

@@ -47,6 +47,7 @@ class PinService {
     try {
       status = response.data;
     } catch (e) {
+      print("Error in pinstatus response = ${e}");
       status = response.data['status'];
     }
 

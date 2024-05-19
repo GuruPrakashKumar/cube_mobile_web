@@ -12,7 +12,7 @@ class BillingService{
     if(kDebugMode)print("data to be sent in create ${order.toMapForCopy()}");
     final response = await ApiV1Service.postRequest(
       '/billingorder/new',
-      data: order.toMapForCopy()
+      data: order.toMapForCopy(),
     );
     return response;
   }
@@ -31,6 +31,29 @@ class BillingService{
   }
   Future<Response> deleteBillingOrder(String kotId) async {
     final response = await ApiV1Service.deleteRequest('/billingOrder/$kotId');
+    return response;
+  }
+  Future<List<dynamic>> getAllQrOrder() async {
+    final response = await ApiV1Service.getRequest('/qrOrder/all');
+    return response.data['allQrOrder'];
+  }
+
+
+  Future<Response> deleteQrOrder(String id) async {
+    final response = await ApiV1Service.deleteRequest(
+      '/qrOrder/reject/$id',
+    );
+    return response;
+  }
+
+  Future<Response> acceptAddQrOrder(String id,Order order) async {
+    String kotId = DateTime.now().toString();
+    print("Accepting kotid = ${kotId}");
+    final response = await ApiV1Service.postRequest(
+      '/qrOrder/accept/$id',
+
+      data: { "kotId" : "${kotId}" },
+    );
     return response;
   }
 

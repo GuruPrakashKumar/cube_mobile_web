@@ -19,6 +19,7 @@ import 'package:shopos/src/pages/checkout.dart';
 import 'package:shopos/src/pages/search_result.dart';
 import 'package:shopos/src/provider/billing_order.dart';
 import 'package:shopos/src/services/LocalDatabase.dart';
+import 'package:shopos/src/services/api_v1.dart';
 import 'package:shopos/src/services/billing_service.dart';
 import 'package:shopos/src/services/global.dart';
 import 'package:shopos/src/services/kot_services.dart';
@@ -61,6 +62,7 @@ class _CreateSaleState extends State<CreateSale> {
   late SharedPreferences prefs;
   bool skipPendingOrdersPref = false;
   bool barcodePref = true;
+  bool _isPercentPref = false;
 
   @override
   void initState() {
@@ -88,6 +90,7 @@ class _CreateSaleState extends State<CreateSale> {
     prefs = await SharedPreferences.getInstance();
     skipPendingOrdersPref = (await prefs.getBool('pending-orders-preference'))!;
     barcodePref = (await prefs.getBool('barcode-button-preference'))!;
+    _isPercentPref = (await prefs.getBool('discount-type-preference'))!;
     if(!barcodePref && widget.args!.editOrders!.isEmpty){
       _onAddManually(context);
     }
@@ -439,7 +442,7 @@ class _CreateSaleState extends State<CreateSale> {
         // kotItemlist.add(model);//for local database
       }
     });
-
+    // _Order.subUserName =
     BillingCubit billingCubit = BillingCubit();
     //adding items to _kot object
     _kot.items = kotItems;
@@ -662,8 +665,19 @@ class _CreateSaleState extends State<CreateSale> {
                     CustomTextField(
                       inputType: TextInputType.number,
                       onChanged: (val) {
-                        localSellingPrice = val;
+                        if(_isPercentPref) {
+                          double? taxableValue = ((_orderItem.product!
+                              .gstRate != "null" && _orderItem.product!
+                              .gstRate != "")
+                              ? double.parse(baseSellingPriceToShow as String)
+                              : sellingPriceToShow);
+                          localSellingPrice = (taxableValue! - double.parse(
+                              val) / 100 * taxableValue).toString();
+                        }
+                        else localSellingPrice = val;
+                        print("LOCAL SELLING PRICE: $localSellingPrice");
                       },
+                      suffixIcon: _isPercentPref ?Icon(Icons.percent) : null,
                       hintText: 'Enter Taxable Value   (${_orderItem.product!.gstRate != "null"  && _orderItem.product!.gstRate!="" ?
                       baseSellingPriceToShow : sellingPriceToShow})'
                     ),
@@ -676,8 +690,14 @@ class _CreateSaleState extends State<CreateSale> {
                     CustomTextField(
                       inputType: TextInputType.number,
                       onChanged: (val) {
-                        discountedPrice = val;
+                        if(_isPercentPref) {
+                          discountedPrice = (sellingPriceToShow! - double.parse(
+                              val) / 100 * sellingPriceToShow).toString();
+                        }
+                        else discountedPrice = val;
+                        print("DISCOUNTED PRICE: $discountedPrice");
                       },
+                      suffixIcon: _isPercentPref ? Icon(Icons.percent) : null,
                       hintText: 'Enter total value   (${sellingPriceToShow})',
                       validator: (val) {
                         if (val!.isNotEmpty && localSellingPrice!.isNotEmpty) {

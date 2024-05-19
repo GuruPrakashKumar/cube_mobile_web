@@ -36,6 +36,7 @@ import 'package:shopos/src/widgets/custom_button.dart';
 import 'package:shopos/src/widgets/pin_validation.dart';
 
 import '../models/input/order.dart';
+import 'billing_list.dart';
 
 class HomePage extends StatefulWidget {
   BuildContext context;
@@ -155,7 +156,7 @@ class _HomePageState extends State<HomePage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text("Hi ${state.user.businessName ?? ""}!"),
+                        Text("Hi ${((state.user.name == null || state.user.name == "") ? state.user.businessName : state.user.name) }!"),
                         SizedBox(
                           width: 35,
                         ),
@@ -255,7 +256,7 @@ class _HomePageState extends State<HomePage> {
                         title: Title(
                           color: Colors.black,
                           child: Text(
-                            state.user.businessName ?? "",
+                            ((state.user.name == null || state.user.name == "") ? state.user.businessName : state.user.name)!,
                           ),
                         ),
                         subtitle: Text(
@@ -284,7 +285,7 @@ class _HomePageState extends State<HomePage> {
                         title: Title(color: Colors.black, child: Text("Set/Change pin")),
                         onTap: () async {
                           bool status = await _pinService.pinStatus();
-                          if(kDebugMode)print(status);
+                          print(status);
                           Navigator.of(context).pushNamed(SetPinPage.routeName, arguments: SetPinPageArgs(isPinSet: status));
                         },
                       ),
@@ -296,8 +297,8 @@ class _HomePageState extends State<HomePage> {
                         title: Title(color: Colors.black, child: Text("Preferences")),
                         onTap: () async {
                           var result = true;
-                          bool x  = await _pinService.pinStatus();
-                          if (x) {
+                          var x  = await _pinService.pinStatus();
+                          if (x == true ) {
                             result = await PinValidation.showPinDialog(context) as bool;
                           }
                           if(result){
@@ -305,7 +306,20 @@ class _HomePageState extends State<HomePage> {
                           }
                         },
                       ),
-
+                      ListTile(
+                        contentPadding: EdgeInsets.only(left: 10),
+                        leading: Image.asset(
+                          "assets/icon/to_do_list.png",
+                          height: 38,
+                        ),
+                        title: Padding(
+                          padding: const EdgeInsets.only(left: 6.0),
+                          child: Title(color: Colors.black, child: Text("Pending Orders"),),
+                        ),
+                        onTap: () {
+                          Navigator.pushNamed(context, BillingListScreen.routeName, arguments: OrderType.sale);
+                        },
+                      ),
                       ListTile(
                         leading: Image.asset(
                           "assets/images/lock.png",
@@ -478,7 +492,11 @@ class _HomePageState extends State<HomePage> {
                         Expanded(
                           child: GestureDetector(
                             onTap: () {
-                              Navigator.pushNamed(context, CreateSale.routeName, arguments: BillingPageArgs(editOrders: []));
+                              Navigator.pushNamed(context, CreateSale.routeName, arguments: BillingPageArgs(
+                                  editOrders: [],
+                                  // userName: state.user.businessName ?? "",
+
+                              ));
                             },
                             onLongPress: () {
                               Navigator.pushNamed(

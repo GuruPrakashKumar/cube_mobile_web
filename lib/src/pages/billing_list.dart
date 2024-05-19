@@ -1,10 +1,14 @@
 import 'dart:async';
+import 'dart:math';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pin_code_fields/pin_code_fields.dart' as pinCode;
 import 'package:intl/intl.dart';
-import 'package:pin_code_fields/pin_code_fields.dart';
+
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shopos/src/blocs/billing/billing_cubit.dart';
@@ -23,6 +27,8 @@ import 'package:shopos/src/services/kot_services.dart';
 import 'package:shopos/src/services/api_v1.dart';
 
 import '../config/colors.dart';
+import '../models/product.dart';
+import '../services/background_service.dart';
 import '../services/global.dart';
 import '../services/locator.dart';
 import '../services/set_or_change_pin.dart';
@@ -85,21 +91,29 @@ class _BillingListScreenState extends State<BillingListScreen> {
   //   _orderType = provider.getAllOrderType();
   // }
   Timer? timer; //we cancel timer when pending order delete dialog shows up, and user is searching using table nu
+  Timer? buzzertimer;
   String date = '';
   bool autoRefreshPref = false;
   bool showReadySwitch = false;
+  bool showNamePref = false;
+  bool buzzerSoundPref = false;
   late SharedPreferences prefs;
   final TextEditingController pinController = TextEditingController();
   PinService _pinService = PinService();
   late final BillingCubit _billingCubit;
+  int _dialogCount = 0;
+  AudioPlayer player = AudioPlayer();
 
   @override
   void initState() {
     super.initState();
     fetchNTPTime();
     init();
-    _billingCubit = BillingCubit()..getBillingOrders();
-
+    _billingCubit = BillingCubit()..getBillingOrders()..getQrOrders();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await player.setSource(AssetSource('telephone_ring.mp3'));
+      await player.resume();
+    });
   }
 
   @override
@@ -112,15 +126,38 @@ class _BillingListScreenState extends State<BillingListScreen> {
     print("timer started");
     timer = Timer.periodic(Duration(seconds: 30), (_) => refreshPage());
   }
+  void startBuzzer() {
 
-  void refreshPage() {
+    // scheduleAlarm('New order received', '');
+    player.audioCache.prefix = 'assets/audio/';
+    player.setPlayerMode(PlayerMode.mediaPlayer);
+    player.resume();
+    // player.play(UrlSource('https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg'));
+    // _audioCache.load('telephone_ring.mp3');
+    buzzertimer = Timer.periodic(Duration(seconds: 10), (timer) {
+      // _audioCache.load('telephone_ring.mp3');
+      player.resume();
+      // player.play(UrlSource('https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg'));
+      print("Timer.tick = ${timer.tick}");
+      // scheduleAlarm('New order received', '');
+    });
+    return;
+
+
+  }
+
+  void refreshPage() async {
     _billingCubit.getBillingOrders();
+    _billingCubit.getQrOrders();
     // print("Function executed!");
   }
+
   init() async {
     prefs = await SharedPreferences.getInstance();
     autoRefreshPref = (await prefs.getBool('refresh-pending-orders-preference'))!;
+    buzzerSoundPref = (await prefs.getBool('buzzer-qr-order-preference'))!;
     showReadySwitch = (await prefs.getBool('ready-orders-preference'))!;
+    showNamePref = (await prefs.getBool('show-name-preference'))!;
     if(autoRefreshPref)
       startTimer();
   }
@@ -195,6 +232,7 @@ class _BillingListScreenState extends State<BillingListScreen> {
         // if (widget.orderType == OrderType.purchase) {
         //   return (curr.quantity * (curr.product?.purchasePrice ?? 1)) + acc;
         // }
+
         return (double.parse(curr.quantity.toString()) *
             (curr.product?.sellingPrice ?? 1.0)) +
             acc;
@@ -226,6 +264,9 @@ class _BillingListScreenState extends State<BillingListScreen> {
             (acc, curr){
           // print(acc);
           // print(curr.discountAmt);
+              if(curr.discountAmt == "null" || curr.discountAmt == null || curr.discountAmt == ""){
+                return acc;
+              }
           return double.parse(curr.discountAmt)+acc;
         }
     ).toStringAsFixed(2);
@@ -234,6 +275,7 @@ class _BillingListScreenState extends State<BillingListScreen> {
   String? totalbasePrice(int index, Billing provider, List<Order> _allBills) {
     print("line 158 in billing list");
     print("index is $index");
+    // return "";
     // print(provider.salesBilling.values.toList()[index].toMap(OrderType.sale));
     return widget.orderType == OrderType.sale
         ? _allBills[index].orderItems?.fold<double>(
@@ -251,7 +293,7 @@ class _BillingListScreenState extends State<BillingListScreen> {
         // }
         // else {
         double sum = 0;
-        if (curr.product!.baseSellingPriceGst != "null")
+        if (curr.product!.baseSellingPriceGst != "null" && curr.product!.baseSellingPriceGst != null)
           sum = double.parse(curr.product!.baseSellingPriceGst!);
         else {
           sum = curr.product!.sellingPrice!.toDouble();
@@ -270,7 +312,7 @@ class _BillingListScreenState extends State<BillingListScreen> {
         // return (curr.quantity * (curr.product?.purchasePrice ?? 1)) +
         //     acc;
         double sum = 0;
-        if (curr.product!.basePurchasePriceGst! != "null")
+        if (curr.product!.basePurchasePriceGst! != "null" && curr.product!.basePurchasePriceGst! != null)
           sum = double.parse(curr.product!.basePurchasePriceGst!);
         else {
           sum = curr.product!.purchasePrice.toDouble();
@@ -530,7 +572,7 @@ class _BillingListScreenState extends State<BillingListScreen> {
             title: Text('Pending orders'),
             actions: [
               IconButton(onPressed: (){
-                _billingCubit.getBillingOrders();
+                refreshPage();
                 //if is in search bar and presses refresh button then timer will restart
                 timer?.cancel;
                 if(autoRefreshPref) startTimer();
@@ -544,6 +586,30 @@ class _BillingListScreenState extends State<BillingListScreen> {
               if(state is BillingSuccess){
                 print("state is billing success");
                 _billingCubit.getBillingOrders();
+              }
+              if(state is BillingQrDialog) {
+
+                timer?.cancel();
+                print("buzzertimer stopped");
+                if(state.qrOrders.isNotEmpty)  {
+                  if(buzzerSoundPref)
+                    startBuzzer();
+                  print("BUZZER Started");
+                  state.qrOrders.forEach((element) {
+                    _dialogCount++;
+                    // initializeService();
+
+                    _showQrDialog(element);
+                    print("k = ");
+                  });
+
+
+                }
+                else {
+                  startTimer();
+                }
+                print("dialog count: $_dialogCount");
+
               }
             },
             child: BlocBuilder<BillingCubit, BillingState>(
@@ -594,8 +660,12 @@ class _BillingListScreenState extends State<BillingListScreen> {
                           itemCount: widget.orderType == OrderType.sale
                               ? _allBills.length
                               : provider.purchaseBilling.length,
-                          itemBuilder: (context, index) => GestureDetector(
+                          itemBuilder: (context, index) {
+                            // print("SUBUSERnAME=${_allBills[index].subUserName}");
+                            return GestureDetector(
                             onLongPress: () {
+                              print("subusername=${_allBills[index].subUserName}, username=${_allBills[index].userName}, businessname=${_allBills[index].user!.businessName }");
+                              // _showQrDialog(_allBills[0]);
                               // showDialog(
                               //     context: context,
                               //     builder: (ctx) {
@@ -706,8 +776,8 @@ class _BillingListScreenState extends State<BillingListScreen> {
                               },
                               onDismissed: (direction) async {
                                 var result = true;
-
-                                if (await _pinService.pinStatus() == true) {
+                                bool x = await _pinService.pinStatus();
+                                if (x == true) {
                                   result = await PinValidation.showPinDialog(context) as bool;
                                 }
                                 if(result){
@@ -752,6 +822,7 @@ class _BillingListScreenState extends State<BillingListScreen> {
                                                     'Table No',style: TextStyle(fontWeight: FontWeight.bold)),
                                                 Text(
                                                     '${_allBills[index].tableNo}',
+                                                    // 'tablu',
                                                     style: TextStyle(fontWeight: FontWeight.bold)),
                                               ],
                                             ),
@@ -760,6 +831,7 @@ class _BillingListScreenState extends State<BillingListScreen> {
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text('Sub Total'),
+                                          // Text("rupee"),
                                           Text('₹ ${totalbasePrice(index, provider, _allBills)}'),
                                         ],
                                       ),
@@ -769,6 +841,7 @@ class _BillingListScreenState extends State<BillingListScreen> {
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text('Tax GST'),
+                                          // Text("rupee"),
                                           Text('₹ ${totalgstPrice(index, provider, _allBills)}'),
                                         ],
                                       ),
@@ -778,6 +851,7 @@ class _BillingListScreenState extends State<BillingListScreen> {
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text('Discount'),
+                                          // Text("rupee"),
                                           // Text('₹ ${provider.salesBilling.values.toList()[index].orderItems}'),
                                           widget.orderType!=OrderType.purchase ? Text('₹ ${totalDiscount(index, provider, _allBills)}'):Text('₹ 0'),
                                         ],
@@ -798,6 +872,29 @@ class _BillingListScreenState extends State<BillingListScreen> {
                                           ),
                                         ],
                                       ),
+                                      Visibility(
+                                        visible: showNamePref,
+                                        child: Column(
+                                          children: [
+                                            SizedBox(height: 5,),
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                Text('Name'),
+                                                Text(
+                                                  (_allBills[index].subUserName != '' && _allBills[index].subUserName != null)
+                                                      ? '${_allBills[index].subUserName}' :
+                                                  ((_allBills[index].userName != '' && _allBills[index].userName != null) ? '${_allBills[index].userName}' :
+                                                  '${_allBills[index].user!.businessName ?? ""}'
+                                                  ),
+                                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+
 
                                       const SizedBox(height: 5),
                                       Row(
@@ -885,8 +982,6 @@ class _BillingListScreenState extends State<BillingListScreen> {
                                           ) : SizedBox(),
                                           InkWell(
                                             onTap: () async {
-                                              // print("on tap edit");
-                                              // print(_allBills[index].orderItems![0].quantity);
                                               widget.orderType == OrderType.sale
                                                   ? await Navigator.pushNamed(
                                                   context, CreateSale.routeName,
@@ -901,15 +996,6 @@ class _BillingListScreenState extends State<BillingListScreen> {
                                                       editOrders: provider.purchaseBilling.values
                                                           .toList()[index]
                                                           .orderItems));
-
-                                              // var data = await DatabaseHelper().getOrderItems();
-                                              //
-                                              // provider.removeAll();
-                                              //
-                                              // data.forEach((element) {
-                                              //   print("adding sales bill");
-                                              //   provider.addSalesBill(element, element.id.toString());
-                                              // });
                                             },
                                             child: Container(
                                               decoration: BoxDecoration(
@@ -946,7 +1032,7 @@ class _BillingListScreenState extends State<BillingListScreen> {
                                 ),
                               ),
                             ),
-                          ),
+                          );},
                         ),
                       ),
                     ],
@@ -965,6 +1051,260 @@ class _BillingListScreenState extends State<BillingListScreen> {
 
       ),
     );
+
+  }
+  Future<bool?> _showQrDialog(Order order) {
+    final provider = Provider.of<Billing>(context, listen: false);
+    return showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        actionsPadding: EdgeInsets.all(20),
+
+        title: Center(child: Text('Table No ${order.tableNo}', style: TextStyle(fontWeight: FontWeight.bold),)),
+        content: Container(
+          height: 100,
+          width: 100,
+          child: ListView.builder(
+            itemCount: order.orderItems!.length,
+            itemBuilder: (context, index){
+              return ListTile(
+                title: Text('${order.orderItems![index].quantity}x   ${order.orderItems![index].product!.name}'),
+              );
+            },),
+        ),
+        actionsAlignment: MainAxisAlignment.spaceBetween,
+        
+        actions: [
+          TextButton(
+            onPressed: () {
+              // Handle reject action
+              _dialogCount--;
+              print(" On reject dialog count: $_dialogCount");
+              if(_dialogCount == 0) {
+                if(buzzerSoundPref) {
+                  buzzertimer?.cancel();
+                  player.audioCache.clearAll();
+                  flutterLocalNotificationsPlugin.cancelAll();
+                }
+                print("buzzertimer stopped");
+                startTimer();
+                print("Timer started by Dialog");
+                // _billingCubit.getBillingOrders();
+              }
+              _billingCubit.deleteQrOrder(order.objId.toString());
+              Navigator.of(context).pop(); // Close the dialog
+            },
+            style: ButtonStyle(
+              fixedSize: MaterialStateProperty.all<Size>(Size.fromWidth(100)),
+
+              shape: MaterialStateProperty.all<OutlinedBorder>(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(100),
+                ),
+              ),
+              backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(5.0),
+              child: Text(
+                ' Reject ',
+                style: TextStyle(color: Colors.white, fontSize: 20),
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: () async {
+              _dialogCount--;
+              print(" On accept dialog count: $_dialogCount");
+              if(_dialogCount == 0) {
+                if(buzzerSoundPref) {
+                  buzzertimer?.cancel();
+                  player.audioCache.clearAll();
+                  flutterLocalNotificationsPlugin.cancelAll();
+                }
+                print("buzzertimer stopped");
+                startTimer();
+                print("Timer started by Dialog");
+                // _billingCubit.getBillingOrders();
+              }
+              order.kotId = DateTime.now().toString();
+              await insertToDatabase(provider, order);
+              _billingCubit.acceptQrOrder(order.objId.toString(), order);
+              // Handle accept action
+              Navigator.of(context).pop(); // Close the dialog
+            },
+            style: ButtonStyle(
+              fixedSize: MaterialStateProperty.all<Size>(Size.fromWidth(100)),
+              shape: MaterialStateProperty.all<OutlinedBorder>(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(100),
+                ),
+              ),
+              backgroundColor: MaterialStateProperty.all<Color>(Colors.green),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(5.0),
+              child: Text(
+                ' Accept ',
+                style: TextStyle(color: Colors.white, fontSize: 20),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+  insertToDatabase(Billing provider, Order _Order) async {
+
+
+    Kot _kot = Kot(kotId: _Order.kotId,items: []);
+    List<Item> kotItems = [];
+    // int id = await DatabaseHelper().InsertOrder(_Order, provider, newAddedItems!);
+
+    List<Product> Kotlist = [];
+    //remove all from kotList, add all products from _Order to kotList while comparing to _currOrder
+    // print("_currOrder length in line 326 is ${_prevOrder.orderItems?.length}");
+    // if(_prevOrder.orderItems!.length != 0){//no matter we can clear kot list anyway
+    print("clearing kot list");
+    Kotlist.clear();
+    // }
+    for(int i = 0; i < _Order.orderItems!.length; i++){
+      Product? product = _Order.orderItems?[i].product;
+      product?.quantityToBeSold = _Order.orderItems?[i].quantity;
+      // print("product name is ${product!.name} and quantity to be sold is ${product.quantityToBeSold}");
+      String? productId = _Order.orderItems?[i].product?.id;
+      //todo: all the working will be done by orderItems.quantity
+
+      //add the product as it is because it is new product added
+      print("adding in kot list");
+      Kotlist.add(_Order.orderItems![i].product!);
+
+    }
+
+    //if user is editing the order and have removed any products
+    //checks from Previously saved Order and compares
+
+
+
+    var tempMap = CountNoOfitemIsList(Kotlist);
+    print("inserting to database");
+    print("temp map is $tempMap");
+    print("kotlist length is ${Kotlist.length} and kotlist is $Kotlist");
+    Kotlist.forEach((element) {
+      print("---kotList for each loop running---");
+      if(tempMap['${element.id}'] > 0){//to remove those items which has 0 quantity in kotList
+        print("kot model name: ${element.name!}, qtycount :${tempMap['${element.id}']}");
+        //Making Item object for kot api
+        Item item = Item(name: element.name, quantity: tempMap['${element.id}'], createdAt: DateTime.now());
+        kotItems.add(item);
+
+        // var model = KotModel(id, element.name!, tempMap['${element.id}'], "no");//for local database
+        // kotItemlist.add(model);//for local database
+      }
+    });
+
+
+    //adding items to _kot object
+    _kot.items = kotItems;
+    for (int i = 0; i  < kotItems.length; i++) {
+      print("\nKOTITEM = ${kotItems[i]}\n");
+    }
+    await KOTService.createKot(_kot);
+
+
+    // billingCubit.getBillingOrders();
+    // print(resp);
+    // DatabaseHelper().insertKot(kotItemlist);
+  }
+  Map CountNoOfitemIsList(List<Product> temp) {
+    var tempMap = {};
+
+    for (int i = 0; i < temp.length; i++) {
+      if (!tempMap.containsKey("${temp[i].id}")) {
+        // for (int j = i + 1; j < temp.length; j++) {
+        //   if (temp[i].id == temp[j].id) {
+        //     count++;
+        //     print("count =$count");
+        //   }
+        // }
+        temp[i].quantityToBeSold = roundToDecimalPlaces(temp[i].quantityToBeSold!, 4);
+        if(temp[i].quantityToBeSold != 0)
+          tempMap["${temp[i].id}"] = temp[i].quantityToBeSold;
+      }
+    }
+    print("temp map is $tempMap");
+
+    for (int i = 0; i < temp.length; i++) {
+      for (int j = i + 1; j < temp.length; j++) {
+        if (temp[i].id == temp[j].id) {
+          temp.removeAt(j);
+          j--;
+        }
+      }
+    }
+
+    return tempMap;
+  }
+  double roundToDecimalPlaces(double value, int decimalPlaces) {
+    final factor = pow(10, decimalPlaces).toDouble();
+    return (value * factor).round() / factor;
+  }
+  Future<bool?> _showPinDialog() {
+    return showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (ctx) => AlertDialog(
+          content: pinCode.PinCodeTextField(
+            autoDisposeControllers: false,
+            appContext: context,
+            length: 6,
+            obscureText: true,
+            obscuringCharacter: '*',
+            blinkWhenObscuring: true,
+            animationType: pinCode.AnimationType.fade,
+            keyboardType: TextInputType.number,
+            pinTheme: pinCode.PinTheme(
+              shape: pinCode.PinCodeFieldShape.underline,
+              borderRadius: BorderRadius.circular(5),
+              fieldHeight: 40,
+              fieldWidth: 30,
+              inactiveColor: Colors.black45,
+              inactiveFillColor: Colors.white,
+              selectedFillColor: Colors.white,
+              selectedColor: Colors.black45,
+              disabledColor: Colors.black,
+              activeFillColor: Colors.white,
+            ),
+            cursorColor: Colors.black,
+            controller: pinController,
+            animationDuration: const Duration(milliseconds: 300),
+            enableActiveFill: true,
+          ),
+          title: Text('Enter your pin'),
+          actions: [
+            Center(
+                child: CustomButton(
+
+                    title: 'Verify',
+                    onTap: () async {
+                      bool status = await _pinService.verifyPin(
+                          int.parse(pinController.text.toString()));
+                      if (status) {
+                        pinController.clear();
+                        Navigator.of(ctx).pop(true);
+                      } else {
+                        Navigator.of(ctx).pop(false);
+                        pinController.clear();
+
+                        return;
+                      }
+                    }))
+          ],
+        ));
   }
   Future<bool?> _showDialog() {
     timer?.cancel();//pausing timer if this dialog is open

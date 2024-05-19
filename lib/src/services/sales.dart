@@ -31,6 +31,9 @@ class SalesService {
       'businessName': orderItemInput.businessName,
       'businessAddress': orderItemInput.businessAddress,
       'gst': orderItemInput.gst,
+      (orderItemInput.subUserName != '') ?
+      'subUserName' : orderItemInput.subUserName: null,
+      // 'userName' : orderItemInput.userName,
     };
     if(kDebugMode)print("--data sent--");
     if(kDebugMode)print(jsonEncode(dataSent));
@@ -44,9 +47,11 @@ class SalesService {
         'party': orderItemInput.party?.id,
         'invoiceNum': invoiceNum,
         'reciverName': orderItemInput.reciverName,
-        'businessName': orderItemInput.businessName,
+        'businessName': (orderItemInput.subUserName != '') ? orderItemInput.subUserName : orderItemInput.businessName,
         'businessAddress': orderItemInput.businessAddress,
         'gst': orderItemInput.gst,
+        // 'userName' : orderItemInput.userName == "" ? "" : orderItemInput.userName,
+        // 'subUserName' : orderItemInput.subUserName == "" ? "" : orderItemInput.subUserName,
       },
     );
     if(kDebugMode)print("line 37 in sales.dart");

@@ -11,7 +11,7 @@ environment:
 
 dependencies:
   flutter_html: 
-  audioplayers: 
+  audioplayers: ^6.0.0
   cached_network_image: 
   cookie_jar: 
   # date_time_picker: 
@@ -75,6 +75,7 @@ dependencies:
   path:
   otp_text_field:
   widget_toolkit_otp:
+  pretty_dio_logger: ^1.3.1
 
 
 dev_dependencies:
@@ -82,6 +83,7 @@ dev_dependencies:
     sdk: flutter
   flutter_launcher_icons: 
   change_app_package_name: ^1.1.0
+
 
 flutter_icons:
   android: true

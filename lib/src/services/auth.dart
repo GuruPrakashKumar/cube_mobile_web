@@ -45,8 +45,33 @@ class AuthService {
   /// Save cookies after sign in/up
   Future<void> saveCookie(Response response) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('token', 'Bearer ${response.data['token']}');
-    document.cookie="Bearer ${response.data['token']}";
+    if(response.data['token_subuser'] != null) {
+      await prefs.setString(
+          'token_subuser', 'Bearer_subuser ${response.data['token_subuser']}');
+      // document.cookie="Bearer ${response.data['token']}; Bearer_subuser ${response.data['token_subuser']}";
+
+      ApiV1Service().addHeaderCookie(
+          {"Authorization" : "Bearer ${response.data['token']}",
+            "Authorization_subuser" : "Bearer_subuser ${response.data['token_subuser']}"}
+      );
+
+    }
+    else {
+      await prefs.setString('token', 'Bearer ${response.data['token']}');
+      // document.cookie = "Bearer ${response.data['token']}";
+      ApiV1Service().addHeaderCookie(
+          {"Authorization" : "Bearer ${response.data['token']}"}
+      );
+    }
+
+
+    // print("Response received = ${response.data}");
+    print("Token = ${response.data['token']}");
+    print("Token_subuser = ${response.data['token_subuser']}");
+    // print("Response received = ${response.data}");
+
+
+
 
     // List<Cookie> cookies = [Cookie("token", response.data['token'])];
     // final cj = await ApiV1Service.getCookieJar();
@@ -80,9 +105,12 @@ class AuthService {
     if ((response.statusCode ?? 400) > 300) {
       return null;
     }
-    if(kDebugMode)print("line 70 signin request");
-    if(kDebugMode)print('res = ${response.data}');
+    print("line 70 signin request");
+    print('RESres = ${response.data}');
     await saveCookie(response);
+    if(response.data['subUser'] != null && response.data['subUser'] != ""){
+      return User.fromMap(response.data['subUser']);
+    }
     return User.fromMap(response.data['user']);
   }
 
