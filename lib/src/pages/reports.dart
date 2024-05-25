@@ -95,6 +95,7 @@ class _ReportsPageState extends State<ReportsPage> {
 
   @override
   Widget build(BuildContext context) {
+    bool isLaptopSize = MediaQuery.of(context).size.width > 440;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -142,147 +143,221 @@ class _ReportsPageState extends State<ReportsPage> {
             child: SingleChildScrollView(
               child: Container(
                 height: 800,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                width: MediaQuery.of(context).size.width > 440 ? double.infinity : 400,
+                child:
+
+                  Column(
+                  // crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    CheckboxListTile(
-                      controlAffinity: ListTileControlAffinity.leading,
-                      value: _reportInput.type == ReportType.sale,
-                      activeColor: ColorsConst.primaryColor,
-                      checkboxShape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      contentPadding: const EdgeInsets.all(0),
-                      onChanged: (value) {
-                        _toggleReportType(ReportType.sale);
-                      },
-                      title: const Text("Sale Report"),
-                    ),
-                    CheckboxListTile(
-                      controlAffinity: ListTileControlAffinity.leading,
-                      value: _reportInput.type == ReportType.saleReturn,
-                      activeColor: ColorsConst.primaryColor,
-                      checkboxShape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      contentPadding: const EdgeInsets.all(0),
-                      onChanged: (value) {
-                        _toggleReportType(ReportType.saleReturn);
-                      },
-                      title: const Text("Sale Return Report"),
-                    ),
-                    CheckboxListTile(
-                      controlAffinity: ListTileControlAffinity.leading,
-                      value: _reportInput.type == ReportType.purchase,
-                      activeColor: ColorsConst.primaryColor,
-                      checkboxShape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      onChanged: (value) {
-                        _toggleReportType(ReportType.purchase);
-                      },
-                      contentPadding: const EdgeInsets.all(0),
-                      title: const Text("Purchase Report"),
-                    ),
-                    CheckboxListTile(
-                      contentPadding: const EdgeInsets.all(0),
-                      activeColor: ColorsConst.primaryColor,
-                      controlAffinity: ListTileControlAffinity.leading,
-                      value: _reportInput.type == ReportType.expense,
-                      checkboxShape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      onChanged: (value) {
-                        _toggleReportType(ReportType.expense);
-                      },
-                      title: const Text("Expense Report"),
-                    ),
-                    CheckboxListTile(
-                      contentPadding: const EdgeInsets.all(0),
-                      activeColor: ColorsConst.primaryColor,
-                      controlAffinity: ListTileControlAffinity.leading,
-                      value: _reportInput.type == ReportType.stock,
-                      checkboxShape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      onChanged: (value) {
-                        _toggleReportType(ReportType.stock);
-                      },
-                      title: const Text("Stock Report"),
-                    ),
-                    CheckboxListTile(
-                      contentPadding: const EdgeInsets.all(0),
-                      activeColor: ColorsConst.primaryColor,
-                      controlAffinity: ListTileControlAffinity.leading,
-                      value: _reportInput.type == ReportType.estimate,
-                      checkboxShape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      onChanged: (value) {
-                        _toggleReportType(ReportType.estimate);
-                      },
-                      title: const Text("Estimate Report"),
-                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                        Container(
+                        height: 300,
+                            width: 300,
+                            child: Column( children: [
+                                CheckboxListTile(
+                                  controlAffinity: ListTileControlAffinity.leading,
+                                  value: _reportInput.type == ReportType.sale,
+                                  activeColor: ColorsConst.primaryColor,
+                                  checkboxShape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  contentPadding: const EdgeInsets.all(0),
+                                  onChanged: (value) {
+                                    _toggleReportType(ReportType.sale);
+                                  },
+                                  title: const Text("Sale Report"),
+                                ),
+                                CheckboxListTile(
+                                  controlAffinity: ListTileControlAffinity.leading,
+                                  value: _reportInput.type == ReportType.saleReturn,
+                                  activeColor: ColorsConst.primaryColor,
+                                  checkboxShape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  contentPadding: const EdgeInsets.all(0),
+                                  onChanged: (value) {
+                                    _toggleReportType(ReportType.saleReturn);
+                                  },
+                                  title: const Text("Sale Return Report"),
+                                ),
+                                CheckboxListTile(
+                                  controlAffinity: ListTileControlAffinity.leading,
+                                  value: _reportInput.type == ReportType.purchase,
+                                  activeColor: ColorsConst.primaryColor,
+                                  checkboxShape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  onChanged: (value) {
+                                    _toggleReportType(ReportType.purchase);
+                                  },
+                                  contentPadding: const EdgeInsets.all(0),
+                                  title: const Text("Purchase Report"),
+                                ),
+                                CheckboxListTile(
+                                  contentPadding: const EdgeInsets.all(0),
+                                  activeColor: ColorsConst.primaryColor,
+                                  controlAffinity: ListTileControlAffinity.leading,
+                                  value: _reportInput.type == ReportType.expense,
+                                  checkboxShape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  onChanged: (value) {
+                                    _toggleReportType(ReportType.expense);
+                                  },
+                                  title: const Text("Expense Report"),
+                                ),
+                                CheckboxListTile(
+                                  contentPadding: const EdgeInsets.all(0),
+                                  activeColor: ColorsConst.primaryColor,
+                                  controlAffinity: ListTileControlAffinity.leading,
+                                  value: _reportInput.type == ReportType.stock,
+                                  checkboxShape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  onChanged: (value) {
+                                    _toggleReportType(ReportType.stock);
+                                  },
+                                  title: const Text("Stock Report"),
+                                ),
+                                CheckboxListTile(
+                                  contentPadding: const EdgeInsets.all(0),
+                                  activeColor: ColorsConst.primaryColor,
+                                  controlAffinity: ListTileControlAffinity.leading,
+                                  value: _reportInput.type == ReportType.estimate,
+                                  checkboxShape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  onChanged: (value) {
+                                    _toggleReportType(ReportType.estimate);
+                                  },
+                                  title: const Text("Estimate Report"),
+                                ),
+                              ])
+                        ),
+                        // Text("Hello"),
+                      isLaptopSize ? Column(
+                          children: [
+                            CustomDatePicker(
+                              label: 'Start date',
+                              hintText: 'dd/mm/yyyy',
+                              onChanged: (DateTime value) {
+                                setState(() {
+                                  _reportInput.startDate = value;
+                                });
+                              },
+                              onSave: (DateTime? value) {
+                                setState(() {
+                                  _reportInput.startDate = value;
+                                });
+                              },
+                              validator: (DateTime? value) {
+                                if (value == null &&
+                                    _reportInput.type != ReportType.stock) {
+                                  return 'Please select start date';
+                                }
+                                return null;
+                              },
+                              value: _reportInput.startDate,
+                            ),
+                            const Divider(color: Colors.transparent),
+                            CustomDatePicker(
+                              hintText: 'dd/mm/yyyy',
+                              label: 'End date',
+                              onChanged: (DateTime value) {
+                                setState(() {
+                                  _reportInput.endDate = value;
+                                });
+                              },
+                              onSave: (DateTime? value) {
+                                setState(() {
+                                  _reportInput.endDate = value;
+                                });
+                              },
+                              validator: (DateTime? value) {
+                                if (value == null &&
+                                    _reportInput.type != ReportType.stock) {
+                                  return 'Please select end date';
+                                }
+                                return null;
+                              },
+                              value: _reportInput.endDate,
+                            ),
+                          ]
+                      ) : SizedBox(height: 0),
+                      ]),
+
+
                     const SizedBox(height: 40),
-                    CustomDatePicker(
-                      label: 'Start date',
-                      hintText: 'dd/mm/yyyy',
-                      onChanged: (DateTime value) {
-                        setState(() {
-                          _reportInput.startDate = value;
-                        });
-                      },
-                      onSave: (DateTime? value) {
-                        setState(() {
-                          _reportInput.startDate = value;
-                        });
-                      },
-                      validator: (DateTime? value) {
-                        if (value == null &&
-                            _reportInput.type != ReportType.stock) {
-                          return 'Please select start date';
-                        }
-                        return null;
-                      },
-                      value: _reportInput.startDate,
-                    ),
-                    const Divider(color: Colors.transparent),
-                    CustomDatePicker(
-                      hintText: 'dd/mm/yyyy',
-                      label: 'End date',
-                      onChanged: (DateTime value) {
-                        setState(() {
-                          _reportInput.endDate = value;
-                        });
-                      },
-                      onSave: (DateTime? value) {
-                        setState(() {
-                          _reportInput.endDate = value;
-                        });
-                      },
-                      validator: (DateTime? value) {
-                        if (value == null &&
-                            _reportInput.type != ReportType.stock) {
-                          return 'Please select end date';
-                        }
-                        return null;
-                      },
-                      value: _reportInput.endDate,
-                    ),
+                    !isLaptopSize ?
+                        CustomDatePicker(
+                          label: 'Start date',
+                          hintText: 'dd/mm/yyyy',
+                          onChanged: (DateTime value) {
+                            setState(() {
+                              _reportInput.startDate = value;
+                            });
+                          },
+                          onSave: (DateTime? value) {
+                            setState(() {
+                              _reportInput.startDate = value;
+                            });
+                          },
+                          validator: (DateTime? value) {
+                            if (value == null &&
+                                _reportInput.type != ReportType.stock) {
+                              return 'Please select start date';
+                            }
+                            return null;
+                          },
+                          value: _reportInput.startDate,
+                        ) : SizedBox(height: 0),
+                    !isLaptopSize ? const Divider(color: Colors.transparent) : SizedBox(),
+                    !isLaptopSize ?   CustomDatePicker(
+                          hintText: 'dd/mm/yyyy',
+                          label: 'End date',
+                          onChanged: (DateTime value) {
+                            setState(() {
+                              _reportInput.endDate = value;
+                            });
+                          },
+                          onSave: (DateTime? value) {
+                            setState(() {
+                              _reportInput.endDate = value;
+                            });
+                          },
+                          validator: (DateTime? value) {
+                            if (value == null &&
+                                _reportInput.type != ReportType.stock) {
+                              return 'Please select end date';
+                            }
+                            return null;
+                          },
+                          value: _reportInput.endDate,
+                        ) : SizedBox(),
                     // const Spacer(),
                     const SizedBox(height: 70,),
-                    CustomButton(
-                      title: "View",
-                      style: Theme.of(context)
-                          .textTheme
-                          .headline6
-                          ?.copyWith(color: Colors.white, fontSize: 18),
-                      onTap: () {
-                        _onSubmit();
-                      },
+                    Row(
+                      mainAxisAlignment: MediaQuery.of(context).size.width > 440 ? MainAxisAlignment.center : MainAxisAlignment.start,
+                      children: [
+                        CustomButton(
+                          title: "View",
+                          style: Theme.of(context)
+                              .textTheme
+                              .headline6
+                              ?.copyWith(color: Colors.white, fontSize: 18),
+                          onTap: () {
+                            _onSubmit();
+                          },
+                        ),
+                      ],
                     ),
                   ],
                 ),
+
+
+
               ),
             ),
           ),

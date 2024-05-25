@@ -38,7 +38,7 @@ class CustomTextField extends StatefulWidget {
         this.obsecureText = false,
         this.readonly = false,
         this.bypassValidator = false,
-        this.maxLines,
+        this.maxLines = 1,
         this.onsubmitted})
   ;
 
@@ -122,7 +122,10 @@ class _CustomTextFieldState extends State<CustomTextField> {
             ): OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
             ),
+            constraints: MediaQuery.of(context).size.width > 440 ? BoxConstraints(maxWidth: 400) :null,
+
           ),
+
         ),
 
       ],

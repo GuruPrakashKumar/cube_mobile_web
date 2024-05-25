@@ -10,6 +10,8 @@ import 'package:pin_code_fields/pin_code_fields.dart' as pinCode;
 import 'package:intl/intl.dart';
 
 import 'package:provider/provider.dart';
+import 'package:shopos/src/blocs/checkout/checkout_cubit.dart';
+import 'package:shopos/src/models/user.dart' as User;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shopos/src/blocs/billing/billing_cubit.dart';
 import 'package:shopos/src/models/input/kot_model.dart';
@@ -35,6 +37,7 @@ import '../services/set_or_change_pin.dart';
 import '../services/user.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/custom_text_field.dart';
+import '../widgets/pdf_bill_template.dart';
 import '../widgets/pdf_kot_template.dart';
 import '../widgets/pin_validation.dart';
 import 'bluetooth_printer_list.dart';
@@ -97,6 +100,8 @@ class _BillingListScreenState extends State<BillingListScreen> {
   bool showReadySwitch = false;
   bool showNamePref = false;
   bool buzzerSoundPref = false;
+  late int salesInvoiceNo;
+  late int purchaseInvoiceNo;
   late SharedPreferences prefs;
   final TextEditingController pinController = TextEditingController();
   PinService _pinService = PinService();
@@ -158,6 +163,9 @@ class _BillingListScreenState extends State<BillingListScreen> {
     buzzerSoundPref = (await prefs.getBool('buzzer-qr-order-preference'))!;
     showReadySwitch = (await prefs.getBool('ready-orders-preference'))!;
     showNamePref = (await prefs.getBool('show-name-preference'))!;
+    CheckoutCubit _cc = CheckoutCubit();
+    salesInvoiceNo = await _cc.getSalesNum() as int;
+    purchaseInvoiceNo = await _cc.getEstimateNum() as int;
     if(autoRefreshPref)
       startTimer();
   }
@@ -393,7 +401,7 @@ class _BillingListScreenState extends State<BillingListScreen> {
     ).toStringAsFixed(2);
   }
 
-  void _view57mmPdf( Order Order)   {
+  void _view57mmPdf( Order Order)   async{
     // User user = User();
     // try {
     //   final res = await UserService.me();
@@ -403,27 +411,37 @@ class _BillingListScreenState extends State<BillingListScreen> {
     // } catch (_) {
     //   Navigator.pop(context);
     // }
-    // await PdfKotUI.generate57mmKot(
-    //     user: user,
-    //     order: Order,
-    //     headers: ["Item", "Qty"],
-    //     date: DateTime.now(),
-    //     invoiceNum: date);
-    print("Pushed to bluetooth printer list");
-    Navigator.pushNamed(context, BluetoothPrinterList.routeName,
-        arguments: CombineArgs(
-            billArgs: null,
-            bluetoothArgs: BluetoothArgs(
-                order: Order,
-                dateTime: DateTime.now(),
-                type: kotType.is57mm))
+    final response = await UserService.me();
+    var userData = User.User.fromMap(response.data['user']);
+    await PdfKotUI.generate57mmKot(
+        user: userData,
+        order: Order,
+        headers: ["Item", "Qty"],
+        date: DateTime.now(),
+        invoiceNum: widget.orderType == OrderType.sale
+            ? Order.invoiceNum != '' &&
+            Order.invoiceNum != null &&
+            Order.invoiceNum != "null"
+            ? Order.invoiceNum!
+            : salesInvoiceNo.toString()
+            : purchaseInvoiceNo.toString(),
     );
-    print("Not Pushed");
+
+    // print("Pushed to bluetooth printer list");
+    // Navigator.pushNamed(context, BluetoothPrinterList.routeName,
+    //     arguments: CombineArgs(
+    //         billArgs: null,
+    //         bluetoothArgs: BluetoothArgs(
+    //             order: Order,
+    //             dateTime: DateTime.now(),
+    //             type: kotType.is57mm))
+    // );
+    // print("Not Pushed");
 
 
   }
 
-  void _view80mmPdf( Order order) {
+  Future<void> _view80mmPdf( Order order) async {
     // User user = User();
     // try {
     //   final res = await UserService.me();
@@ -433,19 +451,28 @@ class _BillingListScreenState extends State<BillingListScreen> {
     // } catch (_) {
     //   Navigator.pop(context);
     // }
-    // await PdfKotUI.generate80mmKot(
-    //     user: user,
-    //     order: Order,
-    //     headers: ["Item", "Qty"],
-    //     date: DateTime.now(),
-    //     invoiceNum: date);
-    Navigator.of(context).pushNamed(BluetoothPrinterList.routeName,
-        arguments: CombineArgs(
-            billArgs: null,
-            bluetoothArgs: BluetoothArgs(
-                order: order,
-                dateTime: DateTime.now(),
-                type: kotType.is80mm)));
+    final response = await UserService.me();
+    var userData = User.User.fromMap(response.data['user']);
+    await PdfKotUI.generate80mmKot(
+        user: userData,
+        order: order,
+        headers: ["Item", "Qty"],
+        date: DateTime.now(),
+        invoiceNum: widget.orderType == OrderType.sale
+            ? order.invoiceNum != '' &&
+            order.invoiceNum != null &&
+            order.invoiceNum != "null"
+            ? order.invoiceNum!
+            : salesInvoiceNo.toString()
+            : purchaseInvoiceNo.toString(),
+    );
+    // Navigator.of(context).pushNamed(BluetoothPrinterList.routeName,
+    //     arguments: CombineArgs(
+    //         billArgs: null,
+    //         bluetoothArgs: BluetoothArgs(
+    //             order: order,
+    //             dateTime: DateTime.now(),
+    //             type: kotType.is80mm)));
 
   }
 
@@ -517,15 +544,15 @@ class _BillingListScreenState extends State<BillingListScreen> {
                 prefs.setString('default', '57mm');
                 print("Default = ${prefs.getString('default')}");
                 // Navigator.of(context).pop();
-                Navigator.of(context).pushNamed(BluetoothPrinterList.routeName,
-                    arguments: CombineArgs(
-                        billArgs: null,
-                        bluetoothArgs: BluetoothArgs(
-                            order: order,
-                            dateTime: DateTime.now(),
-                            type: kotType.is57mm)));
+                // Navigator.of(context).pushNamed(BluetoothPrinterList.routeName,
+                //     arguments: CombineArgs(
+                //         billArgs: null,
+                //         bluetoothArgs: BluetoothArgs(
+                //             order: order,
+                //             dateTime: DateTime.now(),
+                //             type: kotType.is57mm)));
 
-                // _view57mmPdf(order);
+                _view57mmPdf(order);
                 // Navigator.of(context).pop();
               },
               title: Text('57mm'),
@@ -535,15 +562,15 @@ class _BillingListScreenState extends State<BillingListScreen> {
                 SharedPreferences prefs = await SharedPreferences.getInstance();
                 prefs.setString('default', '80mm');
                 print("Default = ${prefs.getString('default')}");
-                // _view80mmPdf(order);
+                _view80mmPdf(order);
 
-                Navigator.of(context).pushNamed(BluetoothPrinterList.routeName,
-                    arguments: CombineArgs(
-                        billArgs: null,
-                        bluetoothArgs: BluetoothArgs(
-                            order: order,
-                            dateTime: DateTime.now(),
-                            type: kotType.is80mm)));
+                // Navigator.of(context).pushNamed(BluetoothPrinterList.routeName,
+                //     arguments: CombineArgs(
+                //         billArgs: null,
+                //         bluetoothArgs: BluetoothArgs(
+                //             order: order,
+                //             dateTime: DateTime.now(),
+                //             type: kotType.is80mm)));
                 // Navigator.of(context).pop();
               },
               title: Text('80mm'),
@@ -655,16 +682,21 @@ class _BillingListScreenState extends State<BillingListScreen> {
                               'No pending orders to show',
                               style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
                             ))
-                            : ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: widget.orderType == OrderType.sale
-                              ? _allBills.length
-                              : provider.purchaseBilling.length,
-                          itemBuilder: (context, index) {
-                            // print("SUBUSERnAME=${_allBills[index].subUserName}");
-                            return GestureDetector(
-                            onLongPress: () {
-                              print("subusername=${_allBills[index].subUserName}, username=${_allBills[index].userName}, businessname=${_allBills[index].user!.businessName }");
+                            : GridView.builder(
+                              gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: (MediaQuery.of(context).size.width > 440 ? 2 : 1),
+                                    mainAxisExtent: MediaQuery.of(context).size.height *0.4
+                                ),
+                              shrinkWrap: true,
+                              itemCount: widget.orderType == OrderType.sale
+                                  ? _allBills.length
+                                  : provider.purchaseBilling.length,
+                              itemBuilder: (context, index) {
+                                // print("SUBUSERnAME=${_allBills[index].subUserName}");
+                                return GestureDetector(
+                                onLongPress: () {
+                                  print("subusername=${_allBills[index].subUserName}, username=${_allBills[index].userName}, businessname=${_allBills[index].user!.businessName }");
                               // _showQrDialog(_allBills[0]);
                               // showDialog(
                               //     context: context,
@@ -911,13 +943,13 @@ class _BillingListScreenState extends State<BillingListScreen> {
                                                 String? defaultFormat =
                                                 prefs.getString('default');
 
-                                                // if (defaultFormat == null) {
-                                                //   _showNewDialog(_allBills[index],);
-                                                // } else if (defaultFormat == "57mm") {
+                                                if (defaultFormat == null) {
+                                                  _showNewDialog(_allBills[index],);
+                                                } else if (defaultFormat == "57mm") {
                                                   _view57mmPdf(_allBills[index],);
-                                                // } else if (defaultFormat == "80mm") {
-                                                //   _view80mmPdf(_allBills[index],);
-                                                // }
+                                                } else if (defaultFormat == "80mm") {
+                                                  _view80mmPdf(_allBills[index],);
+                                                }
                                               }, icon: Icon(Icons.print, color: Colors.blue[400],)),
                                             ],
                                           ),

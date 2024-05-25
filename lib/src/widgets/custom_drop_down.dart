@@ -24,44 +24,47 @@ class _CustomDropDownFieldState extends State<CustomDropDownField> {
 
   @override
   Widget build(BuildContext context) {
-    return DropdownButtonFormField<String>(
-      items: widget.items.map(
-        (e) {
-          return DropdownMenuItem(
-            value: e,
-            child: Text(e),
-          );
+    return SizedBox(
+      width: MediaQuery.of(context).size.width > 440 ? 400 : Size.infinite.width,
+      child: DropdownButtonFormField<String>(
+        items: widget.items.map(
+          (e) {
+            return DropdownMenuItem(
+              value: e,
+              child: Text(e),
+            );
+          },
+        ).toList(),
+        onChanged: (e) {
+          // do other stuff with _category
+          if (e == null) {
+            return;
+          }
+          _selected = e;
+          widget.onSelected(e);
         },
-      ).toList(),
-      onChanged: (e) {
-        // do other stuff with _category
-        if (e == null) {
-          return;
-        }
-        _selected = e;
-        widget.onSelected(e);
-      },
-      validator: (e) {
-        if (widget.validator != null) {
-          return widget.validator!(e);
-        }
-        if (e == null || e.isEmpty) {
-          return 'Please select a Business Type';
-        }
-        return null;
-      },
-      value: _selected ?? widget.initialValue,
-      decoration: InputDecoration(
-        contentPadding: const EdgeInsets.symmetric(
-          vertical: 2,
-          horizontal: 10,
+        validator: (e) {
+          if (widget.validator != null) {
+            return widget.validator!(e);
+          }
+          if (e == null || e.isEmpty) {
+            return 'Please select a Business Type';
+          }
+          return null;
+        },
+        value: _selected ?? widget.initialValue,
+        decoration: InputDecoration(
+          contentPadding: const EdgeInsets.symmetric(
+            vertical: 2,
+            horizontal: 10,
+          ),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          hintText: widget.hintText,
         ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-        hintText: widget.hintText,
+        iconEnabledColor: Colors.white,
       ),
-      iconEnabledColor: Colors.white,
     );
   }
 }

@@ -133,23 +133,24 @@ class _ProductCardHorizontalState extends State<ProductCardHorizontal> {
 
       },
       child: AnimatedContainer(
-        height: itemQuantity>0 && widget.isSelecting == true ? MediaQuery.of(context).size.height * 0.38: MediaQuery.of(context).size.height * 0.33,
+        height: itemQuantity>0 && widget.isSelecting == true ? MediaQuery.of(context).size.height * (MediaQuery.of(context).size.width > 440 ? 0.41 : 0.38): MediaQuery.of(context).size.height * (MediaQuery.of(context).size.width > 440 ? 0.41 : 0.33),
         duration: Duration(milliseconds: 100),
+        width: MediaQuery.of(context).size.width > 440 ? MediaQuery.of(context).size.width/2-10 : MediaQuery.of(context).size.width-5,
         child: Card(
-          color: Color(widget.color).withOpacity(1),
-          elevation: 5,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-            side: BorderSide(
-              color: Color(widget.color), // Set the border color
-              width: 5.0, // Set the border width
-            ),
+        color: Color(widget.color).withOpacity(1),
+        elevation: 5,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+          side: BorderSide(
+            color: Color(widget.color), // Set the border color
+            width: 5.0, // Set the border width
           ),
-          child: Row(
+        ),
+        child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Expanded(
-                flex: 3,
+                flex: MediaQuery.of(context).size.width > 440 ? 2 : 3,
                 child: Padding(
                   padding: const EdgeInsets.all(5.0),
                   child: ClipRRect(
@@ -159,14 +160,16 @@ class _ProductCardHorizontalState extends State<ProductCardHorizontal> {
                             imageUrl: widget.product.image!,
                             fit: BoxFit.contain,
                           )
-                        : Image.asset('assets/images/image_placeholder.png'),
+                        : Image.asset(
+                        'assets/images/image_placeholder.png',
+                    ),
                   ),
                 ),
               ),
               Expanded(
                 flex: 3,
                 child: Padding(
-                  padding: const EdgeInsets.only(top: 3, bottom: 8),
+                  padding: MediaQuery.of(context).size.width > 440 ? EdgeInsets.all(8.0) : EdgeInsets.only(top: 3, bottom: 8),
                   child: Column(
                     children: [
                       Row(
@@ -233,6 +236,7 @@ class _ProductCardHorizontalState extends State<ProductCardHorizontal> {
                       ),
                       Divider(color: Colors.black54),
                       Container(
+                        height: MediaQuery.of(context).size.width > 440 ? 150 : 250,
                         width: MediaQuery.of(context).size.width/2.30,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -819,6 +823,278 @@ class _ProductCardPurchaseState extends State<ProductCardPurchase> {
                                 '₹ ${PurchasePrice.toStringAsFixed(2)}',
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               )
+                      ],
+                    ),
+                    // const SizedBox(height: 10),
+
+                    // // const SizedBox(height: 2),
+                    // // Text(color),
+                    // const SizedBox(height: 2),
+                    // Text('Purchase Price ${product.purchasePrice}'),
+                    // const SizedBox(height: 2),
+                    // Text('Sale Price ${product.sellingPrice}'),
+                    // const SizedBox(height: 2),
+                    // Text('Qty ${product.quantity ?? 0}'),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class ProductCardPurchaseDesktop extends StatefulWidget {
+  final Product product;
+  double productQuantity;
+  final VoidCallback onAdd;
+  final VoidCallback onDelete;
+  final String? type;
+  String discount;
+  Function? onQuantityFieldChange;
+  ProductCardPurchaseDesktop(
+      {Key? key,
+        required this.product,
+        required this.onAdd,
+        required this.productQuantity,
+        required this.onDelete,
+        this.discount="",
+        this.onQuantityFieldChange,
+        this.type})
+      : super(key: key);
+
+  @override
+  State<ProductCardPurchaseDesktop> createState() => _ProductCardPurchaseDesktopState();
+}
+
+class _ProductCardPurchaseDesktopState extends State<ProductCardPurchaseDesktop> {
+  double baseSellingPrice = 0;
+  double Sellinggstvalue = 0;
+  double SellingPrice = 0;
+  bool onTapOutSideWillWork=false;
+  double basePurchasePrice = 0;
+  double Purchasegstvalue = 0;
+  double PurchasePrice = 0;
+  TextEditingController _itemQuantityController = TextEditingController();
+  String? errorText;
+
+
+  @override
+  void initState() {
+    super.initState();
+    print(widget.product.quantityToBeSold);
+    print(widget.productQuantity);
+
+  }
+  double roundToDecimalPlaces(double value, int decimalPlaces) {
+    final factor = pow(10, decimalPlaces).toDouble();
+    return (value * factor).round() / factor;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    _itemQuantityController.text = widget.productQuantity.toString();
+
+    if (widget.type == "sale" || widget.type == "estimate") {
+      if (widget.product.gstRate != "null") {
+        baseSellingPrice = double.parse((double.parse(widget.product.baseSellingPriceGst!) * widget.productQuantity).toStringAsFixed(2));
+        Sellinggstvalue = double.parse((double.parse(widget.product.saleigst!) * widget.productQuantity).toStringAsFixed(2));
+      }
+      if (widget.product.gstRate == "null") {
+        baseSellingPrice = double.parse((widget.product.sellingPrice! * widget.productQuantity).toDouble().toStringAsFixed(2));
+      }
+      SellingPrice = (widget.product.sellingPrice! * widget.productQuantity);
+    }
+
+    if (widget.type == "purchase") {
+      if (widget.product.purchasePrice != 0 && widget.product.gstRate != "null") {
+        basePurchasePrice = double.parse((double.parse(widget.product.basePurchasePriceGst!) * widget.productQuantity).toStringAsFixed(2));
+        Purchasegstvalue = double.parse((double.parse(widget.product.purchaseigst!) * widget.productQuantity).toStringAsFixed(2));
+      } else {
+        basePurchasePrice = double.parse((widget.product.purchasePrice * widget.productQuantity).toDouble().toStringAsFixed(2));
+      }
+      PurchasePrice = widget.product.purchasePrice * widget.productQuantity;
+    }
+
+    return SizedBox(
+      // height: 200,
+      child: Card(
+        elevation: 5,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              flex: 0,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(5),
+                    child: widget.product.image != null
+                        ? Container(
+                      height: 120,
+                      child: CachedNetworkImage(
+                        imageUrl: widget.product.image!,
+                        fit: BoxFit.cover,
+                      ),
+                    )
+                        : Image.asset('assets/images/image_placeholder.png'),
+                  ),
+                  SizedBox(height: 10,),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          widget.onAdd();
+                          _itemQuantityController.text = (double.parse(_itemQuantityController.text)+1).toString();
+                          _itemQuantityController.text = roundToDecimalPlaces(double.parse(_itemQuantityController.text), 4).toString();
+                          setState(() {});
+                        },
+                        icon: const Icon(Icons.add_circle_outline_rounded),
+                      ),
+                      Container(
+                        width: 70,
+                        child: TextFormField(
+                          controller: _itemQuantityController,
+                          keyboardType: TextInputType.numberWithOptions(signed: false, decimal: true),
+                          decoration: InputDecoration(
+                            fillColor: Colors.grey[200], // Light grey background color
+                            filled: true,  // Fill the background
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(15), // Set your desired corner radius
+                              borderSide: BorderSide.none, // Make the border invisible
+                            ),
+                            contentPadding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 7.0),
+                          ),
+                          onFieldSubmitted: (e){
+                            if(e.isNotEmpty)
+                              print("double.parse is ${double.parse(_itemQuantityController.text)}");
+                            widget.productQuantity = double.parse(_itemQuantityController.text);
+                            print("item quantity on field submitted is ${widget.productQuantity}");
+                            if(widget.onQuantityFieldChange != null)
+                              widget.onQuantityFieldChange!(widget.productQuantity);
+                          },
+                          onTapOutside: (e){
+                            if(onTapOutSideWillWork){
+                              print("tapped out side");
+                              print(e);
+                              if(_itemQuantityController.text.isNotEmpty){
+                                print("double.parse(controller text) is ${double.parse(_itemQuantityController.text)}");
+                                widget.productQuantity = double.parse(_itemQuantityController.text);
+                                print("item quantity on tap outside is ${widget.productQuantity}");
+                                if(widget.onQuantityFieldChange != null)
+                                  widget.onQuantityFieldChange!(widget.productQuantity);
+                              }
+                              onTapOutSideWillWork=false;
+                            }
+                          },
+                          onChanged: (e){
+                            onTapOutSideWillWork=true;
+                            if(e.contains('-')){
+                              print("negative value");
+                              locator<GlobalServices>().errorSnackBar("Negative quantity not allowed");
+                              // errorText = "negative value";
+                            }
+
+                            return null;
+                          },
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          widget.onDelete();
+                          _itemQuantityController.text = (double.parse(_itemQuantityController.text)-1).toString();
+                          _itemQuantityController.text = roundToDecimalPlaces(double.parse(_itemQuantityController.text), 4).toString();
+                          setState(() {});
+                        },
+                        icon: const Icon(Icons.remove_circle_outline_rounded),
+                      ),
+                    ],
+                  ),
+                  // Text('Available : ${product.quantity ?? 0}'),
+                ],
+              ),
+            ),
+            Expanded(
+              flex: 3,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  // crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: MediaQuery.of(context).size.width / 3.0,
+                          alignment: Alignment.center,
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            physics: BouncingScrollPhysics(),
+                            child: Text(
+                              widget.product.name ?? "",
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context).textTheme.headlineSmall,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Divider(
+                      color: Colors.black54,
+                    ),
+
+                    const SizedBox(height: 10),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children:  [
+                        Text('Amount'),
+                        (widget.type == "sale" ||widget.type == "estimate") ? Text('₹ ${(baseSellingPrice + double.parse(widget.discount)).toStringAsFixed(2)}') : Text('₹ ${basePurchasePrice}'),
+                      ],
+                    ),
+                    const SizedBox(height: 5),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                            'Tax GST @${widget.product.gstRate == "null" ? "0" : widget.product.gstRate}%'),
+                        widget.type == "sale" || widget.type == "estimate"
+                            ? Text('₹ ${Sellinggstvalue}')
+                            : Text('₹ ${Purchasegstvalue}'),
+                      ],
+                    ),
+                    const SizedBox(height: 5),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('Discount @0%'),
+                        Text('₹ ${widget.discount}'),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    Divider(
+                      color: Colors.black54,
+                    ),
+                    const SizedBox(height: 2),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('Item Total'),
+                        widget.type == "sale" || widget.type == "estimate"
+                            ? Text(
+                          '₹ ${SellingPrice.toStringAsFixed(2)}',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        )
+                            : Text(
+                          '₹ ${PurchasePrice.toStringAsFixed(2)}',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        )
                       ],
                     ),
                     // const SizedBox(height: 10),

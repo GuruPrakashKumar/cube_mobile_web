@@ -1561,10 +1561,10 @@ packages:
     dependency: "direct main"
     description:
       name: screenshot
-      sha256: "5488135006b34529bf3765a7b1900ca94ccafca300c573550a0474a7162ebf95"
+      sha256: d448f43130f49bc7eead1b267b3ea0291cb2450f037bb0a0ecce7aa4c65e2aee
       url: "https://pub.dev"
     source: hosted
-    version: "2.3.0"
+    version: "2.5.0"
   share_plus:
     dependency: "direct main"
     description:
@@ -1774,26 +1774,26 @@ packages:
     dependency: transitive
     description:
       name: syncfusion_flutter_core
-      sha256: a2427697bfad5b611db78ea4c4daef82d3350b83c729a8dc37959662a31547f9
+      sha256: "9e8bac2367d03bd902844f59e866c0e7b1e10b0b8fa5a6a926c0d8ae8c344533"
       url: "https://pub.dev"
     source: hosted
-    version: "23.2.7"
+    version: "25.2.4"
   syncfusion_flutter_xlsio:
     dependency: "direct main"
     description:
       name: syncfusion_flutter_xlsio
-      sha256: "84c771ce3684820e930d27604e801991efaa0e7a72ee1df4ba4c843258f16285"
+      sha256: c14d232b801d1dcf1108d95e5e5c2b5526c7b1b7b8959d4a19afe4896e547359
       url: "https://pub.dev"
     source: hosted
-    version: "23.2.7"
+    version: "25.2.4"
   syncfusion_officecore:
     dependency: transitive
     description:
       name: syncfusion_officecore
-      sha256: a037c8a72748332ba28723eaed2fd1656b9acdaf03c23c6a08e87f7c31dbed18
+      sha256: "347919e8ca82c54c87956cf0d1d668328cd21331c12de8fec271c8036e3a4e45"
       url: "https://pub.dev"
     source: hosted
-    version: "23.2.7"
+    version: "25.2.4"
   synchronized:
     dependency: transitive
     description:

@@ -18,6 +18,7 @@ import 'package:slidable_button/slidable_button.dart';
 
 import '../services/global.dart';
 import '../services/locator.dart';
+import '../widgets/custom_continue_button.dart';
 
 class CreatePurchase extends StatefulWidget {
   static const routeName = '/create_purchase';
@@ -138,6 +139,25 @@ class _CreatePurchaseState extends State<CreatePurchase> {
                   //   color: Colors.transparent,
                   //   width: 10,
                   // ),
+                  MediaQuery.of(context).size.width > 440 ?
+                  CustomContinueButton(
+                    title: "Continue",
+                    onTap: () {
+
+                      if(_orderItems.isNotEmpty){
+                        Navigator.pushNamed(
+                            context, CheckoutPage.routeName,
+                            arguments: CheckoutPageArgs(
+                              invoiceType: OrderType.purchase,
+                              order: _Order,
+                            )
+                        );
+                      }else{
+                        locator<GlobalServices>().errorSnackBar("No Products added");
+                      }
+                    },
+                  )
+                      : const SizedBox(),
                   CustomButton(
                     title: "Create Product",
                     onTap: () {
@@ -149,6 +169,7 @@ class _CreatePurchaseState extends State<CreatePurchase> {
               ),
             ),
             const Divider(color: Colors.transparent),
+            MediaQuery.of(context).size.width > 440 ? const SizedBox() :
             HorizontalSlidableButton(
               width: double.maxFinite,
               buttonWidth: 50,

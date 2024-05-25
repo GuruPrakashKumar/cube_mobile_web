@@ -1,4 +1,6 @@
 import 'package:dio/dio.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shopos/src/blocs/auth/auth_cubit.dart';
 // import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shopos/src/services/api_v1.dart';
 import 'package:shopos/src/services/auth.dart';
@@ -15,6 +17,10 @@ class UserService {
       // getNewToken();
     } catch (e) {
       if(kDebugMode)print('cube token expired');
+      SharedPreferences pref = await SharedPreferences.getInstance();
+      String? email = pref.getString("email");
+      String? password = pref.getString("pass");
+      await AuthCubit().signIn(email!, password!);
       await getNewToken();
       response = await ApiV1Service.getRequest('/me');
     }

@@ -383,7 +383,9 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   GridView(
                     shrinkWrap: true,
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, mainAxisSpacing: 30.0, mainAxisExtent: 166),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: MediaQuery.of(context).size.width > 440 ? 4 : 2, mainAxisSpacing: 30.0, mainAxisExtent: 166
+                    ),
                     padding: const EdgeInsets.all(10),
                     children: [
                       HomeCard(
@@ -477,8 +479,8 @@ class _HomePageState extends State<HomePage> {
                                       padding: const EdgeInsets.all(8),
                                       child: Image.asset(
                                         "assets/images/purchase.png",
-                                        height: 100,
-                                        width: 110,
+                                        height: MediaQuery.of(context).size.width > 440 ? 110 : 100,
+                                        width: MediaQuery.of(context).size.width > 440 ? 210 : 110,
                                       )),
                                 ),
                                 Text(
@@ -520,8 +522,8 @@ class _HomePageState extends State<HomePage> {
                                       padding: const EdgeInsets.all(8),
                                       child: Image.asset(
                                         "assets/images/sale.png",
-                                        height: 100,
-                                        width: 110,
+                                        height: MediaQuery.of(context).size.width > 440 ? 110 : 100,
+                                        width: MediaQuery.of(context).size.width > 440 ? 210 : 110,
                                       )),
                                 ),
                                 Text(
@@ -607,7 +609,7 @@ class HomeCard extends StatelessWidget {
                   Image.asset(
                     icon,
                     height: 100,
-                    width: 100,
+                    width: MediaQuery.of(context).size.width > 440 ? 200 : 100,
                   ),
                 ],
               ),

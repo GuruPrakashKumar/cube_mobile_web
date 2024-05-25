@@ -253,7 +253,7 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
         elevation: 100,
         color: Theme.of(context).scaffoldBackgroundColor,
         child: Container(
-          height: 120,
+          height: MediaQuery.of(context).size.width > 440 ? 150 : 120,
           width: double.maxFinite,
           decoration: const BoxDecoration(border: Border(top: BorderSide(color: Colors.black12))),
           child: SingleChildScrollView(
@@ -321,37 +321,40 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                     );
                   },
                 ),
-                Divider(),
+                Divider(color: MediaQuery.of(context).size.width > 440 ? Colors.transparent : null,),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Card(
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10)), side: BorderSide(color: Colors.green, width: 1)),
                       color: Color.fromRGBO(148, 255, 194, 100),
-                      child: TextButton(
-                        onPressed: () {
-                          modelOpen(context, "Settle");
-                        },
-                        child: Row(
-                          children: [
-                            Image.asset(
-                              "assets/images/recieve.png",
-                              height: 22,
-                            ),
-                            const Text(
-                              "Received",
-                              style: TextStyle(color: Color.fromRGBO(32, 150, 82, 100), fontSize: 19),
-                            ),
-                          ],
-                        ),
-                        style: ButtonStyle(
-                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                            const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(10)),
-                            ),
+                      child: Padding(
+                        padding:  EdgeInsets.all(MediaQuery.of(context).size.width > 440 ? 10.0 : 0.0),
+                        child: TextButton(
+                          onPressed: () {
+                            modelOpen(context, "Settle");
+                          },
+                          child: Row(
+                            children: [
+                              Image.asset(
+                                "assets/images/recieve.png",
+                                height: 22,
+                              ),
+                              const Text(
+                                "Received",
+                                style: TextStyle(color: Color.fromRGBO(32, 150, 82, 100), fontSize: 19),
+                              ),
+                            ],
                           ),
-                          backgroundColor: MaterialStateProperty.all(
-                            const Color.fromRGBO(255, 0, 0, 0),
+                          style: ButtonStyle(
+                            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                              const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.all(Radius.circular(10)),
+                              ),
+                            ),
+                            backgroundColor: MaterialStateProperty.all(
+                              const Color.fromRGBO(255, 0, 0, 0),
+                            ),
                           ),
                         ),
                       ),
@@ -359,37 +362,40 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                     Card(
                       color: Color.fromRGBO(255, 209, 209, 10),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10)), side: BorderSide(color: Colors.red, width: 1)),
-                      child: TextButton(
-                        onPressed: () {
-                          modelOpen(context, "Credit");
-                        },
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              width: 15,
-                            ),
-                            Image.asset(
-                              "assets/images/given.png",
-                              height: 22,
-                            ),
-                            const Text(
-                              "Given",
-                              style: TextStyle(color: Colors.red, fontSize: 19),
-                            ),
-                            SizedBox(
-                              width: 15,
-                            ),
-                          ],
-                        ),
-                        style: ButtonStyle(
-                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                            const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(10)),
-                            ),
+                      child: Padding(
+                        padding: EdgeInsets.all(MediaQuery.of(context).size.width > 440 ? 10.0 : 0.0),
+                        child: TextButton(
+                          onPressed: () {
+                            modelOpen(context, "Credit");
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SizedBox(
+                                width: 15,
+                              ),
+                              Image.asset(
+                                "assets/images/given.png",
+                                height: 22,
+                              ),
+                              const Text(
+                                "Given",
+                                style: TextStyle(color: Colors.red, fontSize: 19),
+                              ),
+                              SizedBox(
+                                width: 15,
+                              ),
+                            ],
                           ),
-                          backgroundColor: MaterialStateProperty.all(
-                            const Color.fromRGBO(255, 0, 0, 0),
+                          style: ButtonStyle(
+                            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                              const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.all(Radius.circular(10)),
+                              ),
+                            ),
+                            backgroundColor: MaterialStateProperty.all(
+                              const Color.fromRGBO(255, 0, 0, 0),
+                            ),
                           ),
                         ),
                       ),

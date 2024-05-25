@@ -292,9 +292,19 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
           elevation: 0,
-          title: Text(
+          title: MediaQuery.of(context).size.width > 440 ?
+          Text(
             "Product List",
-            style: TextStyle(color: Colors.black, fontSize: height / 45, fontFamily: 'GilroyBold'),
+            style: TextStyle(
+                color: Colors.black,
+                fontFamily: 'GilroyBold'),
+          )
+              :Text(
+            "Product List",
+            style: TextStyle(
+                color: Colors.black,
+                fontSize: height/45,
+                fontFamily: 'GilroyBold'),
           ),
           centerTitle: true,
           actions: [
@@ -315,9 +325,31 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
             bottom: 20,
           ),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
+            mainAxisAlignment: MediaQuery.of(context).size.width > 440 ? MainAxisAlignment.center : MainAxisAlignment.end,
             children: [
               if (widget.args?.isSelecting ?? false)
+                (MediaQuery.of(context).size.width > 440 ?
+                CustomButton(
+                    title: "Continue",
+                    padding: const EdgeInsets.symmetric(vertical: 15),
+                    onTap: () {
+                      if (_products.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            backgroundColor: Colors.red,
+                            content: Text(
+                              "Please select products before continuing",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        );
+                        return;
+                      }
+                      Navigator.pop(
+                        context,
+                        _products,
+                      );
+                    }) :
                 Expanded(
                   child: CustomButton(
                       title: "Continue",
@@ -340,7 +372,7 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
                           _products,
                         );
                       }),
-                ),
+                )),
               if (widget.args?.isSelecting ?? false) const SizedBox(width: 20),
               FloatingActionButton(
                 onPressed: () async {
@@ -377,10 +409,15 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
                       ),
                     )
                   : Expanded(
-                      child: ListView.separated(
-                          separatorBuilder: (context, index) {
-                            return const SizedBox(height: 5);
-                          },
+                      child: GridView.builder(
+                          gridDelegate:
+                          SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: (MediaQuery.of(context).size.width > 440 ? 2 : 1),
+                              mainAxisExtent: MediaQuery.of(context).size.width > 440 ? 250 : null
+                          ),
+                          // separatorBuilder: (context, index) {
+                          //   return const SizedBox(height: 5);
+                          // },
                           shrinkWrap: true,
                           padding: EdgeInsets.all(8),
                           physics: AlwaysScrollableScrollPhysics(),
@@ -388,158 +425,161 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
                           controller: scrollController,
                           itemBuilder: (context, index) {
                             if (index < prodList.length) {
-                              return Column(
-                                children: [
-                                  SizedBox(
-                                    height: height / 240,
-                                  ),
-                                  Stack(
-                                    children: [
-                                      ProductCardHorizontal(
-                                        color: 0XFFFFFFFF,
-                                        showInStockSwitch: _showInStockSwitch,
-                                        type: widget.args!.orderType,
-                                        noOfQuatityadded: countNoOfQuatityInArray(prodList[index]),
-                                        isSelecting: widget.args!.isSelecting,
-                                        onTap: (q) {
-                                          //here q represents the quantity
-                                          //if q is 1 that means we should remove the item from main list(productList)
-                                          // if q is we should add item to productList
+                              return Container(
+                                height: MediaQuery.of(context).size.width > 440 ? 300 : null,
+                                child: Column(
+                                  children: [
+                                    SizedBox(
+                                      height: MediaQuery.of(context).size.width > 440 ? 0 : (height / 240),
+                                    ),
+                                    Stack(
+                                      children: [
+                                        ProductCardHorizontal(
+                                          color: 0XFFFFFFFF,
+                                          showInStockSwitch: _showInStockSwitch,
+                                          type: widget.args!.orderType,
+                                          noOfQuatityadded: countNoOfQuatityInArray(prodList[index]),
+                                          isSelecting: widget.args!.isSelecting,
+                                          onTap: (q) {
+                                            //here q represents the quantity
+                                            //if q is 1 that means we should remove the item from main list(productList)
+                                            // if q is we should add item to productList
 
-                                          //this logic is done becasue when we press the card only the (+-) button should show and should add item
-                                          //then when we again press the card the opposite should happen
-                                          if(kDebugMode)print("value of q $q");//q represents item quantity
-                                          if (q == 0) {
-                                            if(kDebugMode)print("if part q==0");
-                                            _selectProduct(prodList[index]);
-                                            itemCheckedFlag = true;
-                                            // if (widget.args!.orderType == OrderType.sale) {//to show the available quantity in product card horizontal
+                                            //this logic is done becasue when we press the card only the (+-) button should show and should add item
+                                            //then when we again press the card the opposite should happen
+                                            if(kDebugMode)print("value of q $q");//q represents item quantity
+                                            if (q == 0) {
+                                              if(kDebugMode)print("if part q==0");
+                                              _selectProduct(prodList[index]);
+                                              itemCheckedFlag = true;
+                                              // if (widget.args!.orderType == OrderType.sale) {//to show the available quantity in product card horizontal
+                                              //   prodList[index].quantity = prodList[index].quantity! - 1;
+                                              // } else if(widget.args!.orderType == OrderType.none){
+                                              //
+                                              // } else if(widget.args!.orderType == OrderType.estimate){
+                                              //
+                                              // } else {
+                                              //   prodList[index].quantity = prodList[index].quantity! + 1;
+                                              // }
+                                            } else if (q <= 1) {
+                                              if(kDebugMode)print("if part q<=1");
+                                              decreaseTheQuantity(prodList[index], q);
+                                              itemCheckedFlag = false;
+                                              // if (widget.args!.orderType == OrderType.sale) {//to show the available quantity in product card horizontal
+                                              //   prodList[index].quantity = prodList[index].quantity! + 1;
+                                              // } else if(widget.args!.orderType == OrderType.none){
+                                              //
+                                              // }else if(widget.args!.orderType == OrderType.estimate){
+                                              //
+                                              // }else{
+                                              //   prodList[index].quantity = prodList[index].quantity! - 1;
+                                              // }
+                                            }
+
+                                            setState(() {});
+                                          },
+
+                                          onAdd: (double value) {
+                                            increaseTheQuantity(prodList[index], value);
+                                            // if (widget.args!.orderType == OrderType.sale) {
                                             //   prodList[index].quantity = prodList[index].quantity! - 1;
-                                            // } else if(widget.args!.orderType == OrderType.none){
+                                            // }else if(widget.args!.orderType == OrderType.estimate){
                                             //
+                                            // }else {
+                                            //   prodList[index].quantity = prodList[index].quantity! + 1;
+                                            // }
+                                            setState(() {});
+                                          },
+                                          onRemove: (double value) {
+                                            decreaseTheQuantity(prodList[index], value);
+                                            itemCheckedFlag = false;
+                                            // if (widget.args!.orderType == OrderType.sale) {
+                                            //   prodList[index].quantity = prodList[index].quantity! + 1;
                                             // } else if(widget.args!.orderType == OrderType.estimate){
                                             //
                                             // } else {
-                                            //   prodList[index].quantity = prodList[index].quantity! + 1;
-                                            // }
-                                          } else if (q <= 1) {
-                                            if(kDebugMode)print("if part q<=1");
-                                            decreaseTheQuantity(prodList[index], q);
-                                            itemCheckedFlag = false;
-                                            // if (widget.args!.orderType == OrderType.sale) {//to show the available quantity in product card horizontal
-                                            //   prodList[index].quantity = prodList[index].quantity! + 1;
-                                            // } else if(widget.args!.orderType == OrderType.none){
-                                            //
-                                            // }else if(widget.args!.orderType == OrderType.estimate){
-                                            //
-                                            // }else{
                                             //   prodList[index].quantity = prodList[index].quantity! - 1;
                                             // }
-                                          }
+                                            setState(() {});
+                                          },
+                                          product: prodList[index],
+                                          isAvailable: isAvailable,
+                                          onDelete: () async {
+                                            var result = true;
+                                            var x = await _pinService.pinStatus();
+                                            if (x == true) {
+                                              result = await _showPinDialog() as bool;
+                                            }
 
-                                          setState(() {});
-                                        },
+                                            if (result) {
+                                              _productCubit.deleteProduct(prodList[index], _currentPage, _limit);
+                                              setState(() {
+                                                prodList.removeAt(index);
+                                              });
+                                            }
+                                          },
+                                          onEdit: () async {
+                                            var result = true;
+                                            var x = await _pinService.pinStatus();
+                                            if (x == true) {
+                                              result = await _showPinDialog() as bool;
+                                            }
+                                            if (result) {
+                                              await Navigator.pushNamed(
+                                                context,
+                                                CreateProduct.routeName,
+                                                arguments: CreateProductArgs(id: prodList[index].id),
+                                              );
 
-                                        onAdd: (double value) {
-                                          increaseTheQuantity(prodList[index], value);
-                                          // if (widget.args!.orderType == OrderType.sale) {
-                                          //   prodList[index].quantity = prodList[index].quantity! - 1;
-                                          // }else if(widget.args!.orderType == OrderType.estimate){
-                                          //
-                                          // }else {
-                                          //   prodList[index].quantity = prodList[index].quantity! + 1;
-                                          // }
-                                          setState(() {});
-                                        },
-                                        onRemove: (double value) {
-                                          decreaseTheQuantity(prodList[index], value);
-                                          itemCheckedFlag = false;
-                                          // if (widget.args!.orderType == OrderType.sale) {
-                                          //   prodList[index].quantity = prodList[index].quantity! + 1;
-                                          // } else if(widget.args!.orderType == OrderType.estimate){
-                                          //
-                                          // } else {
-                                          //   prodList[index].quantity = prodList[index].quantity! - 1;
-                                          // }
-                                          setState(() {});
-                                        },
-                                        product: prodList[index],
-                                        isAvailable: isAvailable,
-                                        onDelete: () async {
-                                          var result = true;
-                                          var x = await _pinService.pinStatus();
-                                          if (x == true) {
-                                            result = await _showPinDialog() as bool;
-                                          }
+                                              _productCubit.getProducts(_currentPage, _limit);
+                                              pinController.clear();
+                                            }
+                                          },
+                                          onCopy:() async {
+                                            var result = true;
 
-                                          if (result) {
-                                            _productCubit.deleteProduct(prodList[index], _currentPage, _limit);
-                                            setState(() {
-                                              prodList.removeAt(index);
-                                            });
-                                          }
-                                        },
-                                        onEdit: () async {
-                                          var result = true;
-                                          var x = await _pinService.pinStatus();
-                                          if (x == true) {
-                                            result = await _showPinDialog() as bool;
-                                          }
-                                          if (result) {
+                                            if (await _pinService.pinStatus() == true) {
+                                              result = await _showPinDialog() as bool;
+                                            }
+                                            if (result) {
                                             await Navigator.pushNamed(
                                               context,
                                               CreateProduct.routeName,
-                                              arguments: CreateProductArgs(id: prodList[index].id),
+                                              arguments: CreateProductArgs(id: prodList[index].id, isCopy: true),
                                             );
 
-                                            _productCubit.getProducts(_currentPage, _limit);
+                                            // _productCubit.getProducts(_currentPage, _limit);
                                             pinController.clear();
-                                          }
-                                        },
-                                        onCopy:() async {
-                                          var result = true;
+                                            }
+                                          },
+                                          onQuantityFieldChange: (double value){
+                                            if(kDebugMode)print("line 412 in serch result: value coming is $value");
+                                            setQuantityToBeSold(prodList[index], value);
 
-                                          if (await _pinService.pinStatus() == true) {
-                                            result = await _showPinDialog() as bool;
-                                          }
-                                          if (result) {
-                                          await Navigator.pushNamed(
-                                            context,
-                                            CreateProduct.routeName,
-                                            arguments: CreateProductArgs(id: prodList[index].id, isCopy: true),
-                                          );
-
-                                          // _productCubit.getProducts(_currentPage, _limit);
-                                          pinController.clear();
-                                          }
-                                        },
-                                        onQuantityFieldChange: (double value){
-                                          if(kDebugMode)print("line 412 in serch result: value coming is $value");
-                                          setQuantityToBeSold(prodList[index], value);
-
-                                        },
-                                      ),
-                                      if (countNoOfQuatityInArray(prodList[index]) > 0)
-                                        const Align(
-                                          alignment: Alignment.topRight,
-                                          child: Padding(
-                                            padding: EdgeInsets.all(8.0),
-                                            child: CircleAvatar(
-                                              radius: 15,
-                                              backgroundColor: Colors.green,
-                                              child: Icon(
-                                                Icons.check,
-                                                color: Colors.white,
+                                          },
+                                        ),
+                                        if (countNoOfQuatityInArray(prodList[index]) > 0)
+                                          const Align(
+                                            alignment: Alignment.topRight,
+                                            child: Padding(
+                                              padding: EdgeInsets.all(8.0),
+                                              child: CircleAvatar(
+                                                radius: 15,
+                                                backgroundColor: Colors.green,
+                                                child: Icon(
+                                                  Icons.check,
+                                                  color: Colors.white,
+                                                ),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                    ],
-                                  ),
-                                  SizedBox(
-                                    height: height / 240,
-                                  ),
-                                ],
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: height / 240,
+                                    ),
+                                  ],
+                                ),
                               );
                             } else {
                               return Center(
@@ -551,7 +591,7 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
             ],
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+            padding:  EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width > 440 ? MediaQuery.of(context).size.width/3+20 :20, vertical: 8),
 //               child: CustomTextField(
             child: CustomTextField(
               prefixIcon: const Icon(Icons.search),

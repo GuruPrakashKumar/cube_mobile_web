@@ -783,19 +783,25 @@ class _CheckoutPageState extends State<CheckoutPage> {
   }
 
   _view80mmBill(Order Order, bool popAll) async {
-    // PdfUI.generate80mmPdf(
-    //   user: userData,
-    //   order: Order,
-    //   headers: [
-    //     "Invoice 0000000",
-    //     "${DateFormat('dd/MM/yyyy').format(DateTime.now())}"
-    //   ],
-    //   date: DateTime.now(),
-    //   invoiceNum: date,
-    //   totalPrice: totalPrice() ?? '',
-    //   subtotal: totalbasePrice() ?? '',
-    //   gstTotal: totalgstPrice() ?? '',
-    // );
+    await PdfUI.generate80mmPdf(
+      user: userData,
+      order: Order,
+      headers: [
+        "Invoice 0000000",
+        "${DateFormat('dd/MM/yyyy').format(DateTime.now())}"
+      ],
+      date: DateTime.now(),
+      invoiceNum: widget.args.invoiceType == OrderType.sale
+          ? widget.args.order.invoiceNum != '' &&
+          widget.args.order.invoiceNum != null &&
+          widget.args.order.invoiceNum != "null"
+          ? widget.args.order.invoiceNum!
+          : salesInvoiceNo.toString()
+          : purchasesInvoiceNo.toString(),
+      totalPrice: totalPrice() ?? '',
+      subtotal: totalbasePrice() ?? '',
+      gstTotal: totalgstPrice() ?? '',
+    );
 
     // PrintBillArgs(
     //   user: userData,
@@ -827,19 +833,25 @@ class _CheckoutPageState extends State<CheckoutPage> {
   }
 
   _view57mmBill(Order Order, bool popAll) async {
-    // PdfUI.generate57mmPdf(
-    //   user: userData,
-    //   order: Order,
-    //   headers: [
-    //     "Invoice 0000000",
-    //     "${DateFormat('dd/MM/yyyy').format(DateTime.now())}"
-    //   ],
-    //   date: DateTime.now(),
-    //   invoiceNum: date,
-    //   totalPrice: totalPrice() ?? '',
-    //   subtotal: totalbasePrice() ?? '',
-    //   gstTotal: totalgstPrice() ?? '',
-    // );
+    await PdfUI.generate57mmPdf(
+      user: userData,
+      order: Order,
+      headers: [
+        "Invoice 0000000",
+        "${DateFormat('dd/MM/yyyy').format(DateTime.now())}"
+      ],
+      date: DateTime.now(),
+      invoiceNum: widget.args.invoiceType == OrderType.sale
+          ? widget.args.order.invoiceNum != '' &&
+          widget.args.order.invoiceNum != null &&
+          widget.args.order.invoiceNum != "null"
+          ? widget.args.order.invoiceNum!
+          : salesInvoiceNo.toString()
+          : purchasesInvoiceNo.toString(),
+      totalPrice: totalPrice() ?? '',
+      subtotal: totalbasePrice() ?? '',
+      gstTotal: totalgstPrice() ?? '',
+    );
 
     // if(kDebugMode)print(
     //     widget.args.order.orderItems![0].product!.baseSellingPriceGst == 'null'

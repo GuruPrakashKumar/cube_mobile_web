@@ -169,7 +169,14 @@ class _CreateSaleState extends State<CreateSale> {
                           'No products added yet',
                         ),
                       )
-                  : ListView.separated(
+                  : GridView.builder(
+                    gridDelegate:  SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: MediaQuery.of(context).size.width > 440 ? 2 : 1,
+                      crossAxisSpacing: 10,
+                      mainAxisSpacing: 10,
+                      childAspectRatio: 1.5,
+                      mainAxisExtent: 200,
+                    ),
                     physics: const ClampingScrollPhysics(),
                     shrinkWrap: true,
                     itemCount: _orderItems.length,
@@ -185,7 +192,27 @@ class _CreateSaleState extends State<CreateSale> {
                     onLongPress: () {
                       showaddDiscountDialouge(basesellingprice!, _orderItems, index);
                     },
-                    child: ProductCardPurchase(
+                    child: MediaQuery.of(context).size.width > 440 ?
+                    ProductCardPurchaseDesktop(
+                      type: "sale",
+                      product: _orderItems[index].product!,
+                      discount: _orderItems[index].discountAmt,
+                      onQuantityFieldChange: (double value){
+                        setQuantityToBeSold(_orderItems[index], value, index);
+                      },
+                      onAdd: () {
+                        Kotlist.add(_Order.orderItems![index].product!);
+                        _onAdd(_orderItems[index]);
+                        if(kDebugMode)print("on add quantity is ${_orderItems[index].quantity}");
+                        if(kDebugMode)print("on add quantity to be sold is ${_orderItems[index].product?.quantityToBeSold!}");
+
+                      },
+                      onDelete: () {
+                        OnDelete(_orderItems[index], index);
+                      },
+                      productQuantity: _orderItems[index].quantity,
+                    ) :
+                    ProductCardPurchase(
                       type: "sale",
                       product: _orderItems[index].product!,
                       discount: _orderItems[index].discountAmt,
@@ -206,76 +233,118 @@ class _CreateSaleState extends State<CreateSale> {
                     ),
                   );
                 },
-                separatorBuilder: (context, index) {
-                  return const Divider(color: Colors.transparent);
-                },
+                // separatorBuilder: (context, index) {
+                //   return const Divider(color: Colors.transparent);
+                // },
               ),
             ),
-            const Divider(color: Colors.transparent),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              const Divider(color: Colors.transparent),
+                MediaQuery.of(context).size.width > 440 ?
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    CustomButton(
+                      title: "Add manually",
+                      onTap: () async {
+                        _onAddManually(context);
+                      },
+                    ),
+                    CustomButton(
+                      title: "Continue",
+                      onTap: () async {
+                        print("skip pending order value $skipPendingOrdersPref");
+                        if (_orderItems.isNotEmpty && skipPendingOrdersPref==false) {
+                          // print('orderid: ${widget.args?.orderId}');
+                          await insertToDatabase(provider);
+                          Navigator.pushNamed(context, BillingListScreen.routeName, arguments: OrderType.sale);
+                        }else if(_orderItems.isEmpty && skipPendingOrdersPref==false){
+                          Navigator.pushNamed(context, BillingListScreen.routeName, arguments: OrderType.sale);
+                        }else if(_orderItems.isNotEmpty && skipPendingOrdersPref){
+                          Navigator.pushNamed(
+                              context,
+                              CheckoutPage.routeName,
+                              arguments: CheckoutPageArgs(invoiceType: OrderType.sale, order: _Order)
+                          );
+                        }else{
+                          locator<GlobalServices>().errorSnackBar('No products added !');
+                        }
+                      },
+                    ),
+                    CustomButton(
+                      title: "Scan barcode",
+                      onTap: () async {},
+                      type: ButtonType.outlined,
+                    ),
+                  ],
+                ):
+                Column(
               children: [
-                CustomButton(
-                  title: "Add manually",
-                  onTap: () async {
-                    _onAddManually(context);
-                  },
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    CustomButton(
+                      title: "Add manually",
+                      onTap: () async {
+                        _onAddManually(context);
+                      },
+                    ),
+                    CustomButton(
+                      title: "Scan barcode",
+                      onTap: () async {
+                        _searchProductByBarcode();
+                      },
+                      type: ButtonType.outlined,
+                    ),
+                  ],
                 ),
-                CustomButton(
-                  title: "Scan barcode",
-                  onTap: () async {
-                    _searchProductByBarcode();
+                const Divider(color: Color.fromRGBO(0, 0, 0, 0)),
+                HorizontalSlidableButton(
+                  width: double.maxFinite,
+                  buttonWidth: 50,
+                  color: Colors.green,
+                  isRestart: true,
+                  buttonColor: Colors.green,
+                  dismissible: false,
+                  label: const Center(
+                      child: CircleAvatar(
+                        backgroundColor: Colors.white,
+                        child: Icon(
+                          Icons.arrow_forward_ios_rounded,
+                          color: Colors.black,
+                        ),
+                      )),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Swipe to continue",
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.white),
+                      ),
+                    ],
+                  ),
+                  height: 50,
+                  onChanged: (position) async {
+                    if (position == SlidableButtonPosition.end) {
+                      if (_orderItems.isNotEmpty && skipPendingOrdersPref==false) {
+                        // if(kDebugMode)print('orderid: ${widget.args?.orderId}');
+                        await insertToDatabase(provider);
+                        Navigator.pushNamed(context, BillingListScreen.routeName, arguments: OrderType.sale);
+                      }else if(_orderItems.isEmpty && skipPendingOrdersPref==false){
+                        Navigator.pushNamed(context, BillingListScreen.routeName, arguments: OrderType.sale);
+                      }else if(_orderItems.isNotEmpty && skipPendingOrdersPref){
+                        Navigator.pushNamed(
+                          context,
+                          CheckoutPage.routeName,
+                          arguments: CheckoutPageArgs(invoiceType: OrderType.sale, order: _Order)
+                        );
+                      }else{
+                        locator<GlobalServices>().errorSnackBar('No products added !');
+                      }
+
+                    }
                   },
-                  type: ButtonType.outlined,
                 ),
               ],
-            ),
-            const Divider(color: Color.fromRGBO(0, 0, 0, 0)),
-            HorizontalSlidableButton(
-              width: double.maxFinite,
-              buttonWidth: 50,
-              color: Colors.green,
-              isRestart: true,
-              buttonColor: Colors.green,
-              dismissible: false,
-              label: const Center(
-                  child: CircleAvatar(
-                    backgroundColor: Colors.white,
-                    child: Icon(
-                      Icons.arrow_forward_ios_rounded,
-                      color: Colors.black,
-                    ),
-                  )),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "Swipe to continue",
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.white),
-                  ),
-                ],
-              ),
-              height: 50,
-              onChanged: (position) async {
-                if (position == SlidableButtonPosition.end) {
-                  if (_orderItems.isNotEmpty && skipPendingOrdersPref==false) {
-                    // if(kDebugMode)print('orderid: ${widget.args?.orderId}');
-                    await insertToDatabase(provider);
-                    Navigator.pushNamed(context, BillingListScreen.routeName, arguments: OrderType.sale);
-                  }else if(_orderItems.isEmpty && skipPendingOrdersPref==false){
-                    Navigator.pushNamed(context, BillingListScreen.routeName, arguments: OrderType.sale);
-                  }else if(_orderItems.isNotEmpty && skipPendingOrdersPref){
-                    Navigator.pushNamed(
-                      context,
-                      CheckoutPage.routeName,
-                      arguments: CheckoutPageArgs(invoiceType: OrderType.sale, order: _Order)
-                    );
-                  }else{
-                    locator<GlobalServices>().errorSnackBar('No products added !');
-                  }
-
-                }
-              },
             ),
           ],
         ),

@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'dart:io';
+import 'dart:html' as html;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -260,26 +262,37 @@ class PdfUI {
       ),
     );
 
-    // Get the directory for saving the PDF
-    final directory = await getApplicationDocumentsDirectory();
-    final filePath = '${directory.path}/Invoice.pdf';
-    final file = File(filePath);
+    if(kDebugMode)print('running');
 
-    // Write the PDF to a file
-    await file.writeAsBytes(await pdf.save());
+    var savedFile = await pdf.save();
+    List<int> fileInts = List.from(savedFile);
+    html.AnchorElement(
+        href: "data:application/octet-stream;charset=utf-16le;base64,${base64.encode(fileInts)}")
+      ..setAttribute("download", "${DateTime.now().millisecondsSinceEpoch}.pdf")
+      ..click();
 
-    // await Printing.layoutPdf(
-    //     onLayout: (PdfPageFormat format) async => pdf.save());
-
-    try {
-      if(kDebugMode)print('run');
-      if(kDebugMode)print(file.path);
-      if(kDebugMode)print(file.absolute.path);
-      OpenFile.open(file.path);
-      if(kDebugMode)print('done');
-    } catch (e) {
-      if(kDebugMode)print(e);
-    }
+    if(kDebugMode)print('saved');
+    // if(kDebugMode)print('launching');
+    // // Get the directory for saving the PDF
+    // final directory = await getApplicationDocumentsDirectory();
+    // final filePath = '${directory.path}/Invoice.pdf';
+    // final file = File(filePath);
+    //
+    // // Write the PDF to a file
+    // await file.writeAsBytes(await pdf.save());
+    //
+    // // await Printing.layoutPdf(
+    // //     onLayout: (PdfPageFormat format) async => pdf.save());
+    //
+    // try {
+    //   if(kDebugMode)print('run');
+    //   if(kDebugMode)print(file.path);
+    //   if(kDebugMode)print(file.absolute.path);
+    //   OpenFile.open(file.path);
+    //   if(kDebugMode)print('done');
+    // } catch (e) {
+    //   if(kDebugMode)print(e);
+    // }
   }
 
   static Future<void> generate57mmPdf({
@@ -528,25 +541,36 @@ class PdfUI {
       ),
     );
 
-    // Get the directory for saving the PDF
-    final directory = await getApplicationDocumentsDirectory();
-    final filePath = '${directory.path}/Invoice.pdf';
-    final file = File(filePath);
+    if(kDebugMode)print('running');
 
-    // Write the PDF to a file
-    await file.writeAsBytes(await pdf.save());
+    var savedFile = await pdf.save();
+    List<int> fileInts = List.from(savedFile);
+    html.AnchorElement(
+        href: "data:application/octet-stream;charset=utf-16le;base64,${base64.encode(fileInts)}")
+      ..setAttribute("download", "${DateTime.now().millisecondsSinceEpoch}.pdf")
+      ..click();
 
-    // await Printing.layoutPdf(
-    //     onLayout: (PdfPageFormat format) async => pdf.save());
-
-    try {
-      print('run');
-      print(file.path);
-      print(file.absolute.path);
-      OpenFile.open(file.path);
-      print('done');
-    } catch (e) {
-      if(kDebugMode)print(e);
-    }
+    if(kDebugMode)print('saved');
+    if(kDebugMode)print('launching');
+    // // Get the directory for saving the PDF
+    // final directory = await getApplicationDocumentsDirectory();
+    // final filePath = '${directory.path}/Invoice.pdf';
+    // final file = File(filePath);
+    //
+    // // Write the PDF to a file
+    // await file.writeAsBytes(await pdf.save());
+    //
+    // // await Printing.layoutPdf(
+    // //     onLayout: (PdfPageFormat format) async => pdf.save());
+    //
+    // try {
+    //   print('run');
+    //   print(file.path);
+    //   print(file.absolute.path);
+    //   OpenFile.open(file.path);
+    //   print('done');
+    // } catch (e) {
+    //   if(kDebugMode)print(e);
+    // }
   }
 }

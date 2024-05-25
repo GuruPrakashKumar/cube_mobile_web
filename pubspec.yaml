@@ -69,7 +69,7 @@ dependencies:
 #  print_bluetooth_thermal: ^1.0.9
   esc_pos_utils_plus: ^2.0.2
   # excel: ^2.1.0
-  syncfusion_flutter_xlsio: ^23.1.40
+  syncfusion_flutter_xlsio: 25.2.4
   sqflite:
 #  package_info_plus:
   path:

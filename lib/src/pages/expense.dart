@@ -75,13 +75,17 @@ class _ExpensePageState extends State<ExpensePage> {
                 // if(kDebugMode)print("line 76 in expense page");
                 // if(kDebugMode)print(state.expense.toString());
                 state.expense.sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
-                return ListView.separated(
-                  physics: const ClampingScrollPhysics(),
+                return GridView.builder(
                   itemCount: state.expense.length,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: MediaQuery.of(context).size.width > 440 ? 2 : 1, mainAxisExtent: 227,),
+                  physics: const ClampingScrollPhysics(),
                   shrinkWrap: true,
-                  separatorBuilder: (context, index) {
-                    return const SizedBox(height: 5);
-                  },
+
+                  // separatorBuilder: (context, index) {
+                  //   return const SizedBox(height: 5);
+                  // },
+
                   itemBuilder: (context, index) {
                     return ExpenseCardHorizontal(
                       expense: state.expense[index],

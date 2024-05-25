@@ -98,7 +98,7 @@ class _CreateExpensePageState extends State<CreateExpensePage> {
                     Padding(
                       padding: const EdgeInsets.all(20.0),
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        crossAxisAlignment: MediaQuery.of(context).size.width > 440 ? CrossAxisAlignment.center : CrossAxisAlignment.stretch,
                         children: [
                           const SizedBox(height: 20),
                           CustomTextField(

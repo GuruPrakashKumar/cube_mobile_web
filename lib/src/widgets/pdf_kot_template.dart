@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'dart:html' as html;
+import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -47,7 +49,7 @@ class PdfKotUI {
 
     pdf.addPage(pw.Page(
       pageFormat: roll57,
-      build: (context) {
+      build: (pw.Context context) {
         return pw.Container(
           margin: pw.EdgeInsets.all(10),
           child: pw.Column(
@@ -76,13 +78,24 @@ class PdfKotUI {
       },
     ));
 
-    // Get the directory for saving the PDF
-    final directory = await getApplicationDocumentsDirectory();
-    final filePath = '${directory.path}/KOT.pdf';
-    final file = File(filePath);
+    if(kDebugMode)print('running');
 
-    // Write the PDF to a file
-    await file.writeAsBytes(await pdf.save());
+    var savedFile = await pdf.save();
+    List<int> fileInts = List.from(savedFile);
+    html.AnchorElement(
+        href: "data:application/octet-stream;charset=utf-16le;base64,${base64.encode(fileInts)}")
+      ..setAttribute("download", "${DateTime.now().millisecondsSinceEpoch}.pdf")
+      ..click();
+
+    if(kDebugMode)print('saved');
+    if(kDebugMode)print('launching');
+    // Get the directory for saving the PDF
+    // final directory = await getApplicationDocumentsDirectory();
+    // final filePath = '${directory.path}/KOT.pdf';
+    // final file = File(filePath);
+    //
+    // // Write the PDF to a file
+    // await file.writeAsBytes(await pdf.save());
 
     // final bytes = File(file.path).readAsBytesSync();
 
@@ -91,15 +104,15 @@ class PdfKotUI {
     // await Printing.layoutPdf(
     //     onLayout: (PdfPageFormat format) async => pdf.save());
 
-    try {
-      if(kDebugMode)print('run');
-      if(kDebugMode)print(file.path);
-      if(kDebugMode)print(file.absolute.path);
-      OpenFile.open(file.path);
-      if(kDebugMode)print('done');
-    } catch (e) {
-      if(kDebugMode)print(e);
-    }
+    // try {
+    //   if(kDebugMode)print('run');
+    //   if(kDebugMode)print(file.path);
+    //   if(kDebugMode)print(file.absolute.path);
+    //   OpenFile.open(file.path);
+    //   if(kDebugMode)print('done');
+    // } catch (e) {
+    //   if(kDebugMode)print(e);
+    // }
   }
 
   static Future<void> generate80mmKot({
@@ -165,13 +178,22 @@ class PdfKotUI {
       },
     ));
 
-    // Get the directory for saving the PDF
-    final directory = await getApplicationDocumentsDirectory();
-    final filePath = '${directory.path}/KOT.pdf';
-    final file = File(filePath);
+    var savedFile = await pdf.save();
+    List<int> fileInts = List.from(savedFile);
+    html.AnchorElement(
+        href: "data:application/octet-stream;charset=utf-16le;base64,${base64.encode(fileInts)}")
+      ..setAttribute("download", "${DateTime.now().millisecondsSinceEpoch}.pdf")
+      ..click();
 
-    // Write the PDF to a file
-    await file.writeAsBytes(await pdf.save());
+    if(kDebugMode)print('pdf save');
+    if(kDebugMode)print('launching');
+    // Get the directory for saving the PDF
+    // final directory = await getApplicationDocumentsDirectory();
+    // final filePath = '${directory.path}/KOT.pdf';
+    // final file = File(filePath);
+    //
+    // // Write the PDF to a file
+    // await file.writeAsBytes(await pdf.save());
 
     // final bytes = File(file.path).readAsBytesSync();
 
@@ -180,14 +202,14 @@ class PdfKotUI {
     // await Printing.layoutPdf(
     //     onLayout: (PdfPageFormat format) async => pdf.save());
 
-    try {
-      if(kDebugMode)print('run');
-      if(kDebugMode)print(file.path);
-      if(kDebugMode)print(file.absolute.path);
-      OpenFile.open(file.path);
-      if(kDebugMode)print('done');
-    } catch (e) {
-      if(kDebugMode)print(e);
-    }
+    // try {
+    //   if(kDebugMode)print('run');
+    //   if(kDebugMode)print(file.path);
+    //   if(kDebugMode)print(file.absolute.path);
+    //   OpenFile.open(file.path);
+    //   if(kDebugMode)print('done');
+    // } catch (e) {
+    //   if(kDebugMode)print(e);
+    // }
   }
 }

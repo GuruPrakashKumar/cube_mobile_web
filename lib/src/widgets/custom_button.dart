@@ -32,8 +32,9 @@ class CustomButton extends StatelessWidget {
         
         style: type == ButtonType.outlined
             ? OutlinedButton.styleFrom(
+                minimumSize: MediaQuery.of(context).size.width > 440 ? Size(300, 60) : null,
                 side: BorderSide(
-                  color: isDisabled ? Colors.grey : ColorsConst.primaryColor,
+                  color: isDisabled ? Colors.grey : (MediaQuery.of(context).size.width > 440 ? Color(0xff0047FF) : ColorsConst.primaryColor),
                   width: 2,
                 ),
                 shape: RoundedRectangleBorder(
@@ -42,8 +43,9 @@ class CustomButton extends StatelessWidget {
                 padding: padding,
               )
             : TextButton.styleFrom(
+                minimumSize: MediaQuery.of(context).size.width > 440 ? Size(300, 60) : null,
                 backgroundColor:
-                    isDisabled ? Colors.grey : ColorsConst.primaryColor,
+                    isDisabled ? Colors.grey : (MediaQuery.of(context).size.width > 440 ? Color(0xff0047FF) : ColorsConst.primaryColor),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
@@ -58,13 +60,20 @@ class CustomButton extends StatelessWidget {
             : Text(
                 title,
                 style: style ??
+                    (MediaQuery.of(context).size.width > 440 ?
+                    Theme.of(context).textTheme.headlineSmall?.copyWith(
+                        color: type == ButtonType.normal
+                            ? Colors.white
+                            : Color(0xff0047FF),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 30) :
                     Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontSize: 16,
                           color: type == ButtonType.normal
                               ? Colors.white
                               : ColorsConst.primaryColor,
                           fontWeight: FontWeight.bold,
-                        ),
+                        )),
               ),
       ),
     );

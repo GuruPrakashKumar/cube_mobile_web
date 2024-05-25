@@ -78,10 +78,10 @@ class _CreatePartyPageState extends State<CreatePartyPage> {
                 child: SingleChildScrollView(
 
                   child: SizedBox(
-                    height: 700,
+                    height: MediaQuery.of(context).size.width > 440 ? 440 : 700,
                     child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      mainAxisSize: MediaQuery.of(context).size.width > 440 ? MainAxisSize.max :MainAxisSize.min,
+                      crossAxisAlignment: MediaQuery.of(context).size.width > 440 ? CrossAxisAlignment.center :CrossAxisAlignment.stretch,
                       children: [
                         const SizedBox(height: 20),
                         CustomTextField(
@@ -116,12 +116,12 @@ class _CreatePartyPageState extends State<CreatePartyPage> {
                         const Divider(color: Colors.transparent),
                         
                         CustomTextField(
-                          maxLines: 8,
+                          maxLines: MediaQuery.of(context).size.width > 440 ? 1 : 8,
                           validator: (e) => null,
                           isLoading: isLoading,
                           initialValue: widget.args.partyAddress,
                           label: 'Address',
-                       
+                          hintText: MediaQuery.of(context).size.width > 440 ? "Optional" : "",
                           
                           onSave: (e) {
                             _partyInput.address = e;
@@ -140,7 +140,8 @@ class _CreatePartyPageState extends State<CreatePartyPage> {
                             }
                           },
                         ),
-                        const SizedBox(height: 40),
+                        SizedBox(height: 40, width: MediaQuery.of(context).size.width > 440 ? 10 : 0,
+                        ),
                       ],
                     ),
                   ),

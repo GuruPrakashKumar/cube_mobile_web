@@ -17,6 +17,8 @@ class AuthCubit extends Cubit<AuthState> {
   void saveAccount(String email,String pass)async
   {
     SharedPreferences pref = await SharedPreferences.getInstance();
+    pref.setString("email", email);
+    pref.setString("pass", pass);
     pref.setString(email, pass);
   }
   ///
