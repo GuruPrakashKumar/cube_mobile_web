@@ -686,7 +686,7 @@ class _BillingListScreenState extends State<BillingListScreen> {
                               gridDelegate:
                                 SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisCount: (MediaQuery.of(context).size.width > 440 ? 2 : 1),
-                                    mainAxisExtent: MediaQuery.of(context).size.height *0.4
+                                    mainAxisExtent: MediaQuery.of(context).size.width > 440 ? MediaQuery.of(context).size.height *0.4 : (showNamePref ? 245 :230),
                                 ),
                               shrinkWrap: true,
                               itemCount: widget.orderType == OrderType.sale

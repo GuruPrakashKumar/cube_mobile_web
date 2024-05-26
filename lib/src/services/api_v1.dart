@@ -17,20 +17,19 @@ class ApiV1Service {
       connectTimeout: Duration(milliseconds: 5000),
       receiveTimeout: Duration(milliseconds: 50000),
     ),
-  );
+  )..interceptors.add(PrettyDioLogger(
+      requestHeader: true,
+      requestBody: true,
+      responseBody: true,
+      responseHeader: false,
+      error: true,
+      compact: true,
+      maxWidth: 90));
   const ApiV1Service();
 
   void addHeaderCookie(Map<String, String> headers) {
     _dio.options.headers.clear();
     _dio.options.headers.addAll(headers);
-    _dio.interceptors.add(PrettyDioLogger(
-        requestHeader: true,
-        requestBody: true,
-        responseBody: true,
-        responseHeader: false,
-        error: true,
-        compact: true,
-        maxWidth: 90));
   }
 
   static Future<String> getToken() async {

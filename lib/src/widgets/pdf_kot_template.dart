@@ -58,8 +58,9 @@ class PdfKotUI {
               pw.Text('KOT', style: pw.TextStyle(fontSize: 11, font: ttf)),
               pw.Text('${dateFormat()}',
                   style: pw.TextStyle(fontSize: 9, font: ttf)),
-              pw.SizedBox(height: 10),
+              // pw.SizedBox(height: 10),
               pw.Text('Table', style: pw.TextStyle(fontSize: 9, font: ttf)),
+              pw.Text('Name : ${(order.subUserName == '' ||  order.subUserName == null ? (order.userName == null || order.userName == "" ? order.user!.businessName : order.userName) : order.subUserName)}', style: pw.TextStyle(fontSize: 9, font: ttf)),
               pw.SizedBox(height: 10),
               pw.Row(
                   mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
@@ -158,8 +159,9 @@ class PdfKotUI {
               pw.Text('KOT', style: pw.TextStyle(fontSize: 11, font: ttf)),
               pw.Text('${dateFormat()}',
                   style: pw.TextStyle(fontSize: 9, font: ttf)),
-              pw.SizedBox(height: 10),
+              // pw.SizedBox(height: 10),
               pw.Text('Table', style: pw.TextStyle(fontSize: 9, font: ttf)),
+              pw.Text('Name : ${(order.subUserName == '' ||  order.subUserName == null ? (order.userName == null || order.userName == "" ? order.user!.businessName : order.userName) : order.subUserName)}', style: pw.TextStyle(fontSize: 9, font: ttf)),
               pw.SizedBox(height: 10),
               pw.Row(
                   mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,

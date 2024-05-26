@@ -51,8 +51,8 @@ class AuthService {
       // document.cookie="Bearer ${response.data['token']}; Bearer_subuser ${response.data['token_subuser']}";
 
       ApiV1Service().addHeaderCookie(
-          {"Authorization" : "Bearer ${response.data['token']}",
-            "Authorization_subuser" : "Bearer_subuser ${response.data['token_subuser']}"}
+          // {"Authorization" : "Bearer ${response.data['token']}",
+            {"Authorization" : "Bearer_subuser ${response.data['token_subuser']}"}
       );
 
     }

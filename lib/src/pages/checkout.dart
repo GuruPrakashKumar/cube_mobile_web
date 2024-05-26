@@ -783,7 +783,13 @@ class _CheckoutPageState extends State<CheckoutPage> {
   }
 
   _view80mmBill(Order Order, bool popAll) async {
-    await PdfUI.generate80mmPdf(
+    salesInvoiceNo = await _checkoutCubit.getSalesNum() as int;
+    purchasesInvoiceNo = await _checkoutCubit.getPurchasesNum() as int;
+    if(!popAll){
+      salesInvoiceNo++;
+      purchasesInvoiceNo++;
+    }
+    PdfUI.generate80mmPdf(
       user: userData,
       order: Order,
       headers: [
@@ -802,38 +808,23 @@ class _CheckoutPageState extends State<CheckoutPage> {
       subtotal: totalbasePrice() ?? '',
       gstTotal: totalgstPrice() ?? '',
     );
-
-    // PrintBillArgs(
-    //   user: userData,
-    //   order: Order,
-    //   headers: [
-    //     "Invoice 0000000",
-    //     "${DateFormat('dd/MM/yyyy').format(DateTime.now())}"
-    //   ],
-    //   dateTime: DateTime.now(),
-    //   invoiceNum: date,
-    //   totalPrice: totalPrice() ?? '',
-    //   subtotalPrice: totalbasePrice() ?? '',
-    //   gsttotalPrice: totalgstPrice() ?? '',
-    // );
-    salesInvoiceNo = await _checkoutCubit.getSalesNum() as int;
-    purchasesInvoiceNo = await _checkoutCubit.getPurchasesNum() as int;
-    if(!popAll){
-      salesInvoiceNo++;
-      purchasesInvoiceNo++;
-    }
-
 
     // for open pdf
     // try {
     //   OpenFile.open(generatedPdfFile.path);
     // } catch (e) {
-    //   if(kDebugMode)print(e);
+    //   print(e);
     // }
   }
 
   _view57mmBill(Order Order, bool popAll) async {
-    await PdfUI.generate57mmPdf(
+    salesInvoiceNo = await _checkoutCubit.getSalesNum() as int;
+    purchasesInvoiceNo = await _checkoutCubit.getPurchasesNum() as int;
+    if(!popAll){
+      salesInvoiceNo++;
+      purchasesInvoiceNo++;
+    }
+    PdfUI.generate57mmPdf(
       user: userData,
       order: Order,
       headers: [
@@ -852,20 +843,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
       subtotal: totalbasePrice() ?? '',
       gstTotal: totalgstPrice() ?? '',
     );
-
-    // if(kDebugMode)print(
-    //     widget.args.order.orderItems![0].product!.baseSellingPriceGst == 'null'
-    //         ? widget.args.order.orderItems![0].product!.sellingPrice
-    //         : 0);
-    salesInvoiceNo = await _checkoutCubit.getSalesNum() as int;
-    purchasesInvoiceNo = await _checkoutCubit.getPurchasesNum() as int;
-    if(!popAll){
-      salesInvoiceNo++;
-      purchasesInvoiceNo++;
-    }
-
-
-
   }
 
   _showNewDialog(
@@ -984,6 +961,658 @@ class _CheckoutPageState extends State<CheckoutPage> {
                         child: CircularProgressIndicator(
                           valueColor: AlwaysStoppedAnimation<Color>(
                             ColorsConst.primaryColor,
+                          ),
+                        ),
+                      );
+                    }
+                    if(MediaQuery.of(context).size.width > 440) {
+                      var media = MediaQuery.of(context);
+                      return Container(
+                        height: media.size.height * 1,
+                        width: media.size.width * 1,
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                            top: 10.0,
+                            bottom: 20,
+                            left: 20,
+                            right: 30,
+                          ),
+                          child: Form(
+                            key: _formKey,
+                            child: Column(
+                              //crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  width: media.size.width * 0.9,
+                                  //height: media.size.height * 0.9,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Column(
+                                        children: [
+                                          Card(
+                                            elevation: 0,
+                                            color: Theme
+                                                .of(context)
+                                                .scaffoldBackgroundColor,
+                                            child: Column(
+                                              children: [
+                                                SingleChildScrollView(
+                                                  child: Container(
+                                                    width: media.size.width * 0.4,
+                                                    child: Column(
+                                                      children: [
+                                                        const SizedBox(height: 10),
+                                                        Row(
+                                                          mainAxisAlignment:
+                                                          MainAxisAlignment.spaceBetween,
+                                                          children: [
+                                                            Text('Sub Total'),
+                                                            Text('₹ ${totalbasePrice()}'),
+                                                          ],
+                                                        ),
+                                                        const SizedBox(height: 5),
+                                                        const SizedBox(height: 5),
+                                                        Row(
+                                                          mainAxisAlignment:
+                                                          MainAxisAlignment.spaceBetween,
+                                                          children: [
+                                                            Text('Tax GST'),
+                                                            Text('₹ ${totalgstPrice()}'),
+                                                          ],
+                                                        ),
+                                                        const SizedBox(height: 5),
+                                                        const SizedBox(height: 5),
+                                                        Row(
+                                                          mainAxisAlignment:
+                                                          MainAxisAlignment.spaceBetween,
+                                                          children: [
+                                                            Text('Discount'),
+                                                            Text('₹ ${totalDiscount()}'),
+                                                          ],
+                                                        ),
+                                                        const SizedBox(height: 5),
+                                                        Divider(color: Colors.black54),
+                                                        const SizedBox(height: 5),
+                                                        Row(
+                                                          mainAxisAlignment:
+                                                          MainAxisAlignment.spaceBetween,
+                                                          children: [
+                                                            Text('Grand Total'),
+                                                            Text(
+                                                              '₹ ${totalPrice()}',
+                                                              style: TextStyle(
+                                                                  fontWeight: FontWeight
+                                                                      .bold),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        const SizedBox(height: 5),
+                                                      ],
+                                                    ),
+                                                    // Divider(color: Colors.black54),
+                                                    // Text(
+                                                    //   "INVOICE",
+                                                    //   style: TextStyle(
+                                                    //       fontSize: 30, fontWeight: FontWeight.w500),
+                                                    // ),
+                                                    // Divider(color: Colors.black54),
+
+                                                    // Divider(color: Colors.black54),
+                                                    // const Divider(color: Colors.transparent),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          if (widget.args.invoiceType ==
+                                              OrderType.estimate &&
+                                              widget.args.order.estimateNum != null)
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.start,
+                                              children: [
+                                                Container(
+                                                  width: media.size.width * 0.4,
+                                                  child: SwitchListTile(
+                                                      title: Text('Convert to Sale: '),
+                                                      value: convertToSale,
+                                                      onChanged: (val) {
+                                                        convertToSale = val;
+                                                        setState(() {});
+                                                      }),
+                                                ),
+                                                const Divider(color: Colors.transparent),
+                                              ],
+                                            ),
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            children: [
+                                              Container(
+                                                width: media.size.width * 0.4,
+                                                child: SwitchListTile(
+                                                    title: Text('Bill to: '),
+                                                    value: isBillTo,
+                                                    onChanged: (val) {
+                                                      isBillTo = val;
+                                                      setState(() {});
+                                                    }),
+                                              ),
+                                            ],
+                                          ),
+                                          SizedBox(
+                                            height: 5,
+                                          ),
+                                          Container(
+                                            width: media.size.width * 0.3,
+                                            child: Visibility(
+                                              visible: isBillTo,
+                                              child: Column(
+                                                children: [
+                                                  TextFormField(
+                                                    controller: receiverNameController,
+                                                    decoration: InputDecoration(
+                                                        label: Text("Receiver name"),
+                                                        border: OutlineInputBorder(
+                                                            borderRadius:
+                                                            BorderRadius.circular(10))),
+                                                    onChanged: (val) {
+                                                      widget.args.order.reciverName = val;
+                                                      setState(() {});
+                                                    },
+                                                  ),
+                                                  SizedBox(
+                                                    height: 15,
+                                                  ),
+                                                  TextFormField(
+                                                    controller: businessNameController,
+                                                    decoration: InputDecoration(
+                                                        label: Text("Business Name"),
+                                                        border: OutlineInputBorder(
+                                                            borderRadius:
+                                                            BorderRadius.circular(10))),
+                                                    onChanged: (val) {
+                                                      widget.args.order.businessName =
+                                                          val;
+                                                      setState(() {});
+                                                    },
+                                                  ),
+                                                  SizedBox(
+                                                    height: 15,
+                                                  ),
+                                                  TextFormField(
+                                                    controller: businessAddressController,
+                                                    decoration: InputDecoration(
+                                                        label: Text("Business Address"),
+                                                        border: OutlineInputBorder(
+                                                            borderRadius:
+                                                            BorderRadius.circular(10))),
+                                                    onChanged: (val) {
+                                                      widget.args.order.businessAddress =
+                                                          val;
+                                                      setState(() {});
+                                                    },
+                                                  ),
+                                                  SizedBox(
+                                                    height: 15,
+                                                  ),
+                                                  TextFormField(
+                                                    controller: gstController,
+                                                    decoration: InputDecoration(
+                                                        label: Text("GSTIN"),
+                                                        border: OutlineInputBorder(
+                                                            borderRadius:
+                                                            BorderRadius.circular(10))),
+                                                    onChanged: (val) {
+                                                      widget.args.order.gst = val;
+                                                      setState(() {});
+                                                    },
+                                                  ),
+                                                  SizedBox(
+                                                    height: 15,
+                                                  ),
+                                                  TextFormField(
+                                                    controller: dlNumController,
+                                                    decoration: InputDecoration(
+                                                        label: Text("DL Number"),
+                                                        border: OutlineInputBorder(
+                                                            borderRadius:
+                                                            BorderRadius.circular(10))),
+                                                    onChanged: (val) {
+                                                      // widget.args.order.dlNum = val;
+                                                      setState(() {});
+                                                    },
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+
+                                      //const Divider(color: Colors.transparent),
+                                      SingleChildScrollView(
+                                        child: Container(
+                                          width: media.size.width * 0.4,
+                                          child: Column(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+                                              if (widget.args.invoiceType !=
+                                                  OrderType.estimate &&
+                                                  widget.args.canEdit != false ||
+                                                  convertToSale != false)
+                                                Column(
+                                                  children: [
+                                                    SizedBox(
+                                                      width: 400,
+                                                      child: TypeAheadField<Party>(
+                                                        // validator: (value) {
+                                                        //   final isEmpty =
+                                                        //       (value == null || value.isEmpty);
+                                                        //   if (isEmpty && _isCredit) {
+                                                        //     return "Please select a party for credit order";
+                                                        //   }
+                                                        //   return null;
+                                                        // },
+                                                        debounceDuration:
+                                                        const Duration(milliseconds: 500),
+
+                                                        builder: (context, controller, focusNode) => TextField(
+
+                                                          controller: _typeAheadController,
+                                                          autofocus: true,
+                                                          decoration: InputDecoration(
+                                                            hintText: "Party",
+                                                            suffixIcon: GestureDetector(
+                                                              onTap: () {
+                                                                Navigator.pushNamed(context,
+                                                                    CreatePartyPage.routeName,
+                                                                    arguments: CreatePartyArguments(
+                                                                      "",
+                                                                      "",
+                                                                      "",
+                                                                      "",
+                                                                      widget.args.invoiceType ==
+                                                                          OrderType.purchase
+                                                                          ? 'supplier'
+                                                                          : 'customer',
+                                                                    ));
+                                                              },
+                                                              child: const Icon(
+                                                                  Icons.add_circle_outline_rounded),
+                                                            ),
+                                                            contentPadding:
+                                                            const EdgeInsets.symmetric(
+                                                              vertical: 2,
+                                                              horizontal: 10,
+                                                            ),
+                                                            border: OutlineInputBorder(
+                                                              borderRadius:
+                                                              BorderRadius.circular(10),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        suggestionsCallback: (String pattern) {
+                                                          if (int.tryParse(pattern.trim()) !=
+                                                              null) {
+                                                            return Future.value([]);
+                                                          }
+                                                          return _searchParties(pattern) as List<Party>;
+                                                        },
+                                                        itemBuilder: (context, party) {
+                                                          return ListTile(
+                                                            leading: const Icon(Icons.person),
+                                                            title: Text(party.name ?? ""),
+                                                          );
+                                                        },
+                                                        onSelected: (Party party) {
+                                                          setState(() {
+                                                            widget.args.order.party = party;
+                                                          });
+                                                          _typeAheadController.text =
+                                                              party.name ?? "";
+                                                        },
+                                                      ),
+                                                    ),
+                                                    const Divider(
+                                                        color: Colors.transparent,
+                                                        height: 30),
+                                                    if (widget.args.invoiceType !=
+                                                        OrderType.saleReturn)
+                                                      Column(
+                                                        children: [
+                                                          Row(
+                                                            children: [
+                                                              Expanded(
+                                                                child: CustomDropDownField(
+                                                                  items: const <String>[
+                                                                    "Cash",
+                                                                    "Credit",
+                                                                    "Bank Transfer",
+                                                                    "UPI"
+                                                                  ],
+                                                                  onSelected: (e) {
+                                                                    // widget.args.order.modeOfPayment = e;
+                                                                    _modeOfPayControllers[0]
+                                                                        .text = e;
+                                                                    checkUpi();
+                                                                    checkCredit();
+                                                                    // if (widget.args.order.modeOfPayment ==
+                                                                    //     'UPI') {
+                                                                    //   _isUPI = true;
+                                                                    //   getUPIDetails();
+                                                                    // } else {
+                                                                    //   _isUPI = false;
+                                                                    // }
+
+                                                                    setState(() {});
+                                                                  },
+                                                                  validator: (e) {
+                                                                    if ((e ?? "")
+                                                                        .isEmpty) {
+                                                                      return 'Please select a mode of payment';
+                                                                    }
+                                                                    return null;
+                                                                  },
+                                                                  hintText: "Payment Mode",
+                                                                ),
+                                                              ),
+                                                              SizedBox(
+                                                                width: 5,
+                                                              ),
+                                                              Expanded(
+                                                                  child: TextFormField(
+                                                                    enabled: !_singlePayMode,
+                                                                    controller: _amountControllers[0],
+                                                                    keyboardType: TextInputType
+                                                                        .numberWithOptions(
+                                                                        signed: false,
+                                                                        decimal: true),
+                                                                    decoration: InputDecoration(
+                                                                        contentPadding:
+                                                                        EdgeInsets
+                                                                            .symmetric(
+                                                                            vertical: 5,
+                                                                            horizontal: 7),
+                                                                        label: Text(
+                                                                            "Amount"),
+                                                                        border: OutlineInputBorder(
+                                                                            borderRadius:
+                                                                            BorderRadius
+                                                                                .circular(
+                                                                                10))),
+                                                                    validator: (e) {
+                                                                      if (e!.contains(
+                                                                          ",")) {
+                                                                        return '(,) character are not allowed';
+                                                                      }
+                                                                      if (e.isNotEmpty)
+                                                                        if (double
+                                                                            .parse(e) >
+                                                                            99999.0) {
+                                                                          return 'Maximum value is 99999';
+                                                                        }
+                                                                      return null;
+                                                                    },
+                                                                  )),
+                                                              SizedBox(
+                                                                width: 30,
+                                                              ),
+                                                            ],
+                                                          ),
+
+                                                          SizedBox(
+                                                            height: 10,
+                                                          ),
+                                                          // qr code image
+                                                          Column(
+                                                            children: [
+                                                              for (int i = 1;
+                                                              i < _amountControllers.length;i++)
+                                                                Column(
+                                                                  children: [
+                                                                    Row(
+                                                                      children: [
+                                                                        Expanded(
+                                                                          child:
+                                                                          CustomDropDownField(
+                                                                            items: const <String>[
+                                                                              "Cash",
+                                                                              "Credit",
+                                                                              "Bank Transfer",
+                                                                              "UPI"
+                                                                            ],
+                                                                            onSelected: (e) {
+                                                                              _modeOfPayControllers[i].text = e;
+                                                                              checkUpi();
+                                                                              checkCredit();
+                                                                              setState(() {});
+                                                                            },
+                                                                            validator: (e) {
+                                                                              if ((e ?? "").isEmpty) {
+                                                                                return 'Please select a mode of payment';
+                                                                              }
+                                                                              return null;
+                                                                            },
+                                                                            hintText:
+                                                                            "Payment Mode",
+                                                                          ),
+                                                                        ),
+                                                                        SizedBox(
+                                                                          width: 5,
+                                                                        ),
+                                                                        Expanded(
+                                                                            child: TextFormField(
+                                                                              controller:
+                                                                              _amountControllers[i],
+                                                                              keyboardType: TextInputType
+                                                                                  .numberWithOptions(
+                                                                                  signed: false,
+                                                                                  decimal: true),
+                                                                              decoration: InputDecoration(
+                                                                                  contentPadding:
+                                                                                  EdgeInsets.symmetric(vertical: 5, horizontal:
+                                                                                  7),
+                                                                                  label:
+                                                                                  Text(
+                                                                                      "Amount"),
+                                                                                  border: OutlineInputBorder(
+                                                                                      borderRadius:
+                                                                                      BorderRadius
+                                                                                          .circular(
+                                                                                          10))),
+                                                                              validator: (
+                                                                                  e) {
+                                                                                if (e!
+                                                                                    .contains(
+                                                                                    ",")) {
+                                                                                  return '(,) character are not allowed';
+                                                                                }
+                                                                                if (e
+                                                                                    .isNotEmpty)
+                                                                                  if (double
+                                                                                      .parse(
+                                                                                      e) >
+                                                                                      99999.0) {
+                                                                                    return 'Amount not correct';
+                                                                                  }
+                                                                                return null;
+                                                                              },
+                                                                            )),
+                                                                        SizedBox(
+                                                                          width: 5,
+                                                                        ),
+                                                                        i ==
+                                                                            _modeOfPayControllers
+                                                                                .length -
+                                                                                1
+                                                                            ? InkWell(
+                                                                          onTap: () =>
+                                                                              _removePaymentMethodField(
+                                                                                  i),
+                                                                          child: Container(
+                                                                            width:
+                                                                            25,
+                                                                            // Adjust the width as needed
+                                                                            child: Icon(
+                                                                              Icons
+                                                                                  .remove_circle,
+                                                                              color: Colors
+                                                                                  .red,
+                                                                            ),
+                                                                          ),
+                                                                        )
+                                                                            : SizedBox(
+                                                                          width: 25,
+                                                                        )
+                                                                      ],
+                                                                    ),
+                                                                    SizedBox(
+                                                                      height: 10,
+                                                                    )
+                                                                  ],
+                                                                )
+                                                            ],
+                                                          ),
+                                                          Row(
+                                                            //add payment mode button
+                                                              mainAxisAlignment:
+                                                              MainAxisAlignment.start,
+                                                              children: [
+                                                                InkWell(
+                                                                  onTap: () {
+                                                                    if (_modeOfPayControllers
+                                                                        .length <
+                                                                        4) {
+                                                                      _addPaymentMethodField();
+                                                                    }
+                                                                  },
+                                                                  child: Container(
+                                                                    padding:
+                                                                    const EdgeInsets.only(
+                                                                        left: 18,
+                                                                        right: 20,
+                                                                        top: 8,
+                                                                        bottom: 8),
+                                                                    decoration: ShapeDecoration(
+                                                                      // color: const Color(0xFF1E232C),
+                                                                      color: Colors
+                                                                          .grey[100],
+                                                                      shape: RoundedRectangleBorder(
+                                                                          side: const BorderSide(
+                                                                              color:
+                                                                              Colors
+                                                                                  .black),
+                                                                          borderRadius:
+                                                                          BorderRadius
+                                                                              .circular(
+                                                                              18)),
+                                                                    ),
+                                                                    child: Row(
+                                                                      mainAxisSize:
+                                                                      MainAxisSize.min,
+                                                                      mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .center,
+                                                                      crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .center,
+                                                                      children: [
+                                                                        Icon(
+                                                                          Icons
+                                                                              .add_circle,
+                                                                          color:
+                                                                          _modeOfPayControllers
+                                                                              .length >=
+                                                                              4
+                                                                              ? Colors
+                                                                              .grey
+                                                                              : Colors
+                                                                              .green,
+                                                                        ),
+                                                                        SizedBox(
+                                                                          width: 5,
+                                                                        ),
+                                                                        Text(
+                                                                          'Payment Mode',
+                                                                          style: TextStyle(
+                                                                            color: _modeOfPayControllers
+                                                                                .length >=
+                                                                                4
+                                                                                ? Colors
+                                                                                .grey
+                                                                                : Colors
+                                                                                .black,
+                                                                            fontSize: 14,
+                                                                            fontFamily:
+                                                                            'Urbanist',
+                                                                            fontWeight:
+                                                                            FontWeight
+                                                                                .w500,
+                                                                          ),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                                const SizedBox(
+                                                                  width: 10,
+                                                                ),
+                                                              ]),
+                                                          SizedBox(
+                                                            height: 10,
+                                                          ),
+                                                          // if (_isUPI)
+                                                          //   Center(
+                                                          //     child: UPIPaymentQRCode(
+                                                          //       upiDetails: _myUpiId!,
+                                                          //       size: 200,
+                                                          //       embeddedImagePath:
+                                                          //       'assets/icon/BharatPos.png',
+                                                          //       embeddedImageSize:
+                                                          //       const Size(40, 40),
+                                                          //       upiQRErrorCorrectLevel:
+                                                          //       UPIQRErrorCorrectLevel.high,
+                                                          //       qrCodeLoader: Center(
+                                                          //           child:
+                                                          //           CircularProgressIndicator()),
+                                                          //     ),
+                                                          //   ),
+                                                          // if (_isUPI)
+                                                          //   SizedBox(
+                                                          //     height: 20,
+                                                          //   ),
+                                                          // if (_isUPI)
+                                                          //   Row(
+                                                          //     mainAxisAlignment:
+                                                          //     MainAxisAlignment.center,
+                                                          //     children: [
+                                                          //       Text(
+                                                          //         'Upi id: ',
+                                                          //       ),
+                                                          //       // to copy upi id
+                                                          //       SelectableText(
+                                                          //         _myUpiId!.upiID,
+                                                          //       )
+                                                          //     ],
+                                                          //   ),
+                                                        ],
+                                                      ),
+                                                  ],
+                                                ),
+
+                                              const Divider(
+                                                  color: Colors.transparent, height: 50),
+
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       );
